@@ -1,0 +1,37 @@
+<div class="second_menu">
+  <% if permission?(:datas, :jixiao) %><%= link_to "绩效统计", store_staff_manages_path(@store), :class => "hover" %><% end %>
+  <% if permission?(:datas, :shuip) %><a href="/stores/<%= @store.id %>/staff_manages/average_score_hart">平均水平统计</a><% end %>
+  <% if permission?(:datas, :ave_cost_detail) %><a href="/stores/<%= @store.id %>/staff_manages/average_cost_detail_summary" style="font-size: 13px">平均成本明细汇总</a><% end %>
+  <% if permission?(:datas, :staff_detail) %><a href="/stores/<%= params[:store_id]%>/complaints/cost_price">员工成本明细</a><% end %>
+</div>
+<div class="clear"></div>
+<div class="data_body">
+  <input type="hidden" id="store_id" value="<%= @store.id %>"/>
+  <div>
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+      <thead>
+        <tr class="hbg">
+          <td>姓名</td>
+          <td>工作岗位</td>
+          <td>职务</td>
+          <td>绩效情况</td>
+        </tr>
+      </thead>
+      <tbody>
+        <% @staffs.each do |staff| %>
+          <tr>
+            <td><%= staff.name %></td>
+            <td><%= Staff::N_HEAD[staff.position] %></td>
+            <td><%= Staff::N_COMPANY[staff.type_of_w] %></td>
+            <td><a href="javascript:void(0)" class="staff_month_score_detail" id="<%= staff.id %>">查看</a></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    <%= will_paginate @staffs, :class => "pageTurn", :previous_label => "上一页",
+      :next_label => "下一页" %>
+  </div>
+</div>
+
+<div class="mask"></div>
+<div id="staff_chart_detail"></div>

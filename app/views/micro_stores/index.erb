@@ -1,0 +1,46 @@
+<div class="main">
+  <div class="box">
+    <div class="data_box">
+      <div class="data_body">
+        <div class="tab_head">
+          <ul>
+            <li class="hover" >新品发布</li>
+            <li onclick="window.location.href='/stores/<%=params[:store_id]%>/micro_stores/upload_content'">宣传推广</li>
+          </ul>
+        </div>
+      </div>
+      <div class="recommended">
+        <h1 >已推荐产品</h1>
+        <div class="recommended_product" id="recommand_prods" >
+          <% @product_serv[false].each do |prod| %>
+            <p><input type="checkbox" id="<%= prod.id %>"  <% if @recommand_prods.include? "#{prod.id}" %> checked<%end%> /><%= prod.name %></p>
+          <%end if @product_serv[false]%>
+        </div>
+        <div  class="recommended_check">将已推荐的产品添加到新品发布栏</div>
+        <div  class="recommended_button"><input type="button"  value="新品推广" onclick="recommand_prod(<%= params[:store_id] %>)" /></div>
+      </div>
+      <div  class="recommended">
+        <h1>已推荐服务</h1>
+        <div class="recommended_product" style="height:470px;">
+          <% @product_serv[true].each do |prod| %>
+            <p><%= prod.name %></p><br/>
+          <%end if @product_serv[true]%>
+        </div>
+      </div>
+      <div class="recommended">
+        <h1>已推荐卡类</h1>
+        <div class="recommended_product" style="height:470px;">
+          <%@card.each do |k,cards|%>
+            <p>---------------------<%= SvCard::S_FAVOR[k] %>--------------------</p>
+            <%cards.each do |card|%>
+              <p><%= card.name %></p>
+            <%end%>
+          <%end%>
+        </div>
+      </div>
+      <div class="clear"></div>
+      <!--<div class="prmotion">-->
+      <!--</div>-->
+    </div>
+  </div>
+</div>

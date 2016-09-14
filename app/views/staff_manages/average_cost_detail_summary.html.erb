@@ -1,0 +1,31 @@
+<div class="second_menu">
+  <% if permission?(:datas, :jixiao) %><%= link_to "绩效统计", store_staff_manages_path(@store) %><% end %>
+  <% if permission?(:datas, :shuip) %><a href="/stores/<%= @store.id %>/staff_manages/average_score_hart">平均水平统计</a><% end %>
+  <% if permission?(:datas, :ave_cost_detail) %><a href="/stores/<%= @store.id %>/staff_manages/average_cost_detail_summary" class="hover" style="font-size: 13px">平均成本明细汇总</a><% end %>
+    <% if permission?(:datas, :staff_detail) %><a href="/stores/<%= params[:store_id]%>/complaints/cost_price">员工成本明细</a><% end %>
+</div>
+<div class="search">
+  <form action="/stores/<%= @store.id %>/staff_manages/average_cost_detail_summary" type="get">
+  <div>
+    <label>时间：</label>
+    <input type="text" class="Wdate" onclick="WdatePicker()" readonly value="<%= @started_time %>" name="search_s_time"/>&nbsp;到&nbsp;
+    <input type="text" class="Wdate" onclick="WdatePicker()" readonly value="<%= @ended_time %>" name="search_e_time"/>
+  </div>
+  <div>
+    <label>服务选择：</label>
+    <select name="search_s_type">
+      <option value="0">全部</option>
+      <% @services.each do |s| %>
+      <option value="<%= s.id %>" <% if @type && @type.to_i == s.id %>selected<% end %>><%= s.name %></option>
+      <% end %>
+    </select>
+  </div>
+  <div><button class="search_btn">查询</button></div>
+  </form>
+</div>
+<div class="clear"></div>
+<div class="data_body">
+  <div id="acds_div">
+    <%= render "acds_table" %>
+  </div>
+</div>

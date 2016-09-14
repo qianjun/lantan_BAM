@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+  <head>
+    <%= stylesheet_link_tag    "application" %>
+    <%= javascript_include_tag "application","finance_reports","jquery.tablesorter.min" %>
+    <script type="text/javascript" src="/assets/My97DatePicker/WdatePicker.js" ></script>
+    <title><%= @title.nil? ? "财务管理" : @title %></title>
+    <%= csrf_meta_tags %>
+    <!--[if IE 6]>
+    <script src="js/DD_belatedPNG_0.0.8a-min.js"></script>
+    <script>
+      DD_belatedPNG.fix('*');
+    </script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="head">
+      <div class="box">
+        <%= render :partial => "/common/login_header" %>
+        <div class="nav">
+          <ul>
+            <li><a href="/stores/<%=params[:store_id]%>/finance_reports"
+                   <%if ["index","revenue_report","other_fee","return_order"].include? controller.action_name%> class="hover"<%end%>>收入管理</a>
+            </li>
+            <li><a href="/stores/<%=params[:store_id]%>/finance_reports/fee_manage"
+                   <%if ["fee_manage","fee_report"].include? controller.action_name%> class="hover"<%end%>>费用管理</a>
+            </li>
+            <li><a href="/stores/<%=params[:store_id]%>/finance_reports/pay_account"
+                   <%if ["pay_account","payable_account","manage_account"].include? controller.action_name%> class="hover"<%end%>>往来管理</a>
+            </li>
+            <li><a href="/stores/<%=params[:store_id]%>/finance_reports/cost_price"
+                   <%if ["cost_price","analysis_price"].include? controller.action_name%> class="hover"<%end%>>成本管理</a>
+            </li>
+            <li><a href="/stores/<%=params[:store_id]%>/finance_reports/manage_assets"
+                   <%if ["manage_assets"].include? controller.action_name%> class="hover"<%end%>>资产管理</a>
+            </li>
+            <li><a href="/stores/<%=params[:store_id]%>/market_manages"
+                   <%if controller.action_name =="index1"%> class="hover"<%end%>>报表中心</a>
+            </li>
+          </ul>
+        </div>
+        <div class="back"><a href="/stores/<%= params[:store_id] %>/welcomes" title="返回">Back</a>财务管理</div>
+      </div>
+    </div>
+    <%= yield %>
+    <div class="foot"><p>Copyright © 2013 杭州鼎洪 版权所有</p></div>
+    <div class="mask"></div>
+    <div class="maskOne"></div>
+    <%= render :partial => "/shared/tishi_alert" %>
+  </body>
+</html>
+

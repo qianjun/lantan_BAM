@@ -1,0 +1,56 @@
+<%= javascript_include_tag "sales" %>
+<div class="data_box">
+  <div class="data_body">
+    <%= form_for :station,:url=>"/stores/#{params[:store_id]}/stations",:html=>{:id=>"change_station"},:method=>:POST  do %>
+      <table width="100%" border="0" cellpadding="0" cellspacing="0" class="gray_table">
+        <tr>
+          <td><strong>工位号</strong></td>
+          <td><strong>技师</strong></td>
+          <td><strong>工位状态</strong></td>
+        </tr>
+        <%@stations.each do |station| %>
+          <tr <%if station.status != Station::STAT[:NORMAL]%> class="gray_table_error_bg" title="<%= Station::STAT_NAME[station.status] %>" <%end%> >
+            <td <%if station.status != Station::STAT[:NORMAL]%> class="gray_table_error"  <%end%>><%=station.name  %></td>
+            <td>
+              <select name="select<%=station.id%>[]" id="select0_<%=station.id%>">
+                <option value="0">未设置</option>
+                <%  @staffs.each do |staff|%>
+                  <option value="<%=staff.id  %>" <%if @t_infos[station.id] and @t_infos[station.id][0]==staff.id %> selected <%end%>><%= staff.name %></option>
+                <% end  unless @staffs.blank?%>
+              </select>
+              <select name="select<%=station.id%>[]" id="select1_<%=station.id%>">
+                <option value="0">未设置</option>
+                <%  @staffs.each do |staff|%>
+                  <option value="<%=staff.id  %>" <%if @t_infos[station.id] and @t_infos[station.id][1]== staff.id %> selected <%end%>><%= staff.name %></option>
+                <% end  unless @staffs.blank?%>
+              </select>
+            </td>
+            <td>
+              <select name="stat<%=station.id  %>" id="stat<%=station.id  %>" onchange="alter_value(this)">
+                <%Station::STAT_NAME.each do |key,value|%>
+                  <option value="<%= key %>" <%if station.status==key%> selected<%end%>><%= value %></option>
+                <% end %>
+              </select>
+            </td>
+          </tr>
+        <% end unless @stations.blank? %>
+      </table>
+    <% end %>
+    <input type="hidden" value="<%= Station::STAT[:NORMAL] %>" id="station_id" />
+    <div class="btn_box">
+      <button class="confirm_btn" onclick="check_station()">确定</button>
+      <button class="cancel_btn" onclick="window.location.reload();">还原</button>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+  function alter_value(e){
+    var stat=$(e).find("option:selected").val();
+    if (stat==$("#station_id").val()){
+      $(e).parent().parent().removeAttr("class").removeAttr("title").children().first().removeAttr("class");
+    }else{
+      var  title=$(e).find("option:selected").html();
+      $(e).parent().parent().addClass("gray_table_error_bg").attr("title",title).children().first().addClass("gray_table_error");
+    }
+  }
+</script>

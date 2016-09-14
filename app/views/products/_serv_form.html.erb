@@ -1,0 +1,132 @@
+<div class="item">
+  <label><span class="red">*</span>名称：</label><input name="name" id="name" type="text" value="<%= @service.name %>" />
+</div>
+<div class="item">
+  <label><span class="red">*</span>成本价：</label><input name="t_price" id="t_price" type="text" value="<%= @service.t_price %>" />
+</div>
+<div class="item">
+  <label><span class="red">*</span>全国零售价：</label><input name="base_price" id="base_price" type="text" value="<%= @service.base_price %>" />
+</div>
+<div class="item">
+  <label><span class="red">*</span>全国促销价：</label><input name="sale_price" id="sale_price" type="text" value="<%= @service.sale_price %>" />
+</div>
+<div class="item">
+  <label><span class="red">*</span>施工时间(分)：</label><input name="cost_time" id="cost_time" type="text" value="<%= @service.cost_time %>" />
+</div>
+<div class="item">
+  <label>技师：</label>
+  <select name="level1" id="level1" class="staff">
+    <% Staff::LEVELS.each do |key,value| %>
+      <option value="<%= key %>" <%if @service.staff_level==key%> selected<%end%> ><%= value %></option>
+    <% end %>
+  </select>
+  <select name="level2" id="level2" class="staff">
+    <% Staff::LEVELS.each do |key,value| %>
+      <option value="<%= key %>" <%if @service.staff_level_1==key%> selected<%end%> ><%= value %></option>
+    <% end %>
+  </select>
+</div>
+<div class="item">
+  <label>类别：</label><select  id="prod_types" name="prod_types">
+    <% @cates.each do |cate| %>
+      <option value="<%= cate.id %>" <%if @service.category_id==cate.id%> selected<%end%> ><%= cate.name %></option>
+    <% end %>
+  </select>
+</div>
+<div class="item">
+  <label><span class="red">*</span>积分：</label><input name="prod_point" id="prod_point" type="text" value="<%= @service.prod_point.nil? ? 0 : @service.prod_point %>" />
+</div>
+<div class="item_textarea">
+  <label>相关物料：</label><input type="button" value="选择物料" class="other_btn" onclick="before_center('.mat_tab');" />
+  <div class="seeProDiv_rWidth">
+    <ul class="srw_ul">
+      <%if @sale_prods && !@sale_prods.blank? %>
+        <% @sale_prods.each do |mat| %>
+          <li><%= mat.name %><span>/<%= mat.num %></span></li>
+        <% end %>
+      <% end %>
+    </ul>
+  </div>
+</div>
+<div class="seeProDiv">
+  <div class="seeProDiv_l">配图：</div>
+  <div class="seeProDiv_rWidth">
+    <% if @img_urls %>
+      <ul class="seeProPic">
+        <%@img_urls.each do |url|%>
+          <li><img src="<%=url.img_url.nil? ? "" : url.img_url.gsub("img#{@service.id}","img#{@service.id}_#{Constant::P_PICSIZE[0]}") %>" /></li>
+        <%end unless @img_urls.blank?%>
+      </ul>
+    <% end %>
+    <a href="javascript:void(0)" class="compile_btn" onclick="before_center('.add_img');">添加图片</a>
+    <span>*添加新图片会使已上传图片被删除，请为图片做好备份，单个图片大小不超过200KB。</span>
+  </div>
+</div>
+<div class="clear"></div>
+<div class="item_blockArea">
+  <h2 class="item_blockArea_h2">销售提成</h2>
+  <div class="item item_w"><span class="item_radio_b">
+      <input name="deduct_type" type="radio" checked onclick="change_input('#deduct_price','#deduct_percent')" /></span>
+    <label>百分点：</label>
+    <input name="deduct_percent" id="deduct_percent" type="text" <%if @service.deduct_percent==0.0 && @service.deduct_price != 0.0%> disabled<%else%>
+             value="<%= @service.deduct_percent/(@service.sale_price<1 ? 1 : @service.sale_price)*100 %>" <%end%>  class="item_areaInput_s"/>
+  </div>
+  <div class="item item_w"><span class="item_radio_b">
+      <input name="deduct_type" type="radio" <% if @service.deduct_price && @service.deduct_price != 0.0 %>checked<%end%>
+             onclick="change_input('#deduct_percent','#deduct_price')" /></span>
+    <label>金 额：</label>
+    <input name="deduct_price" id="deduct_price" type="text"
+           <%if @service.deduct_price.nil? || @service.deduct_price === 0 %> disabled <%else%> value="<%= @service.deduct_price %>"<%end%>  class="item_areaInput_s" />
+  </div>
+  <div class="clear"></div>
+  <h2 class="item_blockArea_h2">技师提成</h2>
+  <div class="item item_w" id="techin_p"><span class="item_radio_b">
+      <input name="techin_type" type="radio" checked onclick="change_input('#techin_price','#techin_percent')" /></span>
+    <label>百分点：</label>
+    <input name="techin_percent" id="techin_percent" type="text"
+           <% if @service.techin_percent==0.0 && @service.techin_price != 0.0 %> disabled <%else%>
+             value="<%= @service.techin_percent/(@service.sale_price < 1 ? 1 : @service.sale_price)*100 %>" <%end%>  class="item_areaInput_s"/>
+  </div>
+  <div class="item item_w" id="techin_t"><span class="item_radio_b">
+      <input name="techin_type" type="radio" <% if @service.techin_price && @service.techin_price != 0.0 %>checked<%end%>
+             onclick="change_input('#techin_percent','#techin_price')" /></span>
+    <label>金 额：</label>
+    <input name="techin_price" id="techin_price" type="text"
+           <% if @service.techin_price.nil? || @service.techin_price === 0 %> disabled <%else%> value="<%= @service.techin_price %>"<%end%> class="item_areaInput_s" />(元)
+  </div>
+
+  <div class="item">
+    <label>自动回访：</label><input name="auto_revist" id="auto_revist" type="checkbox" value="<%= @service.is_auto_revist.nil? ? Product::IS_AUTO[:NO] : @service.is_auto_revist  %>"
+                               onclick="check_revist()" <% if @service.is_auto_revist %>checked<%end%>/>
+  </div>
+  <div class="item"><label>回访时间：</label>
+    <select  id="time_revist" name="time_revist" <%unless @service.is_auto_revist%>disabled <%end%>>
+      <option value="">请选择</option>
+      <% Product::REVIST_TIME.each do |key| %>
+        <option value="<%= key %>" id="<%=key%>" <%if @service.auto_time ==key%> selected<%end%> ><%= key/24 %>*24小时</option>
+      <% end %>
+    </select>
+  </div>
+  <div class="item_textarea">
+    <label>回访内容：</label><textarea name="con_revist" id="con_revist" cols="" rows="" class="width_textarea"
+                                  <%unless @service.is_auto_revist%>disabled <%end%>><%=  @service.is_auto_revist ? @service.revist_content : ""  %></textarea>
+  </div>
+</div>
+<div class="item_textarea">
+  <label>服务简介：</label><textarea name="intro" id="intro" cols="" rows="" class="width_textarea"><%=  @service.description %></textarea>
+</div>
+<div class="item_textarea">
+  <label>服务描述：</label><textarea  id="add_intro" cols="" rows="" class="width_textarea" style="width:470px"><%=  @service.introduction.nil? ? "" : @service.introduction  %></textarea>
+  <input type="hidden" name="desc" id="desc" />
+</div>
+<script type="text/javascript">
+  var serv_editor;
+  $(function() {
+    serv_editor = KindEditor.create('textarea[id="add_intro"]', {
+      allowFileManager : true
+    });
+  });
+<% if @service.deduct_percent.nil? && @service.deduct_price.nil?  %>
+    $("#deduct_percent").attr("disabled",false);
+<%end%>
+</script>

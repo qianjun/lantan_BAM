@@ -1,0 +1,50 @@
+<% if @materials_need_check.present? %>
+  <%= form_tag "/stores/#{@current_store.id}/check_materials/batch_check" do |f|%>
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table" id="print_sort_table">
+      <thead>
+        <tr class="hbg">
+          <th width="3%"><input type="checkbox" onclick="$('.pandian_list :checkbox').attr('checked',this.checked)" id="111" /></th>
+          <th width="15%">物料名称</th>
+          <th width="15%">物料条形码</th>
+          <th width="8%">物料类别</th>
+          <th width="8%">规格</th>
+          <th width="8%">库存量</th>
+          <th width="8%">盘点数</th>
+          <th width="8%">盘点状态</th>
+          <th width="8%">差异数</th>
+          <th width="20%">备注</th>
+        </tr>
+      </thead>
+      <tbody class="pandian_list">
+        <% @materials_need_check.each do |material| %>
+          <tr id="<%= material.id %>">
+            <td><input type="checkbox" value="<%= material.id %>" /></td>
+            <td><%= material.name %></td>
+            <td><%= material.code %></td>
+            <td><%= material.cname %></td>
+            <td><%= material.unit %></td>
+            <td class="su"><%= storage = material.storage %></td>
+            <td class="check_num"><%= check_num = material.check_num %></td>
+            <% if storage  > check_num
+              diff = storage - check_num
+              status = "少于"
+            elsif storage == check_num
+              diff = 0
+              status = "等于"
+            else
+              diff =  check_num - storage
+              status = "多于"
+            end
+          %>
+            <td><%= status %></td>
+            <td><%= diff %></td>
+            <td class="remark"><%= material.remark %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+<% else %>
+  没有盘点清单
+<% end %>
+<div class="clear"></div>

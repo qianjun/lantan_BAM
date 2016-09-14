@@ -1,0 +1,47 @@
+<div class="main">
+  <div class="box">
+    <div class="data_box">
+      <div class="tab_head">
+        <ul>
+          <li class="hover">费用明细</li>
+          <li onclick="window.location.href='/stores/<%=params[:store_id]%>/finance_reports/fee_report'">费用报表</li>
+        </ul>
+      </div>
+      <div class="data_body">
+        <div>
+          <div class="search">
+            <div><label>时间：</label>
+              <input id="c_first" type="text"  onclick="WdatePicker({preLoad:true,maxDate:'<%=Time.now.strftime("%Y-%m-%d")%>'})" readonly class="Wdate"
+                     value="<%=@start_time.strftime("%Y-%m-%d")%>"/> 到
+              <input id="c_last" type="text" onclick="WdatePicker({preLoad:true,maxDate:'<%=Time.now.strftime("%Y-%m-%d")%>'})" readonly class="Wdate"
+                     value="<%=@end_time.strftime("%Y-%m-%d")%>" /></div>
+            <div style="float:right;"><button class="search_btn" style="padding:-1px 0;" onclick="fee_manage(this,<%=params[:store_id]%>)">查&nbsp&nbsp询</button></div>
+          </div>
+          <div class="tab_before">
+            <ul>
+              <%=  Fee::FEE_TAB.map{|k,tab| @position == k ? "<li id=#{k} class=hover onclick='change_tab(this,#{k})'>#{tab}</li>" : "<li id=#{k} onclick='change_tab(this,#{k})'>#{tab}</li>"}.join("").html_safe%>
+              <li style="float:right;padding:-1px 9px;"><button class="search_btn" onclick="show_center('#add_tab')">新 &nbsp&nbsp&nbsp&nbsp建</button></li>
+            </ul>
+          </div>
+          <div class="data_item" id="fee_manage">
+            <%=  render "fee_manage"%>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="tab_popup add_tab" id="add_tab">
+  <div class="popup_box">
+    <h1>新建费用<a href="javascript:void(0)" class="close">关闭</a></h1>
+    <div class="popup_body">
+      <%= form_for :new_fee,:html=>{:id=>:new_fee},:method=>:post,:url=>"/stores/#{params[:store_id]}/finance_reports" do %>
+        <div class="popup_body_area">
+          <%= render "form" %>
+        </div>
+        <div class="btn_box_s"><input value="确定" class="confirm_btn" onclick="check_fee(this)" type="button"  /></div>
+      <%end%>
+    </div>
+  </div>
+</div>
+<div class="tab_popup show_fee" id="show_fee"></div>

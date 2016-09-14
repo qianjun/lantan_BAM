@@ -1,0 +1,64 @@
+<div class="popup_box">
+  <h1>编辑储值卡<a href="JavaScript:void(0)" class="close">关闭</a></h1>
+  <%= form_tag "/stores/#{@store.id}/save_cards/#{@save_card.id}", :method => :put, :multipart => true do  %>
+    <div class="popup_body">
+      <div class="popup_body_area">
+        <div class="item">
+          <label><span class="red">*</span>名称：</label>
+          <input type="text" name="edit_scard_name" id="edit_scard_name" value="<%= @save_card.name %>"/>
+        </div>
+        <div class="item">
+          <label>适用门店：</label>
+          <select name="edit_scard_userange">
+            <% SvCard::S_USE_RANGE.each do |k, v| %>
+              <option value="<%= k %>" <% if @save_card.use_range == k.to_i %>selected<% end %>><%= v %></option>
+            <% end %>
+          </select>
+        </div>
+        <div class="item_textarea">
+          <label><span class='red'>*</span>适用项目：</label>
+          <div class="item_rbox">
+            <dl>
+              <dt><%= "产品/服务:" %></dt>
+              <% @types.each do |t| %>
+                <dd><input type="checkbox" value="<%= t.id %>" name="edit_scard_category[]" id="sv_card_<%=t.id%>"
+                   <% if !@save_card.cid.nil? and  @save_card.cid.split(",").include? "#{t.id}" %> checked <%end%>         />
+                  <%= t.name %></dd>&nbsp;&nbsp;
+              <%end unless @types.blank?%>
+            </dl>
+            <dl>
+              <dt><%= "套餐卡:" %></dt>
+              <% @pcard.each do |p| %>
+                <dd><input type="checkbox" value="<%= p.id %>" name="edit_pcard_category[]" id="sv_card_<%=p.id%>"
+                           <% if  !@save_card.p_id.nil? and @save_card.p_id.split(",").include? "#{p.id}" %>checked<%end%>/>
+                  <%= p.name %></dd>&nbsp;&nbsp;
+              <%end unless @pcard.blank?%>
+            </dl>
+          </div>
+        </div>
+        <div class="item_textarea">
+          <label><span class="red">*</span>图片：</label>
+          <input type="file" class="file" name="edit_scard_img" id="edit_scard_img"/>
+          <span class="show_pic"><img src="<%= @save_card.img_url.nil? ? "" : @save_card.img_url.gsub("img#{@save_card.id}", "img#{@save_card.id}_#{Constant::SVCARD_PICSIZE[2]}") %>"/></span>
+        </div>
+        <div class="setObj">
+          <div class="setobj_name"><span class="red">*</span>发行规则：</div>
+          <div class="setobj_box">
+            <div class="seto_list">
+              <span>充<input id="edit_scard_started_money" name="edit_scard_started_money" type="text" class="input_s" value="<%= format("%.1f", @save_card.bprice) if @save_card.bprice %>"/>元</span>&nbsp;&nbsp;
+              <span>送<input id="edit_scard_ended_money" name="edit_scard_ended_money" type="text" class="input_s" value="<%= format("%.1f", @save_card.mprice) if @save_card.mprice %>"/>元</span>
+            </div>
+          </div>
+        </div>
+        <div class="item_textarea">
+          <label><span class="red">*</span>具体内容：</label>
+          <textarea class="width_textarea" name="edit_scard_desc" id="edit_scard_desc"><%= @save_card.description %></textarea>
+        </div>
+      </div>
+      <div class="btn_box">
+        <button type="button" class="confirm_btn" onclick="update_save_card_valid(this)">确定</button>
+        <button type="button" class="cancel_btn">取消</button>
+      </div>
+    </div>
+  <% end %>
+</div>

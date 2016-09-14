@@ -1,0 +1,51 @@
+<%= stylesheet_link_tag  "application"%>
+<link rel="stylesheet" type="text/css" media="print" href="/assets/style.css" />
+<%= javascript_include_tag "application", "main"%>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+  <thead>
+    <tr class="hbg">
+      <% if controller.action_name == "show" %>
+        <td><input type="checkbox" value="全选" onclick='set_value(this)' /></td>
+      <% end %>
+      <td>订单号</td>
+      <td>消费日期</td>
+      <td>消费项目</td>
+      <td>总价（元）</td>
+      <td>付款方式</td>
+      <td>是否满意</td>
+      <td>是否开票</td>
+    </tr>
+  </thead>
+  <tbody>
+    <% @orders.each do |order| %>
+      <tr>
+        <% if controller.action_name == "show" %>
+          <td><input type="checkbox" id="line_<%= order.id %>" value="<%= order.id %>" /></td>
+        <% end %>
+        <td><%= order.code %></td>
+        <td><%= order.created_at.strftime("%Y-%m-%d %H:%M:%S") %></td>
+        <td>
+          <table width="100%" border="0" cellspacing="1" cellpadding="0" class="s_table">
+            <tr class="fws">
+              <td>名称</td>
+              <td>单价</td>
+              <td>数量</td>
+            </tr>
+            <% @product_hash[order.id].each do |p| %>
+              <tr>
+                <td><%= p.name %></td>
+                <td><%= p.price %></td>
+                <td><%= p.pro_num %></td>
+              </tr>
+            <% end if @product_hash[order.id] %>
+          </table>
+        </td>
+        <td><%= order.price %></td>
+        <td><%= @order_pay_type[order.id].nil? ? "" : @order_pay_type[order.id].join(",") %></td>
+        <td><%= Order::IS_PLEASED_NAME[order.is_pleased] %></td>
+        <td><%= order.is_billing ? "是" : "否" %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

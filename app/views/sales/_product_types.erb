@@ -1,0 +1,7 @@
+<% unless @products.blank? %>
+  <% @products.each do |product| %>
+    <li><input  type="checkbox" value="<%=product.id  %>" id="<%= product.attributes["price"] || 0  %>" onclick="add_this(this,'<%= product.name %>')" ><%= product.name %></input></li>
+  <% end %>
+<% else %>
+  <%= "未查询到相关产品信息"  %>
+<% end %>

@@ -1,0 +1,19 @@
+<div class="tab_popup" id="message_div" style="display: none;">
+  <div class="popup_box">
+    <h1>发短信<a href="javascript:void(0)" class="close">关闭</a></h1>
+    <div class="popup_body">
+      <%= form_for :message ,:url=>"/stores/#{@store.id}/customers/single_send_message",
+    :method => "post", :html => {:onsubmit => "return check_single_send()", :id => "s_s_message_form", :name => "s_s_message_form"} do %>
+      <div class="popup_body_area">
+        <div>
+          <input type="hidden" name="m_customer_id" id="m_customer_id" value="" />
+          <a href="javascript:void(0)" onclick="show_name()" class="sMessage_btn">%name%</a>
+          <a href="javascript:void(0)" onclick="javascript:show_store_name('<%= @store.name %>')" class="sMessage_btn">门店名称</a>
+          <textarea id="content" name="content" rows="" class="message_textarea"></textarea>
+        </div>
+      </div>
+      <div class="btn_box"><button type="submit" class="confirm_btn">确定</button></div>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,23 @@
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_tab_table">
+  <thead>
+    <tr class="hbg">
+      <td>时间</td>
+      <td>员工</td>
+      <td width="40%">原因</td>
+      <td>处理方式</td>
+      <td>操作</td>
+    </tr>
+  </thead>
+  <tbody id="low_materials_tbody">
+    <% operate_voilate.each do |voi| %>
+      <tr id="violate_<%= voi.id %>">
+        <td width="15%"><%= voi.created_at.nil? ? "" : voi.created_at.strftime("%Y-%m-%d") %></td>
+        <td><%= voi.name %></td>
+        <td><%=voi.situation %></td>
+        <td><%= select(:process_types,nil,ViolationReward::VALID_STAT.invert) %></td>
+        <td><a href="javascript:void(0)" onclick="operate_voilate(<%= voi.id %>,<%= params[:store_id] %>,<%=voi.types %>)">处理</a></td>
+      
+      </tr>
+    <% end %>
+  </tbody>
+</table>

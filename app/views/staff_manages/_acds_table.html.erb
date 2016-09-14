@@ -1,0 +1,38 @@
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+  <thead>
+    <tr class="hbg">
+      <td width="160px">物料名称</td>
+      <td width="60px">数量</td>
+      <td width="80px">价值(元)</td>
+      <td>总计</td>
+      <td>施工车辆总数</td>
+      <td>平均成本(元)</td>
+      <td>标准成本(元)</td>
+      <td>成本效率</td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+    <% if @total_array.blank? %>
+    <td colspan="8"><h2>无数据!</h2></td>
+    <% else %>    
+    <td colspan="3">
+      <table width="100%" border="0" cellspacing="1" cellpadding="0" class="s_table">
+        <% @total_array.each do |ta| %>
+        <tr>
+          <td width="160px"><%= ta.split(",")[2] %></td>
+          <td width="60px"><%= ta.split(",")[1] %></td>
+          <td width="80px"><%= ta.split(",")[3] %></td>
+        </tr>
+        <% end %>
+      </table>
+    </td>
+    <td><%= @actual_cost %></td>
+    <td><%= @total_num %></td>
+    <td><%= @total_num==0 ? 0 : sprintf("%.2f", @actual_cost.to_f/@total_num) %></td>
+    <td><%= @total_cost %></td>
+    <td><%= @actual_cost==0 ? 0 : sprintf("%.2f", @total_cost.to_f*100/@actual_cost.to_f) %>%</td>
+    <% end %>
+    </tr>
+  </tbody>
+</table>

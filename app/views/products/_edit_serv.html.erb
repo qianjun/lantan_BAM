@@ -1,0 +1,25 @@
+<%= form_for :add_prod,:url=>"/stores/#{params[:store_id]}/products/#{@service.id}/serv_update",:method=>:post,:html=>{:id=>"edit_serv",:multipart=>true} do %>
+  <div class="tab_popup add_tab">
+    <div class="popup_box">
+      <h1>修改单项服务<a href="javascript:void(0)" class="close">关闭</a></h1>
+      <div class="popup_body">
+        <div class="popup_body_area">
+          <%= render "serv_form" %>
+        </div>
+        <div class="btn_box_s"><input value="确定" class="confirm_btn" onclick="edit_serv(this)" type="button" href="javascript:void(0)" /></div>
+      </div>
+    </div>
+  </div>
+  <div class="tab_popup mat_tab" style="display:none;">
+    <div class="popup_box">
+      <h1>选择物料<a href="javascript:void(0)" class="close">关闭</a></h1>
+      <div class="popup_body">
+        <div class="popup_body_area">
+          <%= render :partial=>"/sales/sale_search",:object=>[@search_cates,"load_material"] %>
+        </div>
+        <div class="btn_box_s"><input value="确定" class="confirm_btn" onclick="show_mat()" type="button"  /></div>
+      </div>
+    </div>
+  </div>
+<%= render 'img_url' %>
+<% end %>

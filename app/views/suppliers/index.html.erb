@@ -1,0 +1,40 @@
+<div class="data_box">
+  <div class="search" style="margin-bottom:-35px;">
+    <%=  form_for :supplier,:url=>"/stores/#{ params[:store_id]}/suppliers",:method=>"get" do %>
+      <div>
+        <label>供应商名称：</label>
+        <input type="text" name="p_name" value="<%= params[:p_name].nil? ? "" : params[:p_name] %>"/>
+      </div>
+      <div>
+        <button class="search_btn" >查询</button>
+      </div>
+    <%end%>
+  </div>
+  <div class="data_menu">
+    <% if permission?(:materials, :add_supplier) %><%= link_to "添加供应商", new_store_supplier_path(params[:store_id]), :remote => true, 'data-type' => 'script', :class => "add_btn" %>
+    <% end %></div>
+  <div class="clear"></div>
+  <div class="data_body">
+    <div id="page_supplier">
+      <%= render :partial => "suppliers/page_list" %>
+    </div>
+  </div>
+</div>
+
+<div class="mask"></div>
+<div class="tab_popup add_tab" id="add_tab_supplier">
+  <div class="popup_box">
+    <h1>添加供应商<a href="javascript:void(0)" class="close">关闭</a></h1>
+    <div class="popup_body">
+    </div>
+  </div>
+</div>
+<div class="tab_popup add_tab" id="edit_tab_supplier">
+  <div class="popup_box">
+    <h1>修改供应商<a href="javascript:void(0)" class="close">关闭</a></h1>
+    <div class="popup_body">
+    </div>
+  </div>
+</div>
+<%= render :partial => "materials/dinghuo_panel" %>
+<%= render :partial => '/common/alipay_repay' %>

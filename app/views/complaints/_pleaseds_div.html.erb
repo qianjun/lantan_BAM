@@ -1,0 +1,66 @@
+<script type="text/javascript">
+  $(function(){
+    $(".data_table > tbody > tr:odd").addClass("tbg");
+    $(".data_tab_table > tbody > tr:odd").addClass("tbg");
+  });
+</script>
+<div class="search">
+  <form url="/stores/<%= @store_id %>/complaints" method="get" data-type="script" data-remote="true">
+    <div>
+      <label>统计日期：</label>
+      <input type="text" name="plea_start" onclick="WdatePicker()" class="Wdate" value="<%= @plea_start %>"  readonly/>&nbsp;到&nbsp;
+      <input type="text" name="plea_end" onclick="WdatePicker()" class="Wdate" value="<%= @plea_end %>" readonly/>
+    </div>
+    <input type="hidden" name="div_name" value="p_div"/>
+    <div><button class="search_btn">查询</button></div>
+  </form>
+</div>
+<div class="ts_category" id="plea_ts_category">
+  类型：
+  <a href="javascript:void(0)" class="hover"
+     onclick="pleased_type(1,<%= @store_id %>, '<%= @plea_start %>','<%= @plea_end %>', 'p_div')" id="plea_a_1">全部</a>
+  <a href="javascript:void(0)"
+     onclick="pleased_type(2,<%= @store_id %>, '<%= @plea_start %>','<%= @plea_end %>', 'p_div')" id="plea_a_2">产品</a>
+  <a href="javascript:void(0)"
+     onclick="pleased_type(3,<%= @store_id %>, '<%= @plea_start %>','<%= @plea_end %>', 'p_div')" id="plea_a_3">服务</a>
+</div>
+<div class="ts_list">
+  <h1>很好：<%= @plea_hash.nil? || @plea_hash[:nice].nil? ? 0 : @plea_hash[:nice] %>人&nbsp;&nbsp;&nbsp;&nbsp;
+    好：<%= @plea_hash.nil? || @plea_hash[:good].nil? ? 0 : @plea_hash[:good] %>人&nbsp;&nbsp;&nbsp;&nbsp;
+    一般：<%= @plea_hash.nil? || @plea_hash[:normal].nil? ? 0 : @plea_hash[:normal] %>人&nbsp;&nbsp;&nbsp;&nbsp;
+    不满意：<%= @plea_hash.nil? || @plea_hash[:unpleased].nil? ? 0 : @plea_hash[:unpleased] %>人&nbsp;&nbsp;&nbsp;&nbsp;
+    总计：<%= @plea_hash.nil? || @plea_hash[:total].nil? ? 0 : @plea_hash[:total] %>人</h1>
+  <div class="merchant">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+      <thead>
+        <tr class="hbg">
+          <td>时间</td>
+          <td>类型</td>
+          <td>客户</td>
+          <td>车牌号</td>
+          <td>订单</td>
+          <td>满意度</td>
+        </tr>
+      </thead>
+      <tbody>
+        <% if @pleaseds.nil? || @pleaseds.blank? %>
+        <tr>
+          <td colspan="6">暂无数据!</td>
+        </tr>
+      <% else %>
+        <% @pleaseds.each do |p| %>
+          <tr>
+            <td><%= p.created_at.nil? ? "" : p.created_at.strftime("%Y-%m-%d") %></td>
+            <td><%= p.types.to_i==0 ? "服务" : "产品" %></td>
+            <td><%= p.name %></td>
+            <td><%= p.num %></td>
+            <td><%= p.code %></td>
+            <td><%= p.is_pleased.nil? ? Order::IS_PLEASED_NAME[2] : Order::IS_PLEASED_NAME[p.is_pleased.to_i] %></td>
+          </tr>
+        <% end %>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<%= will_paginate @pleaseds, :previous_label => "上一页", :next_label => "下一页", :class => "pageTurn", :id => "plea_page" %>

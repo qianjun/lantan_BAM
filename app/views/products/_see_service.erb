@@ -1,0 +1,62 @@
+<div class="popup_box">
+  <h1>查看服务<a href="javascript:void(0)" class="close">关闭</a></h1>
+  <div class="popup_body">
+    <div class="popup_body_area">
+      <div class="seeProDiv">
+        <div class="seeProDiv_l">服务代码：</div>
+        <div class="seeProDiv_r"><%= @serv.service_code %></div>
+      </div>
+      <div class="seeProDiv">
+        <div class="seeProDiv_l">服务名称：</div>
+        <div class="seeProDiv_r"><%=@serv.name  %></div>
+      </div>
+      <div class="seeProDiv">
+        <div class="seeProDiv_l">价格：</div>
+        <div class="seeProDiv_r"><%= @serv.base_price %></div>
+      </div>
+      <div class="seeProDiv">
+        <div class="seeProDiv_l">促销价格：</div>
+        <div class="seeProDiv_r"><%= @serv.sale_price %></div>
+      </div>
+      <div class="seeProDiv">
+        <div class="seeProDiv_l">施工所需时间：</div>
+        <div class="seeProDiv_r"><%= @serv.cost_time %></div>
+      </div>
+      <div class="seeProDiv">
+        <div class="seeProDiv_l">类别：</div>
+        <div class="seeProDiv_r"><%=Product::PRODUCT_TYPES[@serv.types]  %></div>
+      </div>
+          <div class="seeProDiv">
+        <div class="seeProDiv_l">提成：</div>
+        <div class="seeProDiv_r"><%= (@serv.deduct_percent.nil? ? "" : "#{@serv.deduct_percent}(百分点)")+(@serv.deduct_price.nil? ? "" : "#{@serv.deduct_price}(元)")  %></div>
+      </div>
+      <div class="seeProDiv">
+        <div class="seeProDiv_l">技师：</div>
+        <div class="seeProDiv_r"><%= "#{Staff::LEVELS[@serv.staff_level]} - #{Staff::LEVELS[@serv.staff_level_1]}" %></div>
+      </div>
+      <div class="seeProDiv">
+        <div class="seeProDiv_l">物料/工具：</div>
+        <div class="seeProDiv_r"><%= @mats %></div>
+      </div>
+      <div class="seeProDiv">
+        <div class="seeProDiv_l">配图：</div>
+        <div class="seeProDiv_rWidth">
+          <ul class="seeProPic">
+            <%@img_urls.each do |img|%>
+              <li><img src="<%= img.img_url.nil? ? "" : img.img_url.gsub("img#{@serv.id}","img#{@serv.id}_#{Constant::P_PICSIZE[0]}")  %>" /></li>
+            <% end unless @img_urls.blank? %>
+          </ul>
+        </div>
+      </div>
+      <div class="clear"></div>
+      <div class="seeProDiv_p">
+        <div class="seeProDiv_l">简介：</div>
+        <div class="seeProDiv_rWidth"><p><%= @serv.description %></p></div>
+      </div>
+      <div class="seeProDiv_p">
+        <div class="seeProDiv_l">描述：</div>
+        <div class="seeProDiv_rWidth"><p><%= @serv.introduction.nil?? "" : @serv.introduction.html_safe %></p></div>
+      </div>
+    </div>
+  </div>
+</div>

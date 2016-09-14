@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>员工管理--<%= @title.nil? ? "员工一览" : @title %></title>
+    <%= stylesheet_link_tag    "application" %>
+    <%= javascript_include_tag "application", "jquery.tablesorter.min" %>
+    <script type="text/javascript" src="/assets/My97DatePicker/WdatePicker.js" ></script>
+    <script type="text/javascript" src="/assets/staffs.js" ></script>
+
+    <%= csrf_meta_tags %>
+
+
+    <!--[if IE 6]>
+    <script src="js/DD_belatedPNG_0.0.8a-min.js"></script>
+    <script>
+      DD_belatedPNG.fix('*');
+    </script>
+    <![endif]-->
+  </head>
+
+  <body>
+    <div class="head">
+      <div class="box">
+        <%= render :partial => "/common/login_header" %>
+        <div class="nav">
+          <ul>
+            <li><%= link_to "员工一览", store_staffs_path(@store), :class => controller_name == "staffs" ?  "hover" : "" %></li>
+            <% if permission?(:staffs, :month_salary) %><li><%= link_to "本月工资", store_current_month_salaries_path(@store), :class => controller_name == "current_month_salaries" ? "hover" : "" %></li><% end %>
+            <li><%= link_to "出勤情况", store_work_records_path(@store), :class => controller_name == "work_records" ? "hover" : "" %></li>
+          </ul>
+        </div>
+        <div class="back"><a href="/stores/<%= params[:store_id] %>/welcomes" title="返回">Back</a>员工管理</div>
+      </div>
+    </div>
+    <%= yield %>
+    <div class="mask"></div>
+    <div class="maskOne"></div>
+    <!--%= render :partial => "/shared/notice" %-->
+    <%= render :partial => "/shared/tishi_alert" %>
+  </body>
+</html>

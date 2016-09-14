@@ -1,0 +1,109 @@
+<%= javascript_include_tag "/assets/sales.js" %>
+<div class="main">
+  <div class="box">
+    <div class="data_box">
+      <div class="data_menu">
+        <% if permission?(:sales, :add_sale) %>
+          <a href="/stores/<%= params[:store_id] %>/sales/new"  class="hover">新建活动</a>
+        <% end %>
+        <% if permission?(:sales, :delete) %>
+          <a href="javascript:void(0)" onclick="delete_sale(<%= params[:store_id] %>)">删除活动</a>
+        <% end %>
+      </div>
+    </div>
+    <div class="clear"></div>
+    <div class="data_body">
+      <div>
+        <div class="table_box_h">
+          <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+            <thead>
+              <tr class="hbg">
+                <td width="5%"><input type="checkbox" title="全选" onclick='set_value(this)' /></td>
+                <td width="15%">活动名称</td>
+                <td width="15%">代码</td>
+                <td width="20%">活动时间</td>
+                <td width="15%">状态</td>
+                <td width="8%">参加数量</td>
+                <td width="15%">操作</td>
+              </tr>
+            </thead>
+            <tbody>
+              <% unless @sales.blank? %>
+                <% sale = @sales[0] %>
+                <tr>
+                  <td><input type="checkbox" id="line_<%= sale.id %>" value="<%=  sale.id  %>" /></td>
+                  <td><%= sale.name %></td>
+                  <td><%=  sale.code %></td>
+                  <td><%= if sale.disc_time_types == Sale::DISC_TIME[:TIME]
+                      "#{sale.started_at.nil?? "截止日期为" : sale.started_at.strftime("%Y.%m.%d")}-#{ sale.ended_at.nil?? "暂未定" : sale.ended_at.strftime("%Y.%m.%d")}"
+                    else
+                      "#{Sale::DISC_TIME_NAME[sale.disc_time_types]}#{sale.everycar_times}次"
+                    end
+                  %></td>
+                  <td><%=Sale::STATUS_NAME[sale.status] %></td>
+                  <td><%=@orders[sale.id].nil? ? 0 : @orders[sale.id] %></td>
+                  <td style="text-align: right;">
+                    <%if sale.status==0 %>
+                      <% if permission?(:sales, :publish) %><a href="javascript:void(0)" onclick="public_sale('<%= sale.id %>',<%= params[:store_id] %>)">发布</a><% end %>
+                    <%end%>
+                    <% if permission?(:sales, :edit_sale) %><a href="/stores/<%= params[:store_id] %>/sales/<%= sale.id %>/edit">编辑</a><% end %>
+                    <a href="/stores/<%= params[:store_id] %>/sales/<%= sale.id %>" target="_blank">预览</a>
+                      <a href="javascript:void(0)"
+                           onclick="on_weixin('Sale','<%=  sale.id %>',this)" title="<%= sale.on_weixin ?  '不' : '' %>在微信上推荐该套餐卡"><%= sale.on_weixin ?  '不' : '' %>推荐</a>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+        <div class="table_box">
+          <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+            <thead>
+              <tr class="hbg">
+                <td width="5%"><input type="checkbox" title="全选" onclick='set_value(this)' /></td>
+                <td width="15%">活动名称</td>
+                <td width="15%">代码</td>
+                <td width="20%">活动时间</td>
+                <td width="15%">状态</td>
+                <td width="8%">参加数量</td>
+                <td width="15%">操作</td>
+              </tr>
+            </thead>
+            <tbody>
+              <% unless @sales.blank? %>
+                <% @sales.each do |sale| %>
+                  <tr>
+                    <td><input type="checkbox" id="line_<%= sale.id %>" value="<%=  sale.id  %>" /></td>
+                    <td><%= sale.name %></td>
+                    <td><%=  sale.code %></td>
+                    <td><%= if sale.disc_time_types == Sale::DISC_TIME[:TIME]
+                        "#{sale.started_at.nil?? "截止日期为" : sale.started_at.strftime("%Y.%m.%d")}-#{ sale.ended_at.nil?? "暂未定" : sale.ended_at.strftime("%Y.%m.%d")}"
+                      else
+                        "#{Sale::DISC_TIME_NAME[sale.disc_time_types]}#{sale.everycar_times}次"
+                      end
+                    %></td>
+                    <td><%=Sale::STATUS_NAME[sale.status] %></td>
+                    <td><%= @orders[sale.id].nil? ? 0 : @orders[sale.id]  %></td>
+                    <td style="text-align: right;">
+                      <%if sale.status==0 %>
+                        <% if permission?(:sales, :publish) %><a href="javascript:void(0)" onclick="public_sale('<%= sale.id %>',<%= params[:store_id] %>)">发布</a><% end %>
+                      <%end%>
+                      <% if permission?(:sales, :edit_sale) %><a href="/stores/<%= params[:store_id] %>/sales/<%= sale.id %>/edit">编辑</a><% end %>
+                      <a href="/stores/<%= params[:store_id] %>/sales/<%= sale.id %>" target="_blank">预览</a>
+                       <a href="javascript:void(0)"
+                           onclick="on_weixin('Sale','<%=  sale.id %>',this)" title="<%= sale.on_weixin ?  '不' : '' %>在微信上推荐该套餐卡"><%= sale.on_weixin ?  '不' : '' %>推荐</a>
+                    </td>
+                  </tr>
+                <% end %>
+              <% end %>
+            </tbody>
+          </table>
+          <div class="pageTurn">
+            <%= will_paginate @sales,:class=>"pageTurn",:previous_label=>"上一页",:next_label=>"下一页" unless @sales.blank? %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="foot"><p>Copyright © 2013 杭州鼎洪 版权所有</p></div>

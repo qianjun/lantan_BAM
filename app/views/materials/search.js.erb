@@ -1,0 +1,7 @@
+<% if @search_materials.present? %>
+  $("#search_material").html('<%= escape_javascript(render :partial => '/common/search_material') %>');
+  $("#dinghuo_search_material").html('<%= escape_javascript(render :partial => '/common/search_material') %>');
+<% else %>
+  $("#search_material").html('查询结果为空');
+  $("#dinghuo_search_material").html('查询结果为空');
+<% end %>

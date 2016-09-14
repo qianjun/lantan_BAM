@@ -1,0 +1,4 @@
+$('#pac_card_records').html("<%= escape_javascript(render :partial => "/customers/pac_card_records") %>");
+$(".data_table > tbody > tr:odd").addClass("tbg");
+$(".data_tab_table > tbody > tr:odd").addClass("tbg");
+$("#rev_page").attr("value", "<%= params[:page] %>");

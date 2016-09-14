@@ -1,0 +1,39 @@
+<div class="main">
+  <div class="box">
+    <div class="data_box">
+      <div class="tab_head">
+        <ul>
+          <li class="hover" >主营收入</li>
+          <li onclick="window.location.href='/stores/<%=params[:store_id]%>/finance_reports/other_fee'">其他收入</li>
+          <li onclick="window.location.href='/stores/<%=params[:store_id]%>/finance_reports/return_order'">退单记录</li>
+          <li onclick="window.location.href='/stores/<%=params[:store_id]%>/finance_reports/revenue_report'">收入报表</li>
+        </ul>
+      </div>
+      <div class="data_body">
+        <div class="search">
+          <div><label>时间：</label><input id="c_first" type="text"  onclick="WdatePicker({preLoad:true,maxDate:'<%=Time.now.strftime("%Y-%m-%d")%>'})" readonly class="Wdate"
+                                        value="<%=@start_time%>"/> 到
+            <input id="c_last" type="text" onclick="WdatePicker({preLoad:true,maxDate:'<%=Time.now.strftime("%Y-%m-%d")%>'})" readonly class="Wdate"
+                   value="<%=@end_time%>" /></div>
+          <div><label>客户：</label><input type="text" id="customer_n" value="<%=@customer_n%>" /></div>
+          <div><label>项目类型：</label><select  id="cate_n" onchange="load_prod()">
+              <option value="">--</option>
+              <% @category.each do |key,value| %>
+                <option value="<%= key %>" <%if @cate_n == key%> selected<%end%> ><%= value %></option>
+              <% end unless @category.empty?%>
+            </select></div>
+          <div><label>项目名称：</label><input type="text" disabled id="cate_name" /></div>
+          <div id="order_types">付款类型：
+            <%OrderPayType::FINCANCE_TYPES.each do |k,v|%>
+              <input type="checkbox" id="pay_type_<%=k%>" value="<%=k%>" ><%=v%></input>&nbsp&nbsp&nbsp&nbsp
+            <%end%></div>
+          <div><button class="search_btn" onclick="search_finance(this,<%=params[:store_id]%>)">查&nbsp&nbsp询</button></div>
+          <div class="data_menu afterClear"><a href="javascript:void(0)" onclick="three_order_print(<%=params[:store_id]%>)">打印单据</a></div>
+        </div>
+        <div class="data_item" id="cash_over">
+          <%=  render "cash_over"%>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

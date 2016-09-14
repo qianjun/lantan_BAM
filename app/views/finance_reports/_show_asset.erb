@@ -1,0 +1,71 @@
+<div class="popup_box">
+  <h1>查看资产<a href="javascript:void(0)" class="close">关闭</a></h1>
+  <div class="popup_body">
+    <div class="popup_body_area">
+      <div class="seeProDiv">
+        <div class="seeProDiv_l">资产编号：</div>
+        <div class="seeProDiv_r"><%= @asset.code %></div>
+      </div>
+      <div class="seeProDiv">
+        <div class="seeProDiv_l">资产名称：</div>
+        <div class="seeProDiv_r"><%= @asset.name %></div>
+      </div>
+      <div class="seeProDiv">
+        <div class="seeProDiv_l">购入日期：</div>
+        <div class="seeProDiv_r"><%= @asset.pay_date.strftime("%Y-%m-%d") %></div>
+      </div>
+      <div class="seeProDiv">
+        <div class="seeProDiv_l">经手人：</div>
+        <div class="seeProDiv_r"><%= @n_staffs[@asset.operate_staffid]%></div>
+      </div>
+      <div class="seeProDiv">
+        <div class="seeProDiv_l">经办人：</div>
+        <div class="seeProDiv_r"><%= @n_staffs[@asset.create_staffid]%></div>
+      </div>
+      <div class="seeProDiv">
+        <div class="seeProDiv_l">资产类别：</div>
+        <div class="seeProDiv_r"><%= @defines[@asset.types]%></div>
+      </div>
+      <div class="seeProDiv">
+        <div class="seeProDiv_l">折旧月份：</div>
+        <div class="seeProDiv_r"><%= @asset.share_month.nil? ? "--" : @asset.share_month.to_s+"个月"  %></div>
+      </div>
+      <div class="seeProDiv">
+        <div class="seeProDiv_l">折旧金额：</div>
+        <div class="seeProDiv_r"><%= @asset.share_month.nil? ? "--" : (@asset.pay_amount/@asset.share_month).round(2) %></div>
+      </div>
+      <div class="seeProDiv">
+        <div class="seeProDiv_l">资产总价：</div>
+        <div class="seeProDiv_r"><%= @asset.amount %></div>
+      </div>
+      <div class="seeProDiv">
+        <div class="seeProDiv_l">资产数量：</div>
+        <div class="seeProDiv_r"><%=@asset.num%></div>
+      </div>
+      <div class="seeProDiv">
+        <div class="seeProDiv_l">资产单价：</div>
+        <div class="seeProDiv_r"><%=@asset.price%></div>
+      </div>
+      <div class="seeProDiv">
+        <div class="seeProDiv_l">购入总价：</div>
+        <div class="seeProDiv_r"><%= @asset.pay_amount %></div>
+      </div>
+      <div class="seeProDiv">
+        <div class="seeProDiv_l">资产净值：</div>
+        <div class="seeProDiv_r"><%= @asset.left_value %></div>
+      </div>
+      <div class="seeProDiv">
+        <div class="seeProDiv_l">备注：</div>
+        <div class="seeProDiv_r"><%= @asset.remark %></div>
+      </div>
+      <% if @asset.status == FixedAsset::STATUS[:NORMAL] %>
+        <div class="btn_box"><button class="confirm_btn" onclick="set_over(<%= @asset.id %>,<%= @asset.store_id %>)">报废</button></div>
+      <%else%>
+        <div class="seeProDiv">
+          <div class="seeProDiv_l">状态：</div>
+          <div class="seeProDiv_r"><%= FixedAsset::STATUS_NAMES[@asset.status]%></div>
+        </div>
+      <%end%>
+    </div>
+  </div>
+</div>

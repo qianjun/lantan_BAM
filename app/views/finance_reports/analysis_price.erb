@@ -1,0 +1,31 @@
+<div class="main">
+  <div class="box">
+    <div class="data_box">
+      <div class="tab_head">
+        <ul>
+          <li onclick="window.location.href='/stores/<%=params[:store_id]%>/finance_reports/cost_price'" >产品成本</li>
+          <li class="hover">服务成本</li>
+        </ul>
+      </div>
+      <div class="data_body">
+        <div>
+          <div class="search">
+            <div><label>时间：</label><input id="c_first" type="text"  onclick="WdatePicker({preLoad:true,maxDate:'<%=Time.now.strftime("%Y-%m-%d")%>'})" readonly class="Wdate"
+                                          value="<%=@start_time%>"/> 到
+              <input id="c_last" type="text" onclick="WdatePicker({preLoad:true,maxDate:'<%=Time.now.strftime("%Y-%m-%d")%>'})" readonly class="Wdate"
+                     value="<%=@end_time%>" /></div>
+            <div><label>项目类型：</label><select  id="cate_n"><option value="">---全部---</option>
+                <% @cates.each do |key,value| %>
+                  <option value="<%= key %>" <%if params[:prod_types] == key%> selected<%end%> ><%= value %></option>
+                <% end unless @cates.empty?%>
+              </select></div>
+            <div style="float:right;"><button class="search_btn" onclick="analysis_price(this,<%=params[:store_id]%>)">查&nbsp&nbsp询</button></div>
+          </div>
+          <div class="data_item" id="prod_service">
+            <%=  render "prod_service"%>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

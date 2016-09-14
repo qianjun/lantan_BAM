@@ -1,0 +1,61 @@
+<div class="tab_popup" id="process_complaint_partial">
+  <div class="popup_box">
+    <h1>投诉处理<a href="javascript:void(0)" class="close">关闭</a></h1>
+    <div class="popup_body">
+      <%= form_for :process, :url=>"/stores/#{@order.store_id}/revisits/process_complaint", :method => "post",
+        :html => {:onsubmit => "return check_process()"} do %>
+        <div class="popup_body_area">
+          <div class="seeProDiv">
+            <div class="seeProDiv_l">订单号：</div>
+            <div class="seeProDiv_r" id="process_code"><%= @order.code %></div>
+            <input type="hidden" name="pc_store_id" id="pc_store_id" value="<%= @order.store_id %>" />
+            <input type="hidden" name="pro_compl_id" id="pro_compl_id" value="<%= @complaint_id %>" />
+            <input type="hidden" name="pc_order_id" id="pc_order_id" value="<%= @order.id %>" />
+            <input type="hidden" name="pc_code" id="pc_code" value="<%= @order.code %>"/>
+            <input type="hidden" name="pc_code" id="pc_code" value="<%= @order.code %>"/>
+            <input type="hidden" name="pc_cust_id" id="pc_cust_id" value="<%= @order.customer_id %>"/>
+            <input type="hidden" name="comp_page" id="comp_page" value="<%= @comp_page %>"/>
+          </div>
+          <div class="seeProDiv">
+            <div class="seeProDiv_l"><font color="red">*</font>投诉类型：</div>
+            <div class="seeProDiv_r">
+              <select id="prod_type" name="prod_type">
+                <option value="">--</option>
+                <% Complaint::TYPES_NAMES.each do |k, v| %>
+                  <option value="<%= k %>"><%= v %></option>
+                <% end %>
+              </select>
+            </div>
+          </div>
+          <div class="seeProDiv">
+            <div class="seeProDiv_l">责任人：</div>
+            <div class="seeProDiv_rWidth">
+              <span><input type="radio" id="c_staff_id" name="c_staff_id" value="<%= @order.front_staff_id %>" /> <%= @order.front_s_name %>(接待)</span>
+              <% unless @tech_orders.blank? %>
+                <span><input type="radio" id="c_staff_id" name="c_staff_id"
+                             value="<%=  @tech_orders.map(&:staff_id).join(',') %>" /> <%= @tech_orders.map(&:s_name).join("、") %>（技师）
+                </span>
+              <% end %>
+            </div>
+          </div>
+          <div class="clear"></div>
+          <div class="seeProDiv">
+            <div class="seeProDiv_l"><font color="red">*</font>处理结果：</div>
+            <textarea cols="" rows="" id="pro_remark" name="pro_remark" class="width_textarea"></textarea>
+          </div>
+          <div class="seeProDiv">
+              <div class="seeProDiv_l">客户反馈意见：</div>
+              <div class="seeProDiv_rWidth">
+                <span><input type="radio" id="c_f_s" name="cfs" value="1" />满意</span>
+                <span><input type="radio" id="c_f_s" name="cfs" value="0" />不满意</span>
+              </div>
+            </div>
+        </div>
+        <div class="btn_box_w">
+          <input type="hidden" id="is_trains_<%= @complaint_id %>" name="is_trains_<%= @complaint_id %>" value="0" />
+          <button class="confirm_btn" type="submit">确定</button>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

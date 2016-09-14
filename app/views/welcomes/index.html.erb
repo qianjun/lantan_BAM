@@ -1,0 +1,155 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>澜泰门店后台管理系统</title>
+    <%= stylesheet_link_tag    "application" %>
+    <%= javascript_include_tag "application","kucun", "welcome" %>
+    <!--[if IE 6]>
+    <script src="/assets/DD_belatedPNG_0.0.8a-min.js"></script>
+    <script>
+      DD_belatedPNG.fix('*');
+    </script>
+    <![endif]-->
+  </head>
+
+  <body>
+    <div class="head">
+      <div class="weixin"><img src="/assets/qrcode.png" style="width:100px;height:100px;" /></div>
+      <div class="box position_re">
+        <div class="logo1"><span>V2.3.3</span></div>
+        <div class="login">你好：<%= cookies[:user_name] %> | <a href="javascript:void(0)" id="edit_password">修改密码</a> | <a href="/logout">退出</a></div>
+        <div class="name">
+          <span style="display:none;"><input name="" type="text" class="nameInput" onblur="edit_store_name(this, <%= params[:store_id] %>)"/></span>
+          <span style="cursor:pointer;" title="点击此处编辑门店名" onclick="set_store_name(this)"><%= cookies[:store_name] %></span><span>后台管理系统</span>
+        </div>
+      </div>
+    </div>
+    <div class="rollingNews">
+      <ul currentNum="1">
+        <%@roll_news.each do |roll|%>
+          <li onclick="info_detail(<%= roll.id %>,<%= params[:store_id] %>)"><span class="newIcon"></span><%= roll.title %></li>
+        <%end%>
+      </ul>
+    </div>
+    <div class="main">
+      <div class="module">
+        <ul>
+          <% if permissions_on_menus?(:stations)%><li><a href="/stores/<%= params[:store_id] %>/stations" class="m_one">现场管理</a></li><% end %>
+          <% if permissions_on_menus?(:customers)%><li><a href="/stores/<%= params[:store_id] %>/customers" class="m_two">客户管理</a>
+              <% if (@complaints.length + @notices.length) > 0 %><a href="/stores/<%= params[:store_id] %>/customers" class="message" title="投诉和通知信息<%=(@complaints.length + @notices.length)%>条"><%= @complaints.length + @notices.length %></a><% end %>
+              <% if @send_msg.length  > 0 %><a href="/stores/<%=params[:store_id]%>/revisits" class="message" style="right: 30px;" title="回访和提醒信息<%=  @send_msg.length%>条"><%= @send_msg.length %></a><% end %></li><% end %>
+            <% if permissions_on_menus?(:materials)%>
+            <li>
+              <a href="/stores/<%= params[:store_id] %>/materials" class="m_three">库存管理</a>
+              <% if (@material_pay_notices.length + @material_orders_send.length + @material_orders_received.length + @low_materials.length) > 0 %>
+                <a href="JavaScript:void(0)" class="message"><%= @material_pay_notices.length + @material_orders_send.length + @material_orders_received.length + @low_materials.length %></a>
+              <% end %>
+            </li><% end %>
+          <% if permissions_on_menus?(:datas)%><li><a href="/stores/<%= params[:store_id] %>/market_manages" class="m_four">统计管理</a></li><% end %>
+          <% if permissions_on_menus?(:sales)%><li><a href="/stores/<%= params[:store_id] %>/package_cards" class="m_five">营销管理</a></li><% end %>
+          <% if permissions_on_menus?(:staffs)%><li><a href="/stores/<%= params[:store_id] %>/staffs" class="m_six">员工管理</a>
+              <% if @violations.length > 0 %><a href="#" class="message" title="奖罚信息有<%=@violations.length%>条"><%= @violations.length%></a><% end %></li><% end %>
+            <% if permissions_on_menus?(:base_datas) %>
+            <li><a href="/stores/<%= params[:store_id] %>/set_stores" class="m_seven">系统设置</a></li>
+          <% end %>
+          <% if permissions_on_menus?(:pay_cash) %>
+            <li><a href="/stores/<%= params[:store_id] %>/set_stores/cash_register" class="m_eight">收银</a></li>
+          <% end %>
+          <% if permissions_on_menus?(:finances) %>
+            <li><a href="/stores/<%= params[:store_id] %>/finance_reports"  class="m_nine">财务管理</a>
+              <% if @warns > 0 %><a href="/stores/<%=params[:store_id]%>/finance_reports/pay_account" class="message"
+                   style="right: 30px;" title="挂账客户提醒<%= @warns%>条"><%= @warns %></a><% end %>
+            </li>
+          <% end %>
+        </ul>
+        <div class="clear"></div>
+      </div>
+    </div>
+    <%= render :partial => "/shared/tishi_alert" %>
+    <div class="foot"><p>Copyright © 2013 杭州鼎洪 版权所有</p></div>
+
+    <!--修改账户密码-->
+    <div class="mask"></div>
+    <div class="tab_popup" style="display:none;z-index:11;" id="edit_password_area">
+      <div class="popup_box">
+        <h1>修改密码<a href="javascript:void(0)" class="close">关闭</a></h1>
+        <div class="popup_body">
+          <form accept-charset="UTF-8" action="/stores/<%= params[:store_id] %>/welcomes/update_staff_password" method="post" data-remote="true" data-type="script">
+            <div class="popup_body_area">
+              <div class="pressWord_box">
+                <h3 class="red"></h3>
+                <div class="pw_list"><label>用户名：</label><span><%= @staff.username %></span></div>
+                <div class="pw_list"><label>旧密码：</label><input name="old_password" type="password" id="old_password"/></div>
+                <div class="pw_list"><label>新密码：</label><input name="new_password" type="password" id="new_password"/></div>
+                <div class="pw_list"><label>确认新密码：</label><input name="confirm_password" type="password" id="confirm_password"/></div>
+              </div>
+              <div class="btn_box"><button class="confirm_btn" id="edit_password_btn">确定</button><button class="cancel_btn">取消</button></div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="mask"></div>
+    <div class="tab_popup" style="display:none;" id="update_info">
+    </div>
+    <!--浮动QQ客服代码开始 -->
+    <div class="online_qq">
+      <div></div>
+      <p><a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=1737970708&site=qq&menu=yes"><img border="0" src="http://wpa.qq.com/pa?p=2:1737970708:41" alt="点击这里给我发消息" title="点击这里给我发消息"/></a>
+     </p>
+      <p><a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=2027569706&site=qq&menu=yes"><img border="0" src="http://wpa.qq.com/pa?p=2:1942918740:41" alt="点击这里给我发消息" title="点击这里给我发消息"/></a></p>
+      <p><a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=2281160558&site=qq&menu=yes"><img border="0" src="http://wpa.qq.com/pa?p=2:1942918740:41" alt="点击这里给我发消息" title="点击这里给我发消息"/></a></p>
+    </div>
+    <!--浮动QQ客服代码结束-->
+    <div class="help">
+      <p class="help_tit">系统更新小贴士</p>
+      <% if @show_index %>
+        <ul>
+          <li><a href="javascript:void(0)" onclick="info_detail(<%= @show_index.id %>,<%= params[:store_id] %>)"><%= @show_index.title %></a></li>
+          <li><p><%= @show_index.content.html_safe %></p></li>
+        </ul>
+      <% end %>
+    </div>
+
+    <script type="text/javascript">
+      $(function(){
+        /* 帮助hlep */
+        function helpshow(){
+          $(".help ul").show(500);
+        }
+        function helphide(){
+          $(".help ul").hide(500);
+        }
+        var showtimer;
+        $(".help").mouseenter(function(){
+          clearTimeout(showtimer);
+          helpshow();
+        })
+        $(".help").mouseleave(function(){
+          showtimer=setTimeout(helphide(),500);
+        })
+      })
+
+      /* 首页滚动新闻 */
+      $(function(){
+        //单行应用@Mr.Think
+        var _wrap =$('.rollingNews ul');//定义滚动区域
+        var _interval=3000;//定义滚动间隙时间
+        var _moving;//需要清除的动画
+        _wrap.hover(function(){
+          clearInterval(_moving);//当鼠标在滚动区域中时,停止滚动
+        },function(){
+          _moving=setInterval(function(){
+            var _field=_wrap.find('li:first');//此变量不可放置于函数起始处,li:first取值是变化的
+            var _h=_field.height();//取得每次滚动高度
+
+            _field.animate({marginTop:-_h+'px'},600,function(){//通过取负margin值,隐藏第一行
+              _field.css('marginTop',0).appendTo(_wrap);//隐藏后,将该行的margin值置零,并插入到最后,实现无缝滚动
+            })
+          },_interval)//滚动间隔时间取决于_interval
+        }).trigger('mouseleave');//函数载入时,模拟执行mouseleave,即自动滚动
+      });
+    </script>
+  </body>
+</html>

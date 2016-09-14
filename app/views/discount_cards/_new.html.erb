@@ -1,0 +1,45 @@
+<div class="popup_box">
+  <h1>新建打折卡<a href="javaScript:viod(0)" class="close">关闭</a></h1>
+  <div class="popup_body">
+    <%= form_tag "/stores/#{@store.id}/discount_cards", :method => :post, :multipart => true do%>
+      <div class="popup_body_area">
+        <div class="item">
+          <label><span class="red">*</span>名称：</label>
+          <input name="dcard_name" id="dcard_name" type="text"/>
+        </div>
+        <div class="item">
+          <label>适用门店：</label>
+          <select name="dcard_userange" id="dcard_userange">
+            <% SvCard::S_USE_RANGE.each do |k, v| %>
+              <option value="<%= k %>"><%= v %></option>
+            <% end %>
+          </select>
+        </div>
+        <div class="item">
+          <label><span class="red">*</span>面值：</label>
+          <input name="dcard_price" id="dcard_price" type="text"/>
+        </div>
+        <div class="item_textarea">
+          <label><span class="red">*</span>选择项目：</label>
+          <button type="button" class="other_btn" onclick="dcard_add_products()">添加</button>
+          <div class="seeProDiv_rWidth">
+            <ul class="srw_ul">
+            </ul>
+          </div>
+        </div>
+        <div class="item_textarea">
+          <label><span class="red">*</span>图片：</label>
+          <input type="file" class="file" name="dcard_img" id="dcard_img"/>
+        </div>
+        <div class="item_textarea">
+          <label><span class="red">*</span>具体内容：</label>
+          <textarea name="dcard_description" id="dcard_description" class="width_textarea"></textarea>
+        </div>
+      </div>
+      <div class="btn_box">
+        <button class="confirm_btn" type="button" onclick="create_dcard_valid(this)">确定</button>
+        <button class="cancel_btn" type="button">取消</button>
+      </div>
+    </div>
+  <% end %>
+</div>

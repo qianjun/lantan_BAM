@@ -1,0 +1,42 @@
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table" id="work_record_table">
+  <thead>
+    <tr class="hbg">
+      <th><span class="sort_u_s" onclick="sort_change(this)">时间</span></th>
+      <th>出勤</th>
+      <th>接单数量</th>
+      <% if @staff.type_of_w == Staff::S_COMPANY[:TECHNICIAN] %>
+        <th>物品领用</th>
+        <th>物品消耗</th>
+        <th>水消耗</th>
+        <th>气消耗</th>
+      <% end %>
+      <th>投诉</th>
+      <th>培训</th>
+      <th>奖励</th>
+      <th>扣款</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @work_records.each do |work_record| %>
+      <tr>
+        <td><%= @cal_style.eql?("week") ? work_record.current_day.beginning_of_week.strftime("%Y-%m-%d") :
+            work_record.current_day.beginning_of_month.strftime("%Y-%m-%d") %></td>
+        <td><%= work_record.attendance_num_sum %></td>
+        <td><%= work_record.construct_num_sum %></td>
+        <% if @staff.type_of_w == Staff::S_COMPANY[:TECHNICIAN] %>
+          <td><%= work_record.materials_used_num_sum %></td>
+          <td><%= work_record.materials_consume_num_sum %></td>
+          <td><%= work_record.water_num_sum %></td>
+          <td><%= work_record.gas_num_sum %></td>
+        <% end %>
+        <td><%= work_record.complaint_num_sum %></td>
+        <td><%= work_record.train_num_sum %></td>
+        <td><%= work_record.reward_num_sum %></td>
+        <td><%= work_record.violation_num_sum %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<%= will_paginate @work_records, :class => "pageTurn", :previous_label => "上一页",
+  :next_label => "下一页" %>
+

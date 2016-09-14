@@ -1,0 +1,23 @@
+<div class="popup_box">
+  <h1>编辑广告<a href="javascript:void(0)" class="close">关闭</a></h1>
+  <div class="popup_body">
+    <%= form_tag store_advert_path(params[:store_id],@advert.id),:class=>"station_form",:id=>"advert_form",:method=>:put do %>
+      <div class="popup_body_area">
+        <div class="item_textarea">
+          <label><span class="red">*</span>内容：</label>
+          <textarea class="width_textarea" id="content" name="advert[content]"><%= @advert.content %></textarea>
+        </div>
+        <div class="item popup_body_result">
+          <label><span class="red">*</span>显示时间(秒)：</label>
+          <a class='addre_a' style='font-size:24px;background:#026c93;padding:0px 5px;margin:0px 5px;height:2px;' href='javascript:void(0)' onclick='del_m(this)'>-</a>
+          <input type="text" id="last_time" name="advert[last_time]" readonly style = 'width:50px;font-size:20px;line-height:20px;height:30px;text-align:center;' value="<%=@advert.last_time%>"/>
+          <a class='addre_a' style='font-size:24px;background:#026c93;padding:0px 5px;margin:0px 5px;height:2px;' href='javascript:void(0)' onclick='add_m(this)'>+</a>
+        </div>
+      </div>
+    <% end %>
+    <div class="btn_box">
+      <button type="button" class="confirm_btn" onclick="check_advert()">确定</button>
+    </div>
+
+  </div>
+</div>

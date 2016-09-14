@@ -1,0 +1,32 @@
+<%= stylesheet_link_tag  "application"%>
+<link rel="stylesheet" type="text/css" media="print" href="/assets/style.css" />
+<%= javascript_include_tag "application", "main"%>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table" id="print_sort_table">
+  <thead>
+    <tr class="hbg">
+      <th width="160">条形码</th>
+      <th width="160">物料名称</th>
+      <th width="120">物料类别</th>
+      <th width="130">库存状态</th>
+      <th width="80">库存量</th>
+      <th width="100">规格</th>
+      <th width="100">成本价（元）</th>
+      <th width="100">零售价（元）</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% (@materials_storages || []).each do |material| %>
+      <tr>
+        <td <% if material.storage.to_i <= @current_store.material_low.to_i %>class="data_table_error"<% end %> width="160" class="wordBreak"><%= material.code %></td>
+        <td width="160" class="wordBreak"><%= material.name %></td>
+        <td><%= material.cname %></td>
+        <td><%= material.storage.to_i > @current_store.material_low.to_i ? "存货" : "缺货" %></td>
+        <td><span><%= material.storage.to_i %></span></td>
+        <td><%= material.unit %></td>
+        <td><%= permission?(:materials, :show_sale) ? material.price : 0%></td>
+        <td><%= material.sale_price %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

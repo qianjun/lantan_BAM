@@ -1,0 +1,9 @@
+$("#discount_card").html('<%= j(render :partial => "customer_cards") %>');
+$("#pcard").html('<%= j(render :partial => "customer_pcard") %>');
+$("#bill_user_info").html('<%= j(render :partial => "customer_info") %>');
+$("#bill_user_info input").removeAttr("readonly");
+$("#table_item").html("");
+$("#checked_item").val("");
+$("#total_price").html(<%=0.round(2)%>);
+$(".cardDtl .card :checkbox").attr("checked",false);
+$("#submit_item,#submit_spinner").toggle();

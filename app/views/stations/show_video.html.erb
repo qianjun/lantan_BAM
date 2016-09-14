@@ -1,0 +1,27 @@
+<%= javascript_include_tag "/assets/My97DatePicker/WdatePicker.js" %>
+<%= stylesheet_link_tag    "/assets/My97DatePicker/skin/WdatePicker" %>
+<div class="data_box">
+  <div class="search">
+    <%= form_for :video,:url=>"/stores/#{params[:store_id]}/stations/search" do %>
+      <div><label>时间：</label>
+        <input name="create_at" type="text" value="<%= session[:create_at] %>" onclick="WdatePicker()" class="Wdate" readonly />&nbsp;到&nbsp;
+        <input name="end_at" type="text" value="<%= session[:end_at]  %>" onclick="WdatePicker()" class="Wdate" readonly /></div>
+      <div><button class="search_btn">查询</button></div>
+    <% end  %>
+  </div>
+  <div class="clear"></div>
+  <div class="data_body">
+    <dl class="work_video">
+      <%unless @video_hash.blank?%>
+        <%@video_hash.sort.reverse.each do |key,value|%>
+          <dt><%= key %></dt>
+          <%value.each do |url|%>
+            <dd><a href="/stores/<%= params[:store_id] %>/stations/see_video?url=<%= url %>" target="_blank"><%=Constant::SERVER_PATH+url %></a></dd>
+          <% end %>
+        <% end %>
+      <% else %>
+        <%= "未查询到相关视频信息" %>
+      <%end%>
+    </dl>
+  </div>
+</div>

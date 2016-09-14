@@ -1,0 +1,118 @@
+<%= javascript_include_tag "/assets/My97DatePicker/WdatePicker.js" %>
+<%= stylesheet_link_tag    "/assets/My97DatePicker/skin/WdatePicker" %>
+<div class="card_content">
+  <div class="search">
+    <div>
+      <label>物料类别：</label><select  id="pcard_material" name="pcard_material" onchange="request_material(<%= params[:store_id] %>)">
+        <option value="">请选择</option>
+        <% @cates[Category::TYPES[:material]].each do |key,value| %>
+          <option value="<%= key %>"  <%if @material && @material.category_id==key%> selected<%end%> ><%= value %></option>
+        <% end %>
+      </select>
+    </div>
+    <div>
+      <label>所属物料：</label><select  id="material_types" name="material_types" onchange="control_input()">
+      </select>
+    </div>
+    <input type="hidden" id="m_types" value="" />
+    <div><label>数量：</label>
+      <input id="material_num" name="material_num" type="text" disabled value="<%= @p_material.nil? ? "" : @p_material.material_num %>" /></div>
+  </div>
+</div>
+<div class="item">
+  <label><span class="red">*</span>套餐卡名称：</label>
+  <input name="name" id="name" type="text" value="<%= @pcard.name %>" />
+</div>
+<div class="item">
+  <label><span class="red">*</span>套餐价格：</label>
+  <input name="price" id="price" type="text" value="<%= @pcard.price %>" style="width:80px;" <%unless @pcard.new_record?%> readonly <%end%> />
+  <%if @pcard.new_record?%><a href="javascript:void(0)" class="remove_a" onclick="cal_price('#price')" >计算总价</a><%end%>
+</div>
+<div class="item_textarea"><span class="item_radio">
+    <input name="deduct_type" type="radio" checked onclick="change_input('#deduct_price','#deduct_percent')" /></span>
+  <label>百分点：</label>
+  <input name="deduct_percent" id="deduct_percent" type="text" <%if @pcard.deduct_percent==0.0 && @pcard.deduct_price != 0.0%> disabled<%else%>
+           value="<%= (@pcard.deduct_percent.nil? ? 0 :@pcard.deduct_percent)/((@pcard.price.nil? or @pcard.price <1)  ? 1 : @pcard.price)*100 %>" <%end%>  class="item_areaInput_s"/>（销售提成）
+</div>
+<div class="item_textarea"><span class="item_radio">
+    <input name="deduct_type" type="radio" <% if @pcard.deduct_price && @pcard.deduct_price != 0.0 %>checked<%end%>
+           onclick="change_input('#deduct_percent','#deduct_price')" /></span>
+  <label>金额(元)：</label>
+  <input name="deduct_price" id="deduct_price" type="text"
+         <%if @pcard.deduct_price.nil? || @pcard.deduct_price === 0 %> disabled <%else%> value="<%= @pcard.deduct_price %>"<%end%>  class="item_areaInput_s" />（销售提成）
+</div>
+<div class="item">
+  <label><span class="red">*</span>积分：</label><input name="prod_point" id="prod_point" type="text" value="<%= @pcard.prod_point.nil? ? 0 : @pcard.prod_point %>" />
+</div>
+<div class="item_textarea">
+  <span class="item_radio"><input name="time_select" type="radio" checked value="<%= PackageCard::TIME_SELCTED[:PERIOD] %>"
+                                  onclick="$('#end_time').attr('disabled',true).val('');$('#started_at,#ended_at').attr('disabled',false)" /></span>
+  <label>有效时间：</label> <input name="started_at" id="started_at"  value="<%= @pcard.started_at.nil?? "" : @pcard.started_at.strftime("%Y-%m-%d") %>"
+                              type="text" onclick="WdatePicker()" class="Wdate item_areaInput_s" readonly />&nbsp;&nbsp;至&nbsp;&nbsp;
+  <input name="ended_at" id="ended_at" type="text" value="<%= @pcard.ended_at.nil?? "" : @pcard.ended_at.strftime("%Y-%m-%d") %>"
+         onclick="WdatePicker()" class="Wdate item_areaInput_s" readonly />
+</div>
+<div class="item_textarea">
+  <span class="item_radio"><input name="time_select" type="radio" onclick="$('#end_time').attr('disabled',false);$('#started_at,#ended_at').attr('disabled',true).val('')"
+                                  <% if @pcard.date_types==PackageCard::TIME_SELCTED[:END_TIME] %> checked <%end%> value="<%= PackageCard::TIME_SELCTED[:END_TIME] %>" /></span>
+  <label>有效天数：</label><input name="end_time" type="text" class="item_areaInput_s" id="end_time"
+                             <% if @pcard.date_types!=PackageCard::TIME_SELCTED[:END_TIME] %> disabled <%end%> value="<%=@pcard.date_month  %>" />&nbsp;&nbsp;天
+</div>
+<div class="item_textarea">
+  <label>套餐卡配图：</label>
+  <input type="file" name="img_url" id="sale_img"  class="file" size="50px" /><span class="show_pic" >
+    <img src="<%=  @pcard.img_url.nil? ? "" : @pcard.img_url.gsub("img#{@pcard.id}","img#{@pcard.id}_#{Constant::C_PICSIZE[2]}") %>" />
+    图片大小不超过200KB。</span>
+</div>
+<div class="clear"></div>
+<div class="item_blockArea">
+  <div class="item">
+    <label>自动回访：</label> <input name="auto_revist" id="auto_revist" alt="revist" type="checkbox" value="<%= @pcard.is_auto_revist.nil? ? Product::IS_AUTO[:NO] : @pcard.is_auto_revist  %>"
+                                onclick="check_revist(this)" <% if @pcard.is_auto_revist %>checked<%end%>/>
+  </div>
+  <div class="item"><label>回访时间：</label>
+    <select  id="time_revist" name="time_revist" <%unless @pcard.is_auto_revist%>disabled <%end%>>
+      <option value="">请选择</option>
+      <% Product::REVIST_TIME.each do |key| %>
+        <option value="<%= key %>" id="<%=key%>" <%if @pcard.auto_time ==key%> selected<%end%> ><%= key %>小时</option>
+      <% end %>
+    </select>
+  </div>
+  <div class="item_textarea">
+    <label>回访内容：</label><textarea name="con_revist" id="con_revist" cols="" rows="" class="width_textarea"
+                                  <%unless @pcard.is_auto_revist%>disabled <%end%>><%=  @pcard.is_auto_revist ? @pcard.revist_content : ""  %></textarea>
+  </div>
+</div>
+<div class="item_blockArea">
+  <div class="item">
+    <label>自动提醒：</label><input name="auto_warn" id="auto_warn" alt="warn" type="checkbox"
+                               value="<%= @pcard.auto_warn ?  Product::IS_AUTO[:YES] : Product::IS_AUTO[:NO]  %>"
+                               onclick="check_revist(this)"               <% if @pcard.auto_warn %>checked<%end%>/>
+  </div>
+  <div class="item"><label>提醒时间：</label>
+    <input name="time_warn" id="time_warn"  <%unless @pcard.auto_warn%>disabled <%end%>
+           onblur="this.value=isNaN(parseInt(this.value))? 0 : parseInt(this.value);" value="<%=@pcard.time_warn.nil? ? 0 : @pcard.time_warn%>" />天
+  </div>
+  <div class="item_textarea">
+    <label>提醒内容：</label><textarea name="con_warn" id="con_warn" <%unless @pcard.auto_warn%>disabled <%end%> 
+                                  cols="" rows="" class="width_textarea"><%=  @pcard.con_warn %></textarea>
+  </div>
+</div>
+<div class="item_textarea">
+  <label>产品简介：</label><textarea name="desc" id="desc" cols="" rows="" class="width_textarea"><%=  @pcard.description  %></textarea>
+</div>
+<input type="hidden" value="<%= PackageCard::TIME_SELCTED[:PERIOD] %>" id="date1" />
+<div class="clear"></div>
+<div class="card_content" id="t_prod">
+  <%= render :partial=>"/sales/sale_search",:object=>[Product::PACK_SERVIE.merge(@cates[Category::TYPES[:good]]).merge(@cates[Category::TYPES[:service]]),"pcard_types"] %>
+</div>
+<% unless @pcard.new_record? %>
+  <script type="text/javascript">
+    $("#pcard_material").trigger("onchange");
+    $("#material_num").attr("disabled",false);
+    $("#m_types").val(<%= @material.nil? ? "" : @material.id  %>);
+    $("#sale_types").parent().parent().find(".search_btn").removeAttr("onclick").attr("disabled",true);
+    $("#add_products input").attr("readonly",true);
+    $("#add_products a").removeAttr("onclick").attr("disabled",true);
+  </script>
+<% end %>

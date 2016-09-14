@@ -1,0 +1,12 @@
+<%= form_for :add_prod,:url=>"/stores/#{params[:store_id]}/products/pack_create",:method=>:post,:html=>{:id=>"edit_serv",:multipart=>true} do %>
+  <div class="tab_popup add_tab"><div class="popup_box">
+      <h1>添加服务<a href="javascript:void(0)" class="close">关闭</a></h1>
+      <div class="popup_body">
+        <div class="popup_body_area">
+          <%= render "package_form" %>
+        </div>
+        <div class="btn_box_s"><input value="确定" class="confirm_btn" onclick="edit_package(this)" type="button"  /></div>
+      </div>
+    </div>
+  </div>
+<% end %>

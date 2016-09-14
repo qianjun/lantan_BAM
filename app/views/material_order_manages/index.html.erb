@@ -1,0 +1,56 @@
+<div class="second_menu">
+  <a href="/stores/<%= @store_id %>/material_order_manages" class="hover">订货分析</a>
+  <a href="/stores/<%= @store_id %>/material_order_manages/flow_analysis">流量分析</a>
+  <a href="/stores/<%= @store_id %>/material_order_manages/storage_analysis">库存结构分析</a>
+</div>
+<form action="/stores/<%=@store_id %>/material_order_manages" method="get">
+  <div class="search">
+    <div><label>统计月份：</label>
+      <select name="statistics_month">
+        <% get_last_twelve_months.each do |month| %>
+          <option value="<%= month %>" <%= @statistics_month.eql?(month) ? "selected" : "" %>><%= month %></option>
+        <% end %>
+      </select>
+    </div>
+    <div>
+      <label>订货渠道：</label>
+      <select name="supplier_id">
+        <option value="0">总部</option>
+        <% @suppliers.each do |s| %>
+          <option value="<%= s.id %>" <% if !@supplier_id.nil? && @supplier_id.to_i==s.id %>selected<% end %>><%= s.name %></option>
+        <% end %>
+      </select>
+    </div>
+    <div><button class="search_btn" type="submit">查询</button></div>
+  </div>
+</form>
+<div class="tab_head">
+  <span>订货总金额：<%= sprintf("%.2f", (@has_pay + @no_pay)) %></span>&nbsp;&nbsp;&nbsp;
+  <span>未付款金额： <%= sprintf("%.2f", @no_pay) %></span>&nbsp;&nbsp;&nbsp;
+  <span>未付款比例：<%= @no_pay <= 0 ? "0%" : (@has_pay <= 0 ? "100%" : "#{sprintf("%.2f", (@no_pay * 100)/(@has_pay + @no_pay))}%") %></span>
+</div>
+<div class="data_body">
+  <div class="data_body_h">类别汇总</div>
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+    <thead>
+      <tr class="hbg">
+        <td>库存类别</td>
+        <td>金额</td>
+        <td>金额占比</td>
+        <td>数量</td>
+        <td>数量占比</td>
+      </tr>
+    </thead>
+    <tbody>
+      <% @mat_orders.each do |mo| %>
+      <tr>
+        <td><strong><%= mo.name %></strong></td>
+        <td><%= mo.price.to_i %></td>
+        <td><%= @t_price.nil? || @t_price.to_i==0 ? "0%" : "#{sprintf("%.2f",(mo.price.to_f * 100)/@t_price.to_i)}%" %></td>
+        <td><%= mo.count.to_i %></td>
+        <td><%= @t_count.nil? || @t_count <= 0 ? "0%" : "#{sprintf("%.2f",(mo.count.to_f * 100)/@t_count)}%" %></td>
+      </tr>
+      <% end %>     
+    </tbody>
+  </table>
+</div>

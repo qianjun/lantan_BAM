@@ -1,0 +1,98 @@
+<script>
+  $(document).ready(function(){
+    $("#page_out_records .pageTurn a").unbind("click");
+    $("#page_out_records .pageTurn a").bind("click", function() {
+      var url = this.href;
+      $.ajax({
+        async:true,
+        url:this.href,
+        dataType:"script",
+        type:"GET",
+        success:function(){
+          // alert(1);
+        },error:function(){
+          // alert("error");
+        }
+      });
+      /* alert(this.href); */
+      return false;
+    });
+
+    $("#materials_out_tab").tablesorter({
+      headers:
+        {
+        0: {
+          sorter: false
+        },
+        2: {
+          sorter: false
+        },
+        4: {
+          sorter: false
+        },
+        5: {
+          sorter: false
+        },
+        6: {
+          sorter: false
+        },
+        7: {
+          sorter: false
+        }
+      }
+    });
+    //after sort
+    $("#materials_out_tab").bind("sortEnd",function() {
+      $("#materials_out_tab tbody").find('tr').each(function(i){
+        if(i%2==0){
+          $(this).removeClass('tbg');
+        }else{
+          $(this).addClass('tbg');
+        }
+      })
+    });
+  });
+</script>
+<div class="collect">
+  <ul>
+    <li>出库记录：<span><%= @out_arr[0] %></span>条</li>
+    <li>金额：<span><%= format("%.2f", @out_arr[1]) if @out_arr[1] %></span></li>
+  </ul>
+</div>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table" id="materials_out_tab">
+  <thead>
+    <tr class="hbg">
+      <th width="5%"><input type="checkbox" onclick="$('#out_records :checkbox').attr('checked',this.checked)" /></th>
+      <th width="15%"><span class="sort_u" onclick="sort_change(this)">物料名称</span></th>
+      <th width="6%">出库类型</th>
+      <th width="10%"><span class="sort_d" onclick="sort_change(this)">物料类别</span></th>
+      <th width="8%">申请人</th>
+      <th width="6%">出库量</th>
+      <th width="12%">出库时间</th>
+      <th width="13%">备注</th>
+      <th width="15%">相关订单</th>
+      <th width="10%">操作</th>
+    </tr>
+  </thead>
+  <tbody id="out_records">
+    <% (@out_records || []).each do |out| %>
+      <tr class="<%= cycle('', 'tbg') %>">
+        <td><input type="checkbox" id="<%=out.out_id%>" /></td>
+        <td><%= out.name %></td>
+        <td><%= MatOutOrder::TYPES[out.out_types] %></td>
+        <td><%= out.cname %></td>
+        <td><%= out.staff_name %></td>
+        <td><%= out.material_num.to_i %></td>
+        <td><%= out.out_time.strftime("%Y-%m-%d %H:%M") unless out.out_time.nil?%></td>
+        <td><%=out.o_remark%></td>
+        <td><%=link_to "#{out.o_code}", "/orders/#{out.o_id}/order_info" ,
+            :remote => "true", "data-type" => "script", :class => "other_a"%></td>
+        <td class="operation">
+          <a href="javascript:void(0)" title="<%=out.d_list%>" onclick="window.open('/stores/'+<%=params[:store_id]%>+'/materials/print_mat?mat_id=<%=out.out_id%>','_blank','height=520,width=625,left=10,top=100');">打印物料清单</a></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<div id="related_order_div"></div>
+<%= will_paginate_remote(@out_records,"mat_code=#{@mat_code}&mat_name=#{@mat_name}&mat_type=#{@mat_type}&first_time=#{@start_time}&last_time=#{@end_time}&out_types=#{@out_types}",{:url => page_outs_store_materials_url(params[:store_id]),:class => "pageTurn",:prev_label => "上一页",:next_label => "下一页",:renderer => "RemotePaginateHelper::LinkRenderer"}) if @out_records.size > 0 %>

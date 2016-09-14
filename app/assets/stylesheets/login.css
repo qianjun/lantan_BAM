@@ -1,0 +1,107 @@
+@charset "utf-8";
+* { padding: 0; margin: 0;}
+body { 
+    background: url(/assets/body_bg.jpg) repeat center top;
+	font-family: "微软雅黑", "宋体", Arial; 
+	color: #333; 
+	font-size: 14px;
+}
+ul { list-style: none;}
+a { text-decoration: none;}
+button { font-family:"微软雅黑"; cursor: pointer; border: none;}
+
+.login_bg { 
+    width: 510px; 
+	height: 370px; 
+	margin: 100px auto; 
+	background: url(/assets/login_bg.png) no-repeat;
+	overflow: hidden;
+}
+.login_box { width: 250px; height: 160px; margin: 130px 0 0 130px;}
+.login_list { height: 39px;}
+.login_list input { 
+    height: 39px;
+	line-height: 39px; 
+	width: 206px; 
+	border: none; 
+	background: none; 
+	padding-left: 30px; 
+	font-size: 14px; 
+	color: #CCC;
+	font-family: "微软雅黑";
+}
+.login_btn button {
+	width: 240px; 
+	height: 43px; 
+	margin: 30px auto 0 auto;
+	font-size: 16px; 
+	color: #FFF;
+	background: url(/assets/btn_bg.jpg) no-repeat;
+}
+.losePassWord { height: 30px; line-height: 30px; text-align: right;}
+.losePassWord a { padding-right: 10px; font-size: 12px; color: #999;}
+.losePassWord_list { padding: 20px 0;}
+.losePassWord_list label {
+	width: 150px;
+	text-align: right; 
+	display: inline-block; 
+	font-weight: bold;
+	color: #930205;
+}
+.losePassWord_list input {
+	width: 120px;
+	height: 24px; 
+	line-height: 24px; 
+	border: 1px #CCCCCC solid;	
+}
+
+/*tab提示*/
+.tab_popup.tab_alert { width: 500px;}
+.alert_h { width: 400px; margin: 20px auto; line-height: 24px; font-size: 16px; color:#930205; text-align: center;}
+.tab_popup { 
+    width: 650px; 
+	padding: 10px; 
+	background: url(/assets/black.png) repeat; 
+	border-radius: 0.6em;
+	position: absolute;
+	z-index: 100;
+}
+.popup_box { background: #FFF;}
+.popup_box h1 { 
+    height: 32px; 
+	line-height: 32px; 
+	background: #930205; 
+	color: #FFF; 
+	font-size: 16px; 
+	padding-left: 20px; 
+	position: relative;
+}
+.popup_body { overflow: hidden; padding: 10px; position: relative;}
+.popup_body_area { overflow: hidden;}
+.x, .close {
+	display:block; 
+	text-indent: -999px; 
+	overflow: hidden; 
+	position: absolute; 
+	top: 5px; 
+	right: 5px;
+	cursor: pointer;
+	z-index: 110;
+}
+.x { width: 10px; height: 10px; background: url(/assets/x.png) no-repeat 0 0; }
+.close { width: 13px; height: 13px; background: url(/assets/close.jpg) no-repeat ; }
+
+.btn_box { margin: 10px auto; text-align: center;}
+.confirm_btn, .cancel_btn { padding: 5px 15px; margin: 0 10px; color: #FFF;cursor: pointer; display: inline-block;}
+.confirm_btn { background: #930205;}
+.cancel_btn { background: #999999;}
+.mask {
+    background: url(/assets/black.png) repeat;
+    width: 100%;
+    height: 100%;
+    display: none;
+    position: absolute;
+    z-index: 10;
+    top: 0;
+    left: 0;
+}

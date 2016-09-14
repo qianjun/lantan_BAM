@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <%= javascript_include_tag "application" %>
+    <style type="text/css">
+      /* CSS Document */
+      * { padding: 0; margin: 0;}
+      body { font-family: "微软雅黑", "宋体", Arial; font-size: 6px; background:#e9ebea; color: #2c2c2c;}
+      p { margin: 2px 5px;}
+      .prod_span{ width: 55%; display: inline-block;}
+      .prod_span1{ width: 20%; display: inline-block;float:none; text-align: center}
+      .prod_span2{ width: 18%; display: inline-block; float: none}
+      .prod_span3{ width: 25%; display: inline-block; float: right;}
+      .bill { width: 150px; margin: 0 auto; background: #ffffff; padding: 5px;}
+      .dashed { border-bottom: 1px dashed #2c2c2c; margin-bottom: 10px; height: 5px;}
+      .solid { border-bottom: 1px solid #2c2c2c; margin-bottom: 3px;}
+      .detail { }
+      .lineTxt { background: #ffffff; position: relative; left: 50px; padding: 0 5px;}
+      .tit { font-weight: bold;}
+      .span1 { width: 60%; display: inline-block;}
+    </style>
+    <title>打印清单</title>
+  </head>
+  <body>
+    <div class="bill">
+      <h1><%=@store.name%></h1>
+      <div class="dashed"><span class="lineTxt">物料清单</span></div>
+      <p>
+        <textarea style="width:140px;height:250px;">
+          <% if @mat_out.detailed_list %>
+            <%= @mat_out.detailed_list.gsub("<br/>","\r\n") %>
+          <%end%>
+        </textarea>
+      </p>
+      <div class="solid"></div>
+      <span class="time">*打印框可以往下拖动</span>
+      <button onclick="$(this).css('display','none');$('.time').css('display','none');window.print();" style="float: right;">打印</button>
+    </div>
+  </body>
+
+</html>

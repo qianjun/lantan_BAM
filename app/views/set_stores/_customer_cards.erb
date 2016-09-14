@@ -1,0 +1,33 @@
+<% unless @suit_cards.blank?%>
+ <div   class="pcard_card" ><span> 打 折 卡 区</span></div>
+  <% @suit_cards.each do |card| %>
+    <div class="card_list">
+      <div class="card_register">
+        <div class="order_card">
+          <ul>
+            <li><%=card[:name]%></li>
+            <li class="di_downUp" id="<%=card[:types]%>_<%=card[:c_id]%>" onclick="$('#table_<%=card[:types]%>_<%=card[:c_id]%>').slideToggle(2000,show_hihglight(this))">
+              <span class="highlight">↓</span><span>↑</span></li>
+          </ul>
+        </div>
+        <div id="table_<%=card[:types]%>_<%=card[:c_id]%>">
+          <table  width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+            <tr>
+              <th>项目名称</th>
+              <th>折扣</th>
+              <th>操作</th>
+            </tr>
+            <% card[:content].each do |k,v| %>
+              <tr id="<%=card[:c_id]%>_<%=card[:types]%>_<%=k%>">
+                <td><%= v[1] %></td>
+                <td><%= v[0].to_f/10 %>折</td>
+                <td id="<%= k %>"><input type="checkbox" value="<%=@prod[k]%>_<%=v[2]%>" onclick="add_prod(this)" /></td>
+              </tr>
+            <%end%>
+          </table>
+        </div>
+      </div>
+    </div>
+  <%end%>
+<%end%>
+

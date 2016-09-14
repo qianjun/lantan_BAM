@@ -1,0 +1,29 @@
+<% unless @material_orders_send.blank? and  @material_orders_received.blank? and @material_pay_notices.blank?%>
+  <div class="message">
+    <% unless @material_orders_send.blank? %>
+      有 <span class="red mo_notice_num1"><%= @material_orders_send.length %></span> 条订单已发货，请注意查收
+      <a href="javascript:void(0);" onclick="toggle_notice(this)">点击查看</a>
+      <%= render :partial => 'mat_order_notice', :locals => {:mo_notices => @material_orders_send, :mo_class_name => "mo_notice_send"} %>
+      <br/>
+    <% end %>
+    <% unless @material_orders_received.blank? %>
+      有 <span class="red mo_notice_num1"><%= @material_orders_received.length %></span> 条订单已经到货，但尚未入库
+      <a href="javascript:void(0);" onclick="toggle_notice(this)">点击查看</a>
+      <%= render :partial => 'mat_order_notice', :locals => {:mo_notices => @material_orders_received, :mo_class_name => "mo_notice_receive"} %>
+      <br/>
+    <% end %>
+    <% unless @material_pay_notices.blank? %>
+      有 <span class="red"><%= @material_pay_notices.length %></span> 条催款订单，请您及时与总部联系
+      <a href="javascript:void(0);" onclick="toggle_notice(this)">点击查看</a>
+      <%= render :partial => 'mat_order_notice', :locals => {:mo_notices => @material_order_urgent, :mo_class_name => "pay_notice"} %>
+    <% end %>
+  </div>
+<% end %>
+<% unless  @low_materials.blank? %>
+  <div class="message" id="low_mat_notice">
+    有 <span class="red" id="low_materials_span"><%=  @low_materials.length %></span>个物料库存量过低
+    <a href="javascript:void(0)" onclick="toggle_low_materials(this)">点击查看</a>
+    <%= render :partial => 'show_low_materials', :locals => {:low_materials => @low_materials} %>
+  </div>
+<% end %>
+

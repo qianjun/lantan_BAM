@@ -1,0 +1,36 @@
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table" id="salary_table">
+  <thead>
+    <tr class="hbg">
+      <th><span class="sort_u_s" onclick="sort_change(this)">时间</span></th>
+      <th>底薪</th>
+      <th>提成</th>
+      <th>补贴</th>
+      <th>扣款</th>
+      <th>加班</th>
+      <th>考核</th>
+      <th>所得税</th>
+      <th>奖金</th>
+      <th>社保</th>
+      <th>总额</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @salaries.each do |salary| %>
+      <tr>
+        <td><%= salary.current_month %></td>
+        <td><%= salary.base_salary %></td>
+        <td><%= salary.deduct_num %></td>
+        <td><%= salary.reward_fee%></td>
+        <td><%= salary.voilate_fee%></td>
+        <td><%= salary.work_fee%></td>
+        <td><%= salary.manage_fee%></td>
+        <td><%= salary.tax_fee%></td>
+        <td><%= salary.reward_num %></td>
+        <td><%= salary.secure_fee%></td>
+        <td><%= salary.fact_fee %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<%= will_paginate @salaries, :class => "pageTurn", :previous_label => "上一页",
+  :next_label => "下一页" %>

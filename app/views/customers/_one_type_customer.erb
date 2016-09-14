@@ -1,0 +1,58 @@
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+  <thead>
+    <tr class="hbg">
+      <td>车牌号码</td>
+      <td>客户姓名</td>
+      <% unless Customer::PROPERTY.values.include? one_type_customer[0] %>
+        <td>客户属性</td>
+      <%end%>
+      <td>手机号码</td>
+      <td>是否会员</td>
+      <td>操作</td>
+    </tr>
+  </thead>
+  <tbody>
+    <% if one_type_customer[1].any? %>
+      <% one_type_customer[1].each do |customer| %>
+        <tr>
+          <td width="20%" class="wordBreak">
+            <% @car_nums[customer.id].each_with_index do |cn, index| %>
+              <span><%= cn.num %><% if index < (@car_nums[customer.id].length - 1) %>，<% end %></span>
+            <% end if @car_nums[customer.id] %>
+          </td>
+          <td width="20%" class="wordBreak"><%= customer.name %></td>
+          <% unless Customer::PROPERTY.values.include? one_type_customer[0] %>
+            <td width="15%" class="wordBreak">
+              <%= customer.property.to_i==Customer::PROPERTY[:PERSONAL] ? "个人客户" : (customer.property.to_i==Customer::PROPERTY[:GROUP] ? "单位客户" : "未知") %>
+            </td>
+          <%end%>
+          <td width="15%" class="wordBreak"><%= customer.mobilephone %></td>
+          <td width="10%" class="wordBreak">
+            <%=  customer.is_vip ? "是" : "否" %>
+          </td>
+          <td width="20%" class="wordBreak">
+            <% if permission?(controller.controller_name.to_sym, :detail) %><a href="/stores/<%= @store.id %>/customers/<%= customer.id %>">详情</a><% end %>
+            <% if permission?(controller.controller_name.to_sym, :remark) %><a href="javascript:void(0)" onclick="customer_mark(<%= customer.id %>)">备注</a><% end %>
+            <% if permission?(controller.controller_name.to_sym, :send_msg) %><a href="javascript:void(0)" onclick="single_send_message(<%= customer.id %>)">发短信</a><% end %>
+            <% if permission?(controller.controller_name.to_sym, :delete) %><%= link_to "删除", "/stores/#{@store.id}/customers/#{customer.id}", :method => :delete,
+                :confirm => "您确认要删除 #{customer.name} 信息么？" %><% end %>
+            <div id="mark_<%= customer.id %>" style="display: none;"><%= customer.mark %></div>
+          </td>
+        </tr>
+      <% end %>
+    <% else %>
+      <tr><td colspan="5">暂无客户信息</td></tr>
+    <% end %>
+  </tbody>
+</table>
+<% parm = {
+  "types"=>one_type_customer[0],
+  "name"=>params[:name],
+  "phone"=>params[:phone],
+  'car_num'=>params[:car_num],
+  'started_at'=>params[:started_at],
+  'ended_at'=>params[:ended_at]
+}.map{|k,v|"#{k}=#{v}" unless v.nil? || v.to_s.strip ==""}.compact.join("&")
+
+%>
+<%= will_paginate_remote(one_type_customer[1],parm,{:url => search_store_customers_url(params[:store_id]),:class => "pageTurn",:prev_label => "上一页",:next_label => "下一页",:renderer => "RemotePaginateHelper::LinkRenderer"}) if one_type_customer[1].size > 0 %>

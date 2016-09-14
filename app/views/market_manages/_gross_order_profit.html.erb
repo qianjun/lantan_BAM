@@ -1,0 +1,56 @@
+<script>
+  <% if params[:action]=='search_gross_profit' %>
+    $(document).ready(function(){
+      $(".pageTurn a").unbind("click");
+      $(".pageTurn a").bind("click", function() {
+        var url = this.href + "&o_started="+$("#o_gross_started").val()+"&o_ended="+$("#o_gross_ended").val()+"&prod_types="+$("#prod_types").val();
+        $.ajax({
+          async:true,
+          url:url,
+          dataType:"script",
+          type:"POST",
+          success:function(){
+            // alert(1);
+          },error:function(){
+            // alert("error");
+          }
+        });
+        /* alert(this.href); */
+        return false;
+      });
+    });
+    <% end %>
+</script>
+  <div>
+    <% unless @orders.blank? %>
+      <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+        <thead>
+          <tr class="hbg">
+            <th width="200">日期</th>
+            <th width="250">相关订单</th>
+            <th width="180">成本价</th>
+            <th width="180">零售价</th>
+            <th width="170">毛利</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @orders.each do |order| %>
+            <tr class="<%= cycle("","tbg")%>">
+              <td><%= order[:created_at].strftime("%Y-%m-%d") if order[:created_at] %></td>
+              <td>
+              <%= link_to "#{order[:code]}", "/orders/#{order[:id]}/order_info" ,
+            :remote => "true", "data-type" => "script", :class => "other_a" %></td>
+              <td><%= format("%.2f", permission?(:materials, :show_sale) ? order[:cost_price] : 0) %></td>
+              <td><%= format("%.2f", order[:price]) %></td>
+              <td><%= format("%.2f", order[:gross_profit]) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+      <div class="pageTurn">
+        <%= will_paginate @orders,:class=>"pageTurn",:previous_label=>"上一页",:next_label=>"下一页" %>
+      </div>
+    <%else%>
+      暂无记录
+    <%end%>
+  </div>

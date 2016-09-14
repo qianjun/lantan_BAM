@@ -1,0 +1,8 @@
+<div class="nav">
+  <ul>
+    <!--li--><!--%= link_to "仓库", store_depots_url(params[:store_id]), :class => cover_div("depots") %--><!--/li-->
+    <% if permission?(:base_datas,:edit_store_datas) %><li><%= link_to "门店", "/stores/#{params[:store_id]}/set_stores", :class =>cover_div("set_stores")+cover_div("set_functions")+cover_div("messages") %></li><% end %>
+    <% if permission?(:base_datas,:roles) %><li><%= link_to "权限", store_roles_url(params[:store_id]), :class => cover_div("roles") %></li><% end %>
+     </ul>
+</div>
+<div class="back"><a href="/stores/<%= params[:store_id] %>/welcomes" title="返回">Back</a>系统设置</div>

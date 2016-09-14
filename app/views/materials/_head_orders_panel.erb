@@ -1,0 +1,25 @@
+<% if permission?(:materials, :dh_search) %>
+<div class="search">
+  <div><label>物流状态：</label>
+    <select id="select_h_order">
+      <option value="-1">全部</option>
+      <option value="0">未发货</option>
+      <option value="1">已发货</option>
+      <option value="2">已收货</option>
+      <option value="3">已入库</option>
+    </select>
+  </div>
+  <div><label>付款状态：</label>
+    <select id="h_pay_status">
+      <option value="-1">全部</option>
+      <option value="0">未付款</option>
+      <option value="1">已付款</option>
+    </select>
+  </div>
+  <div><label>时间：</label><input class="Wdate" readonly onclick="WdatePicker()" name="mo_start" type="text" id="date01"/> 到 <input class="Wdate" readonly onclick="WdatePicker()" name="mo_end" type="text" id="date02"/></div>
+  <div><button onclick="search_head_order('<%= params[:store_id] %>')" class="search_btn">查询</button></div>
+</div>
+<% end %>
+<div id="page_head_orders">
+  <%= render :partial => "head_orders" %>
+</div>

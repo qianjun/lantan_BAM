@@ -1,0 +1,51 @@
+<div class="popup_box">
+  <h1>编辑打折卡<a href="javaScript:viod(0)" class="close">关闭</a></h1>
+  <div class="popup_body">
+    <%= form_tag "/stores/#{@store.id}/discount_cards/#{@dcard.id}", :method => :put, :multipart => true do%>
+      <div class="popup_body_area">
+        <div class="item">
+          <label><span class="red">*</span>名称：</label>
+          <input name="edit_dcard_name" id="edit_dcard_name" type="text" value="<%= @dcard.name %>"/>
+        </div>
+        <div class="item">
+          <label>适用门店：</label>
+          <select name="edit_dcard_userange" id="edit_dcard_userange">
+            <% SvCard::S_USE_RANGE.each do |k, v| %>
+              <option value="<%= k %>" <% if @dcard.use_range==k.to_i %>selected<% end %>><%= v %></option>
+            <% end %>
+          </select>
+        </div>
+        <div class="item">
+          <label><span class="red">*</span>面值：</label>
+          <input name="edit_dcard_price" id="edit_dcard_price" type="text" value="<%= format("%.1f", @dcard.price) if @dcard.price %>"/>
+        </div>
+        <div class="item_textarea">
+          <label><span class="red">*</span>选择项目：</label>
+          <button type="button" class="other_btn" onclick="edit_dcard_add_products(<%= @dcard.id %>, <%= @store.id %>)">添加</button>
+          <div class="seeProDiv_rWidth">
+            <ul class="srw_ul">
+              <% @products.each do |p| %>
+              <li><%= p.pname %>/<span><%=  format("%.1f", p.discount.to_i*0.1) if p.discount %>折</span><input type="hidden"
+                   name="edit_dcard_products[]" value="<%= p.pid %>-<%= p.discount.to_i*0.1 %>"/></li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+        <div class="item_textarea">
+          <label><span class="red">*</span>图片：</label>
+          <input type="file" class="file" name="edit_dcard_img" id="edit_dcard_img"/>
+          <span class="show_pic"><img src="<%= @dcard.img_url.nil? ? "" : @dcard.img_url.gsub("img#{@dcard.id}", "img#{@dcard.id}_#{Constant::SVCARD_PICSIZE[2]}") %>"/></span>
+        </div>
+        <div class="item_textarea">
+          <label><span class="red">*</span>具体内容：</label>
+          <textarea name="edit_dcard_description" id="edit_dcard_description"
+                    class="width_textarea" ><%= @dcard.description %></textarea>
+        </div>
+      </div>
+      <div class="btn_box">
+        <button class="confirm_btn" type="button" onclick="edit_dcard_valid(this)">确定</button>
+        <button class="cancel_btn" type="button">取消</button>
+      </div>
+    </div>
+  <% end %>
+</div>

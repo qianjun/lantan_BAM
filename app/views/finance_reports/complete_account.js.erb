@@ -1,0 +1,3 @@
+$("#account").html('<%= j(render :partial => "pay_account",:object=>params[:rend]) %>');
+$("#pay_account .close").trigger('click');
+tishi_alert("<%=@msg%>");

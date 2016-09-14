@@ -1,0 +1,51 @@
+<%= form_tag "/stores/#{@store.id}/suppliers/#{@supplier.id}",:method => :put, :remote => true, 'data-type' => 'script' do %>
+  <div class="popup_body_area">
+    <div class="item">
+      <label><span class='red'>*</span>名称：</label>
+      <input type="text" id="edit_supplier_name" name="edit_supplier_name" value="<%= @supplier.name %>" onPropertyChange="get_cap_code(this,<%= params[:store_id] %>)" oninput="get_cap_code(this,<%= params[:store_id] %>)"/>
+    </div>
+    <div class="item">
+      <label><span class='red'>*</span>助记码：</label>
+      <input type="text" name="cap_name" id="cap_name" onchange="set_cap()" value="<%= @supplier.cap_name %>" /></div>
+    <input type="hidden" value="0" id="refuse" />
+    <input type="hidden" value="0" id="still_name" />
+
+    <div class="item">
+      <label><span class='red'>*</span>联系人：</label>
+      <input type="text" id="edit_supplier_contact" name="edit_supplier_contact" value="<%= @supplier.contact %>"/>
+    </div>
+    <div class="item">
+      <label><span class='red'>*</span>联系电话：</label>
+      <input type="text" id="edit_supplier_phone" name="edit_supplier_phone" value="<%= @supplier.phone %>"/>
+    </div>
+    <div class="item">
+      <label>其他联系方式：</label>
+      <input type="text" id="edit_supplier_email" name="edit_supplier_email" value="<%= @supplier.email %>"
+             placeholder="QQ/微信/Email"/>
+    </div>
+    <div class="item_textarea">
+      <label>地址：</label>
+      <input type="text" id="edit_supplier_addr" name="edit_supplier_addr" value="<%= @supplier.address %>"/>
+    </div>
+    <div class="item">
+      <label>结算方式：</label>
+      <select id="edit_supplier_check_type" name="edit_supplier_check_type" onchange="select_check_type(this)">
+        <% Supplier::S_CHECK_TYPE.each do |k, v| %>
+          <option value="<%= k %>" <% if @supplier.check_type.to_i==k %>selected<% end %>><%= v %></option>
+        <% end %>
+      </select>
+    </div>
+    <div class="item">
+      <label>结算时间：</label>
+      <select id="edit_supplier_check_time" name="edit_supplier_check_time"
+              <% if @supplier.check_type.to_i==Supplier::CHECK_TYPE[:DAY] %>disabled<% end %>>
+                <% (1..28).inject(Hash.new){|h,x|h[x]=x;h}.each do |k,v| %>
+          <option value="<%= k %>" <% if @supplier.check_time.to_i==k %>selected<% end %>><%= v %></option>
+        <% end %>
+      </select>
+    </div>
+  </div>
+  <div class="btn_box">
+    <button type="button" onclick="edit_commit_supplier_form(this)" class="confirm_btn">确定</button>
+  </div>
+<% end %>

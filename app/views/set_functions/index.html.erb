@@ -1,0 +1,36 @@
+<%= javascript_include_tag "set_functions" %>
+<div class="data_box">
+  <div class="second_menu">
+    <a href="/stores/<%= @store.id %>/set_stores">门店信息</a>
+    <a href="/stores/<%= @store.id %>/set_functions" class="hover">功能设置</a>
+    <a href="/stores/<%= @store.id %>/adverts">led广告设置</a>
+    <a href="/stores/<%= @store.id %>/messages/send_list">短信设置</a>
+  </div>
+  <div class="clear"></div>
+  <div class="data_body">
+    <div class="groupFunc_area">
+      <ul class="groupFunc_h">
+        <li class="hover">组织架构</li>
+        <li>营销</li>
+        <li>库存</li>
+      </ul>
+      <div class="groupFunc_b">
+        <div id="organi_div">
+          <%= render "organi_tab" %>
+        </div>
+        <div id="market_div" style="display: none;">
+          <%= render "market_tab" %>
+        </div>
+        <div id="storage_div" style="display: none;">
+          <%= render "storage_tab" %>
+        </div>
+      </div>      
+    </div>
+    <div id="set_functions_new" class="tab_popup" style="display:none;"></div>
+    <div id="set_functions_edit" class="tab_popup" style="display:none;"></div>
+    <div id="set_functions_position_new" class="tab_popup" style="display:none;"></div>
+    <div class="clear"></div>
+  </div>
+</div>
+<div class="mask"></div>
+<div class="maskOne"></div>

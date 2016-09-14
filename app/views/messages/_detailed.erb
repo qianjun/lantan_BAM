@@ -1,0 +1,32 @@
+<div class="data_item_title">费用总计：<%= @total_num %>（元）</div>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+  <thead>
+    <tr class="hbg">
+      <td width="15%">扣费操作</td>
+      <td width="40%">内容</td>
+      <td width="15%">时间</td>
+      <td width="10%">数量</td>
+      <td width="10%">费用（元）</td>
+      <td width="10%">操作</td>
+    </tr>
+  </thead>
+  <tbody>
+    <% unless @message_records.blank? %>
+      <%@message_records.each do |record|%>
+        <tr>
+          <td><%= MessageRecord::SET_MESSAGE[record.types]%></td>
+          <td><%= record.content %></td>
+          <td><%= record.send_at.strftime("%Y-%m-%d %H:%M:%S") %></td>
+          <td><%=  record.total_num  %></td>
+          <td><%= record.total_fee %></td>
+          <td><a href="/stores/<%=params[:store_id]%>/messages/<%=record.id%>/load_message#<%=record.id%>" target="_blank">详情</a></td>
+        </tr>
+      <% end%>
+    <%else%>
+      <tr><td  colspan="5">暂无明细</td></tr>
+    <%end%>
+  </tbody>
+</table>
+<div class="pageTurn">
+  <%= will_paginate @message_records,:class=>"pageTurn",:previous_label=>"上一页",:next_label=>"下一页" if @message_records.length >0%>
+</div>

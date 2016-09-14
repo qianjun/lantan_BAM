@@ -1,0 +1,6 @@
+$("#back_good_search_list_fieldset").show();
+<% if @materials.blank? %>
+$("#back_good_search_list").html("<h4>无查询数据</h4>")
+<% else %>
+  $("#back_good_search_list").html("<ul><% @materials.each do |m| %><li id='back_good_li<%= m.mid %>'><input type='checkbox' onclick='back_good_select(<%= m.to_json %>,this)' <% @checked.each do |c| %><% if c.to_i==m.mid %>checked<% end %><% end if @checked %>/><span><%= m.mname %></span></li><% end %></ul>")
+<% end %>

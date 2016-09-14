@@ -1,0 +1,12 @@
+<div class="popup_box">
+    <h1>新建同级部门<a href="javascript:void(0);" class="close">关闭</a></h1>
+    <div class="popup_body">
+      <div class="popup_body_area">
+        <div class="brand"><span class="red">*</span>部门名称：
+          <input type="text" id="sibling_depart_name" style="width:200px;"/></div>
+      </div>
+      <div class="btn_box">
+        <button class="confirm_btn" onclick="sibling_depart_new_commit(<%= @store_id %>, <%= @lv %>)">确定</button>
+      </div>
+    </div>
+  </div>

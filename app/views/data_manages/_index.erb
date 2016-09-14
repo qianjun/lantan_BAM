@@ -1,0 +1,91 @@
+<div class="tab_head">
+  <ul>
+    <span class="data">销售单：<%=@t_orders.compact.uniq.length%>&nbsp;&nbsp;笔</span>
+    <% total_t = @total_t_price ||= 0
+     total_price =   @total_price ||= 0
+  %>
+    <span class="data">成本：<%=total_t %>&nbsp;&nbsp;元</span>
+    <span class="data">毛利：<%= (total_price -total_t).round(2)%>&nbsp;&nbsp;元</span>
+  </ul>
+</div>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+  <thead>
+    <tr class="hbg">
+      <td>类型</td>
+      <td>项目类别</td>
+      <td>订单增量</td>
+      <td>金额</td>
+      <td>成本</td>
+      <td>毛利</td>
+      <td width="20%">操作</td>
+    </tr>
+  </thead>
+  <tbody>
+    <%@category.each do |k,v|%>
+      <% m=0%>
+      <%v.each do |c_id,c_name|%>
+        <tr>
+          <% m += 1;if m==1 %>
+            <td rowspan="<%=@category[k].keys.length%>"><strong><%=  Category::TYPES_NAME[k]%></strong></td>
+          <%end%>
+          <td><%=  c_name%></td>
+          <td><%=  @t_num[k] && @t_num[k][c_id] ? @t_num[k][c_id] : 0  %></td>
+          <%price = @prod_service[k] && @prod_service[k][c_id] ? @prod_service[k][c_id].round(2) : 0.round(2) %>
+          <td><%=  price %></td>
+          <%  t_price = @t_price[k] && @t_price[k][c_id] ? @t_price[k][c_id].round(2) : 0.round(2)%>
+          <td><%= t_price  %></td>
+          <td><%=(price-t_price).round(2)%></td>
+          <td>
+            <a href="javascript:void(0)" onclick="show_category(<%=  params[:store_id]%>,<%=c_id%>,0)">详情</a>
+            <a href="javascript:void(0)" onclick="show_category(<%=  params[:store_id]%>,<%=c_id%>,0,1)">套餐卡详情</a>
+          </td>
+        </tr>
+      <%end%>
+      <tr >
+        <td style="color:Red"><strong>总计</strong></td>
+        <td></td>
+        <td><%= (@t_num[k] ||= {}).values.reduce(:+) %></td>
+        <%total_price = @prod_service[k].nil? ? 0.round(2) : @prod_service[k].values.compact.reduce(:+).round(2)%>
+        <td><%=total_price%></td>
+        <% sum_t_price = @t_price[k].nil? ? 0.round(2) : @t_price[k].values.compact.reduce(:+).round(2) %>
+        <td><%=sum_t_price%></td>
+        <td><%=(total_price-sum_t_price).round(2)%></td>
+        <td>
+          <a href="javascript:void(0)" onclick="show_category(<%=  params[:store_id]%>,<%=k%>,<%=k%>)">详情</a>
+          <a href="javascript:void(0)" onclick="show_category(<%=  params[:store_id]%>,<%=k%>,<%=k%>,1)">套餐卡详情</a>
+        </td>
+      </tr>
+    <%end%>
+    <% n =0 %>
+    <%@favour_cat.each do |c_id,c_name|%>
+      <tr>
+        <% n += 1;if n==1 %>
+          <td rowspan="<%=@favour_cat.length%>"><strong>优惠</strong></td>
+        <%end%>
+        <td><%=c_name%></td>
+        <td><%=  @f_num[c_id].nil? ? 0 : @f_num[c_id].length %></td>
+        <%f_price =  @favour[c_id] ? @favour[c_id].round(2) : 0.round(2) %>
+        <td><%=  f_price %></td>
+        <td><%=  "--" %></td>
+        <td><%=  "--"%></td>
+        <td>
+          <a href="javascript:void(0)" onclick="show_category(<%=  params[:store_id]%>,<%=c_id%>,3)">详情</a>
+           <a href="javascript:void(0)" onclick="show_category(<%=  params[:store_id]%>,<%=c_id%>,3,1)">套餐卡详情</a>
+        </td>
+      </tr>
+    <%end%>
+    <tr >
+      <td style="color:Red"><strong>总计</strong></td>
+      <td></td>
+      <td><%= @f_num.values.flatten.length %></td>
+      <%f_total = @favour.empty? ? 0.round(2) : @favour.values.compact.inject(0){|sum,t|sum+t}.round(2)%>
+      <td><%=  f_total%></td>
+      <td><%=  "--"%></td>
+      <td><%=  "--"%></td>
+      <td>
+        <a href="javascript:void(0)" onclick="show_category(<%=  params[:store_id]%>,<%=0%>,4)">详情</a>
+        <a href="javascript:void(0)" onclick="show_category(<%=  params[:store_id]%>,<%=0%>,4)">套餐卡详情</a>
+      </td>
+    </tr>
+  </tbody>
+</table>

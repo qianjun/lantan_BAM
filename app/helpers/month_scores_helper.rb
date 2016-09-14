@@ -1,0 +1,2 @@
+module MonthScoresHelper
+end

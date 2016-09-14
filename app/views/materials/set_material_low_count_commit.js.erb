@@ -1,0 +1,18 @@
+<% if @status == 0 %>
+tishi_alert("设置失败!");
+<% else %>
+tishi_alert("设置成功!");
+<% if !@low_materials.blank? %>
+$("#low_mat_notice").html("<%= j (render :partial => 'low_mat_notice_panel') %>");
+$("#low_materials_tbody").find("tr").removeAttr("class");
+$("#low_materials_tbody").find("tr:odd").attr("class", "tbg");
+<% end %>
+<% if !@material.is_ignore && @material.storage.to_i<=@material.material_low.to_i %>
+$("#showmaterial<%= @material.id %>tr").find("td:first").removeAttr("class");
+$("#showmaterial<%= @material.id %>tr").find("td:first").attr("class", "data_table_error");
+$("#showmaterial<%= @material.id %>tr").find("td:nth-child(4)").text("缺货");
+<% else %>
+$("#showmaterial<%= @material.id %>tr").find("td:first").removeAttr("class");
+$("#showmaterial<%= @material.id %>tr").find("td:nth-child(4)").text("存货");
+<% end %>
+<% end %>

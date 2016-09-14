@@ -1,0 +1,59 @@
+<div class="popup_box">
+  <h1>付款<a href="javascript:void(0)" class="close">关闭</a></h1>
+  <div class="popup_body">
+    <div class="popup_body_area">
+      <h2 class="popup_body_title" id="supplier_from">订货渠道：<%= @material_order.supplier_name %></h2>
+      <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_tab_table">
+        <thead>
+          <tr class="hbg">
+            <td>条形码</td>
+            <td>物料名称</td>
+            <td>物料类别</td>
+            <td>单价（元）</td>
+            <td>订货量</td>
+            <td>总价</td>
+          </tr>
+        </thead>
+        <tbody>
+          <% @material_order.mat_order_items.each do |moi| %>
+            <tr>
+              <td><%= moi.material.try(:code) %></td>
+              <td><%= moi.material.try(:name) %></td>
+              <td><%= @a[moi.material.try(:category_id)] %></td>
+              <td><%= moi.try(:price) %></td>
+              <td><%= moi.try(:material_num) %></td>
+              <td><%= moi.try(:price) * moi.try(:material_num) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+
+    </div>
+    <div class="otherWay" id="activity_code" style="display: block;">
+      <ul>
+        <% if @material_order.sale_price.blank? and @material_order.supplier_type == 0 %>
+          <li><%= check_box_tag "use_code","",false, :onclick => "use_sale(this, 'sale')" %>使用活动代码<%= text_field_tag "act_code","",{:onblur => "get_act_count(this, #{@material_order.id})"} %><span id="use_code_count" class="red"></span>
+            <%= hidden_field_tag "sale_id", nil %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+    <div class="otherWay">
+      <div class="amount">总计：<span id="price_total"><%= @material_order.price %></span></div>
+      <div class="amount" style="<%= @material_order.svc_use_price.blank? ? 'display:none' : '' %>">储值卡抵用：<span id="savecard_price"><%= @material_order.svc_use_price %></span></div>
+      <div class="amount" style="<%= @material_order.sale_price.blank? ? 'display:none' : '' %>">活动优惠：<span id="sale_price"><%= @material_order.sale_price %></span></div>
+      <% unless @material_order.svc_use_price.blank? && @material_order.sale_price.blank? %>
+        <div class="amount">合计：<span id="final_price"><%= @material_order.price %></span></div>
+      <%end%>
+    </div>
+    <%= hidden_field_tag "pay_order_id", @material_order.id %>
+    <%= hidden_field_tag "pay_order_type", @material_order.supplier_type %>
+    <%= hidden_field_tag "if_refresh", "0"%>
+    <div class="fukuan_btn">
+      <span><a href="javascript:void(0)" class="zfb" onclick="pay_material_order('final_fukuan_tab', 1,<%= @current_store.id %>, this)"></a></span>
+      <span><button class="confirm_btn" type="button" onclick="if(confirm('确认已付款了吗？')){pay_material_order('final_fukuan_tab', 3, <%= @current_store.id %>, this)}">现金</button></span>
+      <span><button class="confirm_btn" type="button" onclick="pay_material_order('final_fukuan_tab', 5, <%= @current_store.id %>, this)">货到付款</button></span>
+    </div>
+    <div class="clear"></div>
+  </div>
+</div>

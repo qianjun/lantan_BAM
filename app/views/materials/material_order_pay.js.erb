@@ -1,0 +1,4 @@
+$("#final_fukuan_tab").html('<%= escape_javascript(render :partial => 'fukuan_tab') %>');
+hide_mask($("#fukuan_tab"));
+$('#final_fukuan_tab #if_refresh').val("1");
+popup("#final_fukuan_tab");

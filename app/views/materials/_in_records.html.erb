@@ -1,0 +1,95 @@
+<script>
+  $(document).ready(function(){
+    $("#page_in_records.pageTurn a").unbind("click");
+    $("#page_in_records .pageTurn a").bind("click", function() {
+      var url = this.href;
+      $.ajax({
+        async:true,
+        url:this.href,
+        dataType:"script",
+        type:"GET",
+        success:function(){
+          // alert(1);
+        },error:function(){
+          // alert("error");
+        }
+      });
+      /* alert(this.href); */
+      return false;
+    });
+
+    $("#materials_in_tab").tablesorter({
+      headers:
+        {
+        0: {
+          sorter: false
+        },
+        1: {
+          sorter: false
+        },
+        4: {
+          sorter: false
+        },
+        5: {
+          sorter: false
+        },
+        6: {
+          sorter: false
+        },
+        7: {
+          sorter: false
+        }
+      }
+    });
+
+    //after sort
+    $("#materials_in_tab").bind("sortEnd",function() {
+      $("#materials_in_tab tbody").find('tr').each(function(i){
+        if(i%2==0){
+          $(this).removeClass('tbg');
+        }else{
+          $(this).addClass('tbg');
+        }
+      })
+    });
+
+  });
+</script>
+<div class="collect">
+  <ul>
+    <li>入库记录：<span><%= @in_arr[0] %></span>条</li>
+    <li>金额：<span><%= format("%.2f", @in_arr[1]) if @in_arr[1] %></span></li>
+  </ul>
+</div>
+
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table" id="materials_in_tab">
+  <thead>
+    <tr class="hbg">
+      <th width="5%"><input type="checkbox" onclick="$('#in_records :checkbox').attr('checked',this.checked)" /></th>
+      <th>订货单号</th>
+      <th><span class="sort_u" onclick="sort_change(this)">物料名称</span></th>
+      <th><span class="sort_d" onclick="sort_change(this)">物料类别</span></th>
+      <th>入库量</th>
+      <th>操作人</th>
+      <th>入库时间</th>
+      <th width="150">备注</th>
+    </tr>
+  </thead>
+  <tbody id="in_records">
+    <% (@in_records || []).each do |record| %>
+      <tr class="<%= cycle('', 'tbg') %>">
+        <td><input type="checkbox" id="<%=  record.o_id%>" /></td>
+        <td><%= record.order_code %></td>
+        <td><%= record.name %></td>
+        <td><%= record.cname %></td>
+        <td><%= record.material_num.to_i %></td>
+        <td><%= record.staff_name %></td>
+        <td><%= record.out_time.strftime("%Y-%m-%d %H:%M") %></td>
+        <td><%= record.o_remark %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= will_paginate_remote(@in_records,"mat_code=#{@mat_code}&mat_name=#{@mat_name}&mat_type=#{@mat_type}&first_time=#{@start_time}&last_time=#{@end_time}",{:url => page_ins_store_materials_url(params[:store_id]),:class => "pageTurn",:prev_label => "上一页",:next_label => "下一页",:renderer => "RemotePaginateHelper::LinkRenderer"}) if @in_records.size > 0 %>

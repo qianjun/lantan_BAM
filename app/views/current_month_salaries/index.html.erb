@@ -1,0 +1,111 @@
+<div class="main">
+  <div class="box">
+    <div class="data_box">
+      <div class="search">
+        <input type="hidden" value="<%= @store.id %>" id="store_id"/>
+        <div>
+          <form action="/stores/<%= @store.id %>/current_month_salaries" method="get">
+            统计时间：<select name="statistics_date" id="statistics_date_select">
+              <% get_last_twelve_months.each do |month| %>
+                <option value="<%= month %>" <%= @statistics_date.eql?(month) ? "selected" : "" %>><%= month %></option>
+              <% end %>
+            </select>
+          </form>
+        </div>
+
+        <div>
+          <% if permission?(:staffs, :export_salary) %>
+            <%= link_to "发放并导出", store_current_month_salaries_path(@store, :format => 'xls') + "?statistics_date=#{@statistics_date}&salary_list=0", :class => "search_btn" %>
+            <%= link_to "导出工资条", store_current_month_salaries_path(@store, :format => 'xls') + "?statistics_date=#{@statistics_date}&salary_list=1", :class => "search_btn" %>
+          <% end %></div>
+      </div>
+      <div class="collect">
+        <ul>
+          <li>工资支出总额：<span id="total_num"><%=@total.round(2)%></span>元</li>
+        </ul>
+      </div>
+      <div class="clear"></div>
+      <div class="data_body" id="salary_info">
+        <div>
+          <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table" id="current_month_salary_table">
+            <thead>
+              <tr class="hbg">
+                <th>姓名</th>
+                <th>部门</th>
+                <th>职务</th>
+                <th>基本工资</th>
+                <th>社保</th>
+                <th>工资合计</th>
+                <th>提成</th>
+                <th>补贴</th>
+                <th>奖励</th>
+                <th>扣款</th>
+                <th>加班</th>
+                <th>考核</th>
+                <th>所得税</th>
+                <th>实发工资</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @staffs.each do |staff| %>
+                <tr>
+                  <td><%= staff.name %></td>
+                  <td><%= @departs[staff.position] %></td>
+                  <td><%= @departs[staff.department_id] %></td>
+                  <% if @current_month[staff.id].nil?
+                    details = [0,0,0,0,0,0,0,0,0,0,0]
+                  else
+                    salary = @current_month[staff.id]
+                    details = [salary.deduct_num,salary.reward_fee,salary.reward_num,salary.voilate_fee,salary.secure_fee,salary.total,
+                      salary.work_fee,salary.manage_fee,salary.tax_fee,salary.fact_fee,salary.base_salary]
+                  end
+                %>
+                  <td class="base_salary_text"><%=details[10] %></td>
+                  <td><%= details[4] %></td>
+                  <td><%= details[5] %></td>
+                  <td>
+                    <span id="deduct_show"><%= details[0] %></span>
+                    <input id="deduct_input" type="text" value="<%=details[0]%>" class="data_input_s reward_num_input" style="display: none;"/>
+                  </td>
+                  <td> <span id="reward_fee_show"><%= details[1] %></span>
+                    <input id="reward_fee_input" type="text" value="<%=details[1]%>" class="data_input_s reward_num_input" style="display: none;"/></td>
+                  <td>
+                    <span id="reward_show"><%= details[2] %></span>
+                    <input id="reward_input" type="text" value="<%=details[2]%>" class="data_input_s reward_num_input" style="display: none;"/>
+                  </td>
+                  <td>
+                    <span id="voilate_show"><%=  details[3]%></span>
+                    <input id="voilate_input" type="text" value="<%= details[3] %>" class="data_input_s deduct_num_input" style="display: none;"/>
+                  </td>
+                  <td>
+                    <span id="work_show"><%= details[6]%></span>
+                    <input id="work_input" type="text" value="<%=details[6] %>" class="data_input_s deduct_num_input" style="display: none;"/>
+                  </td>
+                  <td>
+                    <span id="manage_show"><%= details[7]%></span>
+                    <input id="manage_input" type="text" value="<%=details[7]%>" class="data_input_s deduct_num_input" style="display: none;"/>
+                  </td>
+                  <td>
+                    <span id="tax_show"><%=  details[8]%></span>
+                    <input id="tax_input" type="text" value="<%=details[8]%>" class="data_input_s deduct_num_input" style="display: none;"/>
+                  </td>
+                  <td>
+                    <span id="fact"><%= details[9]%></span>
+                  </td>
+                  <td>
+                    <a href="javascript:void(0)" class="edit_reward_deduct_submit" name="<%=@statistics_date%>" style="display: none;" id="<%= staff.id %>">提交</a>
+                    <% if permission?(:staffs, :edit_salary) && @current_month[staff.id] && @current_month[staff.id].is_edited %><a href="javascript:void(0)" class="bz_btn">编辑</a><% end %>
+                    <% if permission?(:staffs, :detail_salary) %><%= link_to "详细", store_current_month_salary_path(@store, staff.id)+"?statistics_date=#{@statistics_date}" %><% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+          <%= will_paginate @staffs, :class => "pageTurn", :previous_label => "上一页",:next_label => "下一页" %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="foot"><p>Copyright © 2013 杭州鼎洪 版权所有</p></div>

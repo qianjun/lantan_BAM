@@ -1,0 +1,24 @@
+<p>
+  <label><span class="red">*</span>车牌号码</label>
+  <input type="text" id="car_num" value="<%=  @num%>" onblur="auth_car_num(this,<%=params[:store_id]%>)"/>
+  <label>客户姓名</label>
+  <input type="text" id="c_name" <% if @customer %>  value="<%= @customer.name %>" readonly <%end%>  />
+  <label>手机号</label>
+  <input type="text" id="c_number" <% if @customer and @customer.mobilephone %>
+           style="background-color:<%if @customer.mobilephone.length ==11 %>chartreuse<%else%>red<%end%>;"
+           value="<%= @customer.mobilephone %>" readonly <%end%>
+         onblur="auth_number(this,<%=params[:store_id]%>)" />
+  <button class="blue_btn" title="选择车牌所属用户" id="add_c_btn" style="display: none" onclick="before_center('#customer_popup')" >添加车牌</button>
+  <label style="width:50px">备注</label>
+  <input type="text" id="other_way" <% if @customer %>  value="<%= @customer.other_way %>" readonly <%end%> />
+</p>
+<p>
+  <label>单位</label>
+  <input type="text" style="width: 368px;" id="c_group" <% if @customer %>  value="<%= @customer.group_name %>" readonly <%end%>  />
+  <label>通讯地址</label>
+  <input type="text" style="width: 368px;" id="c_address" <% if @customer %>  value="<%= @customer.address %>" readonly <%end%>  />
+</p>
+<input type="hidden" id="old_customer" value="<%= @num %>" />
+<input type="hidden" id="old_number" <% if @customer and @customer.mobilephone %> value="<%= @customer.mobilephone %>" <%end%> />
+<input type="hidden" id="checked_item" />
+<input type="hidden" id="my_number" <% if @customer and @customer.mobilephone %> value="<%= @customer.mobilephone %>" <%end%> />

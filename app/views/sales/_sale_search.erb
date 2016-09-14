@@ -1,0 +1,33 @@
+<div class="search">
+  <div><label>类别：</label>
+    <select  id="sale_types">
+      <option value="">请选择</option>
+      <% sale_search[0].each do |key,value| %>
+        <option value="<%= key %>"><%= value %></option>
+      <% end %>
+    </select>
+  </div>
+  <div><label>名称：</label><input id="sale_name" type="text" /></div>
+  <div><input type="button" class="search_btn" value="查询" onclick="<%=sale_search[1]  %>('<%= params[:store_id] %>')" /></div>
+</div>
+<fieldset class="popup_body_fieldset">
+  <legend class="popup_body_title">查询结果</legend>
+  <div class="popup_body_result">
+    <ul></ul>
+  </div>
+</fieldset>
+<div class="pq"></div>
+<fieldset class="popup_body_fieldset">
+  <legend class="popup_body_title"><span class="red">*</span>已选择</legend>
+  <div class="popup_body_result" id="add_products">
+    <% if @sale_prods and !@sale_prods.blank? %>
+      <% @sale_prods.each do |prod| %>
+        <div id='<%= prod.id %>'><em><%=prod.name  %></em>
+          <a href='javascript:void(0)' class='addre_a'  onclick="add_one('<%= prod.id %>')" id='add_one<%= prod.id %>'>+</a>
+          <span><input name='sale_prod[<%= prod.id %>]' type='text' class='addre_input' value='<%= prod.num %>' id='add_p<%=prod.id  %>' /></span>
+          <a href='javascript:void(0)' class='addre_a' id='delete_one<%=prod.id  %>'>-</a>
+          <a href='javascript:void(0)' class='remove_a' onclick='$(this).parent().remove();if($("#prod_<%=prod.id  %>").length!=0){$("#prod_<%= prod.id %>")[0].checked=false;}'>删除</a></div>
+        <% end %>
+      <% end %>
+  </div>
+</fieldset>

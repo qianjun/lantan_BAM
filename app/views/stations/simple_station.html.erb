@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>工位分布</title>
+    <%= stylesheet_link_tag 'sim_station' %>
+  </head>
+
+  <body>
+    <div class="technician_main">
+      <% @stations.each do |station| %>
+        <div class="tec_box">
+          <h1><%= station.name %></h1>
+          <div class="tec_content">
+            <dl>
+              <dt>技师:</dt>
+              <% if @staff_stations[station.id].blank? %>
+                <dd></dd>
+                <dd></dd>
+              <% else %>
+                <% @staff_stations[station.id].each do |s| %>
+                  <dd>
+                    <%= s.try(:name)%>
+                  </dd>
+                <% end %>
+              <% end %>
+            </dl>
+            <dl>
+              <dt>工位状态:</dt>
+              <dd>
+                <%= Station::STAT_NAME[station.status] %>
+              </dd>
+            </dl>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </body>
+</html>

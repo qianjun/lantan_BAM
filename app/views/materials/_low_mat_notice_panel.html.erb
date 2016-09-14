@@ -1,0 +1,3 @@
+有 <span class="red" id="low_materials_span"><%=  @low_materials.length %></span>个物料库存量过低
+<a href="javascript:void(0)" onclick="toggle_low_materials(this)">点击查看</a>
+<%= render :partial => 'show_low_materials', :locals => {:low_materials => @low_materials} %>

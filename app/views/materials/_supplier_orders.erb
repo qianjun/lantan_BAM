@@ -1,0 +1,78 @@
+<script>
+  $(document).ready(function(){
+    $(".pageTurn a").unbind("click");
+    $(".pageTurn a").bind("click", function() {
+      var url = this.href + "&m_status="+$("#select_s_order").val()+"&from="+$("#date03").val()+"&to="+$("#date04").val()+"&supp="+$("#select_supplier").val();
+      url += "&status="+$("#s_pay_status").val();
+      $.ajax({
+        async:true,
+        url:url,
+        dataType:"script",
+        type:"GET",
+        success:function(){
+          // alert(1);
+        },error:function(){
+          // alert("error");
+        }
+      });
+      /* alert(this.href); */
+      return false;
+    });
+  });
+</script>
+<div class="register">
+  <div class="orderGoods">
+    <ul>
+      <li>订货记录：<%= @supp_total_count %>条</li>
+      <li>订货金额：<%= format("%.2f", @supp_total_money) if @supp_total_money %>元</li>
+      <li>付款金额：<%= format("%.2f", @supp_pay_money) if @supp_pay_money %>元</li>
+    </ul>
+  </div>
+  <% (@supplier_order_records || []).each do |record| %>
+    <div class="merchant" id="merchant_<%= record.id %>">
+      <div class="merchantNumber">订货单编号：<%= record.code %>
+        <%= link_to "详情", mat_order_detail_store_material_path(params[:store_id],record), remote: :true, "data-type" => "script", :class => "a_btn" %>
+        <% if permission?(:materials, :order_mark) %>
+          <%= link_to "备注", "/stores/#{params[:store_id]}/materials/#{record.id}/get_mo_remark", :remote => true, 'data-type' => 'script', :class => "a_btn" %>
+        <% end %>
+      </div>
+      <ul>
+        <li><strong>下单时间：</strong><%= record.created_at.strftime("%Y-%m-%d") if record.created_at %></li>
+        <li><strong>供应商：</strong><%= record.supplier.try(:name) %></li>
+        <li><strong>结算方式：</strong><%= Supplier::S_CHECK_TYPE[record.supplier.try(:check_type)] %></li>
+        <li><strong>结算时间：</strong>
+            <%= record.supplier.try(:check_type).to_i==Supplier::CHECK_TYPE[:DAY] ? "----" :
+            "每月"+record.supplier.try(:check_time).to_s+"号"%>
+        </li>
+        <li><strong>本次订货金额：</strong><%= format("%.2f", record.price) if record.price %></li>
+        <li><strong>付款状态：</strong><span><%= MaterialOrder::S_STATUS[record.status] %></span></li>
+        <li><strong>物流状态：</strong><span><%= MaterialOrder::S_M_STATUS[record.m_status] %></span></li>
+      </ul>
+      <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table" name="head_table">
+        <thead>
+          <tr class="hbg">
+            <td>条形码</td>
+            <td>名称</td>
+            <td>类别</td>
+            <td>数量</td>
+            <td>规格</td>
+            <td>单价</td>
+          </tr>
+        </thead>
+        <tbody>
+          <% (record.mat_order_items || []).each do |item| %>
+            <tr>
+              <td><%= item.material.try(:code) %></td>
+              <td><%= item.material.try(:name) %></td>
+              <td><%= item.material && item.material.category ? item.material.category.name : "----" %></td>
+              <td><%= item.material_num.to_i %></td>
+              <td><%= item.material.try(:unit) %></td>
+              <td><%= item.material.try(:import_price) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+</div>
+<%= will_paginate_remote(@supplier_order_records,"",{:url => page_supplier_orders_store_materials_url(params[:store_id]),:class => "pageTurn",:prev_label => "上一页",:next_label => "下一页",:renderer => "RemotePaginateHelper::LinkRenderer"}) if @supplier_order_records.size > 0 %>

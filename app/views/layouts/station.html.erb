@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+  <head>
+    <%= stylesheet_link_tag    "application" %>
+    <%= javascript_include_tag "application","stations" %>
+    <title><%= @title.nil? ? "现场管理" : @title %></title>
+    <%= csrf_meta_tags %>
+    <!--[if IE 6]>
+    <script src="js/DD_belatedPNG_0.0.8a-min.js"></script>
+    <script>
+      DD_belatedPNG.fix('*');
+    </script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="head">
+      <div class="box">
+        <%= render :partial => "/common/login_header" %>
+        <div class="nav">
+          <ul>
+            <li><a href="/stores/<%= params[:store_id] %>/stations" <%if controller.controller_name == "stations" && params[:action] == "index" %> class="hover"<%end%>>施工现场</a></li>
+            <% if permission?(:stations, :dispatch) %><li><a href="/stores/<%= params[:store_id] %>/stations/set_tech"  class="fontSize17 <%if params[:action] == "set_tech" %>hover<%end%>">工位技师分配</a></li><% end %>
+            <% if permission?(:stations, :video) %><li><a href="/stores/<%= params[:store_id] %>/station_datas" <%if controller.controller_name == "station_datas"  %> class="hover"<%end%>>工位设置</a></li><% end %>
+          </ul>
+        </div>
+        <div class="back"><a href="/stores/<%= params[:store_id] %>/welcomes" title="返回">Back</a>现场管理</div>
+      </div>
+    </div>
+    <div class="main">
+      <div class="box">      
+        <%= yield %>
+      </div>
+    </div>
+    <div class="foot"><p>Copyright © 2013 杭州鼎洪 版权所有</p></div>
+    <div class="mask"></div>
+    <div class="maskOne"></div>
+    <%= render :partial => "/shared/tishi_alert" %>
+  </body>
+</html>

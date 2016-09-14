@@ -1,0 +1,17 @@
+<% if @mat_loss_search_materials %>
+    <% if @mat_loss_search_materials.size > 0 %>
+    <fieldset class="popup_body_fieldset" id="search_result">
+    <legend class="popup_body_title">查询结果</legend>
+    <div class="popup_body_result">
+    <ul>
+    <% (@mat_loss_search_materials||[]).each do |mat|%>
+    <li><input type="checkbox" id="mat_<%=mat.id%>"  onclick="select_mat_loss_material(this,'<%=mat.name%>',
+            '<%=mat.code%>','<%= mat.cname%>','<%= mat.storage%>','<%= mat.id%>')" name="mat_<%= mat.id%>"  value="0"/><%= mat.name%></li>
+    <% end %>
+    </ul>
+    </div>
+    </fieldset>
+  <% else%>
+    查询结果为空！
+  <% end %>
+<% end %>

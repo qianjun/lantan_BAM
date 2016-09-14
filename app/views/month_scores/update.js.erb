@@ -1,0 +1,24 @@
+$(".mask").hide();
+$("#manage_score_area").hide();
+$("#month_score_tab").html('<%= escape_javascript(render :partial => '/staffs/month_score_tab') %>');
+$("#month_score_val").text("<%= @month_score.manage_score %>");
+$("#current_month_manage_score").text("<%= @month_score.manage_score %>");
+$("#assess_result").val(assess_result("<%= @month_score.sys_score %>", "<%= @month_score.manage_score %>"));
+tishi_alert("店长打分成功!");
+$("#month_score_table").tablesorter({
+    headers:
+    {
+        1: { sorter: false },
+        2: { sorter: false },
+        3: { sorter: false }
+    }
+});
+$("#month_score_table").bind("sortEnd",function() {
+    $("#month_score_table").find('tr').each(function(i){
+    if(i%2==0){
+      $(this).removeClass('tbg');
+    }else{
+      $(this).addClass('tbg');
+    }
+    })
+ });

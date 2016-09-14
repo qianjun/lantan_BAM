@@ -1,0 +1,37 @@
+<div class="popup_box">
+  <h1>添加项目<a href="javascript:void(0)" class="close">关闭</a></h1>
+  <div class="popup_body">
+    <div class="popup_body_area">
+      <div class="search">
+        <div>
+          <label>类别：</label>
+          <select>
+            <option value="0">全部</option>
+            <% @types.each do |t| %>
+              <option value="<%= t.id %>"><%= t.name %></option>
+            <% end %>
+          </select>
+        </div>
+        <div><label>名称：</label><input type="text"/></div>
+        <div><input type="button" class="search_btn" value="查询" onclick="add_products_search(<%= @store.id %>, this)"/></div>
+      </div>
+      <fieldset class="popup_body_fieldset">
+        <legend class="popup_body_title">查询结果
+          <input type="checkbox"  onclick="select_all(this)" disabled id="select_all"/></legend>
+        <div class="popup_body_result">
+          <ul></ul>
+        </div>
+      </fieldset>
+      <div class="pq"></div>
+      <fieldset class="popup_body_fieldset">
+        <legend class="popup_body_title"><span class="red">*</span>已选择</legend>
+        <div class="popup_body_result" id="selected_products_div">
+        </div>
+      </fieldset>
+    </div>
+    <div class="clear"></div>
+    <div class="btn_box">
+      <button type="button" class="confirm_btn" onclick="selected_product_submit()">确定</button>
+    </div>
+  </div>
+</div>

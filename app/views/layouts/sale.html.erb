@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <%= stylesheet_link_tag    "application" %>
+    <%= javascript_include_tag "application" %>
+    <script type="text/javascript" src="/assets/My97DatePicker/WdatePicker.js" ></script>    
+    <title><%= @title.nil? ? "营销管理--营销" : @title %></title>
+    <%= csrf_meta_tags %>
+  </head>
+  <body>
+    <div class="head">
+      <div class="box">
+        <%= render :partial => "/common/login_header" %>
+        <div class="nav">
+          <ul>
+            <li><a href="/stores/<%= params[:store_id] %>/discount_cards"
+                   <% if  ["save_cards", "discount_cards", "package_cards"].include?(controller.controller_name) %> class="hover" <%end%>>卡类</a></li>
+            <li><a href="/stores/<%= params[:store_id] %>/sales" 
+                   <% if  controller.controller_name=="sales" %> class="hover" <%end%>>活动</a></li>
+            <li><a href="/stores/<%= params[:store_id] %>/products" 
+                   <% if controller.controller_name=="products" and (controller.action_name =~/service/) == nil %> class="hover" <%end%> id="product">产品</a></li>
+            <li><a href="/stores/<%= params[:store_id] %>/products/prod_services"
+                   <% if controller.controller_name=="products" and controller.action_name =~/service/ %> class="hover" <%end%> id="service">服务</a></li>
+              <li><a href="/stores/<%= params[:store_id] %>/micro_stores"
+                   <% if controller.controller_name=="micro_stores" %> class="hover" <%end%> id="service">微推广</a></li>
+          </ul>
+        </div>
+        <div class="back"><a href="/stores/<%= params[:store_id] %>/welcomes" title="返回">Back</a>营销管理</div>
+      </div>
+    </div>
+    <%= yield %>
+    <div class="mask"></div>
+    <div class="maskOne"></div>
+    <%= render :partial => "/shared/tishi_alert" %>
+  </body>
+</html>

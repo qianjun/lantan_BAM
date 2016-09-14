@@ -1,0 +1,143 @@
+<div class="item">
+  <label>相关物料：</label><select  id="prod_material" name="prod_material" onchange="modify_value()">
+    <% @materials.each do |material| %>
+      <option value="<%= material.id %>" <%  if (@material.nil? ? 0 : @material.material_id) == material.id%> selected<%end%> o_value="<%= "#{material.code}||#{material.storage}||#{permission?(:materials, :show_sale) ? material.price : 0}||#{@cates[Category::TYPES[:material]][material.category_id]}||#{material.sale_price}" %>" ><%=
+        "#{material.name}#{(0..(@max_len-check_str(material.name)+3)).inject(String.new){|str,n|str +="-"}}#{@cates[Category::TYPES[:material]][material.category_id]}"%></option>
+    <% end unless @materials.blank?%>
+  </select>
+</div>
+<div class="item">
+  <label><span class="red">*</span>名称：</label><input name="name" id="name" type="text" value="<%= @product.name.nil? ? @materials[0].nil? ? "" : @materials[0].name : @product.name  %>" />
+</div>
+<div class="item">
+  <label>条形码：</label><label id="item_txm"><%=@materials[0].nil? ? "" : @materials[0].code  %></label>
+</div>
+<div class="item">
+  <label>库存：</label><label id="item_kc"><%= @materials[0].nil? ? "" : @materials[0].storage %></label>
+</div>
+
+<div class="item">
+  <label><span class="red">*</span>成本价：</label><input name="t_price" id="t_price" type="text" value="<%= permission?(:materials, :show_sale) ? @product.t_price.nil? ? @materials[0].nil? ? "" : @materials[0].price : @product.t_price : 0%>" />
+</div>
+<div class="item">
+  <label><span class="red">*</span>全国零售价：</label><input name="base_price" id="base_price" type="text" value="<%= @product.base_price.nil? ? @materials[0].nil? ? "" : @materials[0].sale_price : @product.base_price %>" />
+</div>
+<div class="item">
+  <label><span class="red">*</span>全国促销价：</label><input name="sale_price" id="sale_price" type="text" value="<%= @product.sale_price %>" />
+</div>
+
+<div class="item">
+  <label>类别：</label><select  id="prod_types" name="prod_types">
+    <% @cates[Category::TYPES[:good]].each do |k,v| %>
+      <option value="<%= k %>" <%if @product.category_id==k%> selected<%end%> ><%= v %></option>
+    <% end %>
+  </select>
+</div>
+<div class="seeProDiv">
+  <div class="seeProDiv_l">配图：</div>
+  <div class="seeProDiv_rWidth">
+    <% if @img_urls %>
+      <ul class="seeProPic">
+        <%@img_urls.each do |url|%>
+          <li><img src="<%=url.img_url.nil? ? "" : url.img_url.gsub("img#{@product.id}","img#{@product.id}_#{Constant::P_PICSIZE[0]}") %>" /></li>
+        <%end unless @img_urls.blank?%>
+      </ul>
+    <% end %>
+    <a href="javascript:void(0)" class="compile_btn" onclick="before_center('.add_img');">添加图片</a>
+    <span>*添加新图片会使已上传图片被删除，请为图片做好备份，单个文件大小不超过200KB。</span>
+  </div>
+</div>
+<div class="item">
+  <label><span class="red">*</span>规格：</label><input name="standard" id="standard" type="text" value="<%= @product.standard %>" />
+</div>
+<div class="item">
+  <label><span class="red">*</span>积分：</label><input name="prod_point" id="prod_point" type="text" value="<%= @product.prod_point.nil? ? 0 : @product.prod_point  %>" />
+</div>
+<div class="clear"></div>
+<div class="item_blockArea">
+  <h2 class="item_blockArea_h2">销售提成</h2>
+  <div class="item item_w"><span class="item_radio_b">
+      <input name="deduct_type" type="radio" checked onclick="change_input('#deduct_price','#deduct_percent')" /></span>
+    <label>百分点：</label>
+    <input name="deduct_percent" id="deduct_percent" type="text" <%if @product.deduct_percent==0.0 && @product.deduct_price != 0.0%> disabled<%else%>
+             value="<%= ((@product.deduct_percent.nil? ? 0 :@product.deduct_percent)/(@product.sale_price.nil? ? 1 : @product.sale_price)*100).round(1) %>" <%end%>  class="item_areaInput_s"/>
+  </div>
+  <div class="item item_w"><span class="item_radio_b">
+      <input name="deduct_type" type="radio" <% if @product.deduct_price && @product.deduct_price != 0.0 %>checked<%end%>
+             onclick="change_input('#deduct_percent','#deduct_price')" /></span>
+    <label>金 额：</label>
+    <input name="deduct_price" id="deduct_price" type="text"
+           <%if @product.deduct_price.nil? || @product.deduct_price === 0 %> disabled <%else%> value="<%= @product.deduct_price %>"<%end%>  class="item_areaInput_s" />
+  </div>
+  <div class="item">
+    <label>需要施工：</label><input name="is_added" id="is_added" type="checkbox" value="<%= @product.is_added.nil? ? Product::IS_ADDED[:NO] : @product.is_added  %>"
+                               onclick="control_deduct(this)" <% if @product.is_added %>checked<%end%>/>
+  </div>
+  <div class="clear"></div>
+  <h2 class="item_blockArea_h2" <% if !@product.is_added %> style="display: none"<%end%> id="techin_lable">技师提成</h2>
+  <div class="item item_w" id="techin_p" <% if !@product.is_added %> style="display: none"<%end%>><span class="item_radio_b">
+      <input name="techin_type" type="radio" checked onclick="change_input('#techin_price','#techin_percent')" /></span>
+    <label>百分点：</label>
+    <input name="techin_percent" id="techin_percent" type="text"
+           <% if @product.techin_percent==0.0 && @product.techin_price != 0.0 %> disabled <%else%>
+             value="<%= ((@product.techin_percent.nil? ? 0 :@product.techin_percent)/(@product.sale_price.nil? ? 1 : @product.sale_price)*100).round(1)  %>" <%end%>  class="item_areaInput_s"/>
+  </div>
+  <div class="item item_w" id="techin_t" <% if !@product.is_added %>style="display: none"<%end%>><span class="item_radio_b">
+      <input name="techin_type" type="radio" <% if @product.techin_price && @product.techin_price != 0.0 %>checked<%end%>
+             onclick="change_input('#techin_percent','#techin_price')" /></span>
+    <label>金 额：</label>
+    <input name="techin_price" id="techin_price" type="text"
+           <% if @product.techin_price.nil? || @product.techin_price === 0 %> disabled <%else%> value="<%= @product.techin_price %>"<%end%> class="item_areaInput_s" />
+  </div>
+</div>
+<div class="item_blockArea">
+  <div class="item">
+    <label>自动回访：</label><input name="auto_revist" id="auto_revist" type="checkbox" value="<%= @product.is_auto_revist.nil? ? Product::IS_AUTO[:NO] : @product.is_auto_revist  %>"
+                               onclick="check_revist()" <% if @product.is_auto_revist %>checked<%end%>/>
+  </div>
+  <div class="item"><label>回访时间：</label>
+    <select  id="time_revist" name="time_revist" <%unless @product.is_auto_revist%>disabled <%end%>>
+      <option value="">请选择</option>
+      <% Product::REVIST_TIME.each do |key| %>
+        <option value="<%= key %>" id="<%=key%>" <%if @product.auto_time ==key%> selected<%end%> ><%= key %>小时</option>
+      <% end %>
+    </select>
+  </div>
+  <div class="item_textarea">
+    <label>回访内容：</label><textarea name="con_revist" id="con_revist" cols="" rows="" class="width_textarea"
+                                  <%unless @product.is_auto_revist%>disabled <%end%>><%=  @product.is_auto_revist ? @product.revist_content : ""  %></textarea>
+  </div>
+</div>
+<div class="item_textarea">
+  <label>产品简介：</label><textarea name="intro" id="intro" cols="" rows="" class="width_textarea"><%=@product.description  %></textarea>
+</div>
+
+<div class="item_textarea">
+  <label>产品描述：</label><textarea  id="add_intro" cols="" rows="" class="width_textarea" style="width:470px"><%=@product.introduction.nil? ? "" : @product.introduction  %></textarea>
+  <input type="hidden" name="desc" id="desc" />
+</div>
+<script type="text/javascript">
+  var serv_editor;
+  $(function() {
+    serv_editor = KindEditor.create('textarea[id="add_intro"]', {
+      allowFileManager : true
+    });
+  });
+
+  function modify_value(){
+    var html = $('#prod_material option:selected');
+    $('#name').val(html.html().split("-")[0]);
+    $("#item_txm").html(html.attr("o_value").split("||")[0]);
+    $("#item_kc").html(html.attr("o_value").split("||")[1]);
+    $("#t_price").val(html.attr("o_value").split("||")[2]);
+    $("#base_price").val(html.attr("o_value").split("||")[4]);
+    $("#prod_types option").attr("selected",'');
+    $("#prod_types option[id='"+html.attr("o_value").split("||")[3] +"']").attr("selected","selected")
+  }
+<%unless @materials.blank?%>
+    $("#item_txm").html($('#prod_material option:selected').attr("o_value").split("||")[0]);
+    $("#item_kc").html($('#prod_material option:selected').attr("o_value").split("||")[1]);
+<% end %>
+</script>
+
+

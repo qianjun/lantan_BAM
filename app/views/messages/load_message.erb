@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+  <head>
+    <!--[if IE 6]>
+    <script src="js/DD_belatedPNG_0.0.8a-min.js"></script>
+    <script>
+      DD_belatedPNG.fix('*');
+    </script>
+    <![endif]-->
+    <%= stylesheet_link_tag    "application" %>
+  </head>
+
+  <body>
+    <div class="main">
+      <div class="box">
+        <div class="data_box" style="height:auto;">
+          <div style="background: #f0f4f7; padding-bottom: 10px;">
+            <%  @m_records.each do |record| %>
+              <% records = @send_message[record.id] %>
+              <% if records %>
+                <div class="two_table_area">
+                  <a name="<%=  record.id%>"></a>
+                  <div style="padding: 10px; font-size: 16px;">
+                    <span><%= record.send_at.strftime("%Y-%m-%d %H:%M:%S") %></span>
+                    <span style="float: right;">小计：<%=record.total_fee%>(元)</span>
+                  </div>
+                  <%end_pos = records.length >5 ? records.length/2 : records.length %>
+                  <div class="table_div">
+                    <table class="table_head">
+                      <tr>
+                        <th width="170">手机号</th>
+                        <th width="100">费用</th>
+                      </tr>
+                    </table>
+                    <div style="height: 180px; overflow: auto;">
+                      <table class="table_main">
+                        <tr>
+                          <th width="170">手机号</th>
+                          <th width="100">费用</th>
+                        </tr>
+                        <% records[0..end_pos].each do |message| %>
+                          <tr>
+                            <td><%=message.phone%></td>
+                            <% piece = message.content.length%70==0 ? message.content.length/70 : message.content.length/70+1 %>
+                            <td><%= piece*0.06 %></td>
+                          </tr>
+                        <%end%>
+                      </table>
+                    </div>
+                  </div>
+                  <% if records.length >5 %>
+
+                    <div class="table_div">
+                      <table class="table_head">
+                        <tr>
+                          <th width="170">手机号</th>
+                          <th width="100">费用</th>
+                        </tr>
+                      </table>
+                      <div style="height: 180px; overflow: auto;">
+                        <table class="table_main">
+                          <tr>
+                            <th width="170">手机号</th>
+                            <th width="100">费用</th>
+                          </tr>
+                          <% records[end_pos..records.length-1].each do |message| %>
+                            <tr>
+                              <td><%=message.phone%></td>
+                              <% piece = message.content.length%70==0 ? message.content.length/70 : message.content.length/70+1 %>
+                              <td><%= piece*0.06 %></td>
+                            </tr>
+                          <%end%>
+                        </table>
+                      </div>
+                    </div>
+                  <%end%>
+                </div>
+              <%end%>
+            <%end unless @m_records.blank? %>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><p>Copyright © 2013 杭州澜泰 版权所有</p></div>
+  </body>
+</html>
+

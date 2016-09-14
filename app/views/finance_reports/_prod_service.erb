@@ -1,0 +1,61 @@
+<div class="finnace_title">
+  <ul>
+    <li>商品销售：<span><%= @t_orders.map(&:t_num).inject(0){|sum,n|sum+n}%></span></li>
+    <li>成本总额：<span><%= @t_orders.map(&:t_price).inject(0){|sum,n|sum+n}.round(2)%></span></li>
+  </ul>
+</div>
+<div class="table_box_h">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+    <thead>
+      <tr class="hbg">
+        <td width="15%">条码</td>
+        <td width="15%">名称</td>
+        <td width="15%">类别</td>
+        <td width="15%">数量</td>
+        <td width="15%">平均成本</td>
+        <td width="15%">合计成本</td>
+      </tr>
+    </thead>
+    <tbody>
+      <%unless @t_orders.blank?%>
+        <% t_order = @t_orders[0] %>
+        <tr>
+          <td><%= t_order.p_code%></td>
+          <td><%= t_order.p_name%></td>
+          <td><%= t_order.c_name%></td>
+          <td><%= t_order.t_num%></td>
+          <td><%= (t_order.t_price/t_order.t_num).round(2) %></td>
+          <td><%= t_order.t_price %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+<div class="table_box">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+    <thead>
+      <tr class="hbg">
+        <td width="15%">条码</td>
+        <td width="15%">名称</td>
+        <td width="15%">类别</td>
+        <td width="15%">数量</td>
+        <td width="15%">平均成本</td>
+        <td width="15%">合计成本</td>
+      </tr>
+    </thead>
+    <tbody>
+      <%unless @t_orders.blank? %>
+        <% @t_orders.each do |t_order| %>
+          <tr>
+            <td><%= t_order.p_code%></td>
+            <td><%= t_order.p_name%></td>
+            <td><%= t_order.c_name%></td>
+            <td><%= t_order.t_num%></td>
+            <td><%= (t_order.t_price/t_order.t_num).round(2) %></td>
+            <td><%= t_order.t_price %></td>
+          </tr>
+        <% end %>
+      <% end %>
+    </tbody>
+  </table>
+</div>

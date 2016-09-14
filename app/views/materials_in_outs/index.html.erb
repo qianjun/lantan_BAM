@@ -1,0 +1,13 @@
+<div class="main">
+  <!--<div class="search_select">
+    <label>您是：</label>
+    <%#= select("staff", "id", Staff.all.collect {|s| [ s.name, s.id ] }, { :include_blank => true}, {:onchange => "chooseCookie(this)"}) %>
+  </div>-->
+  <div class="mat_notice" style="margin: auto 400px;"><%= flash[:error] %></div>
+  <div class="ul_bg">
+    <ul class="io_menu">
+      <li><%= link_to '入库', "/stores/#{@store.id}/materials_in", :class => 'ina' %></li>
+      <li><%= link_to '出库', "/stores/#{@store.id}/materials_out", :class => 'outa' %></li>
+    </ul>
+  </div>
+</div>

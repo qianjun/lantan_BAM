@@ -1,0 +1,100 @@
+<%= javascript_include_tag "/assets/kindEditor/kindeditor-min.js" %>
+<%= javascript_include_tag "/assets/kindEditor/zh_CN.js" %>
+<%= javascript_include_tag "/assets/My97DatePicker/WdatePicker.js" %>
+<%= stylesheet_link_tag    "/assets/My97DatePicker/skin/WdatePicker" %>
+<div class="releaseDiv">
+  <div class="releaseDiv_l"><span class="red">*</span>标题：</div>
+  <div class="releaseDiv_r">
+    <input name="name" type="text" class="title_input" id="sale_title" value="<%= @sale.name %>" />
+  </div>
+</div>
+<div class="releaseDiv">
+  <div class="releaseDiv_l">选择产品/服务项目：</div>
+  <div class="releaseDiv_r rdTop">
+    <%= render :partial=>"/sales/sale_search",:object=>[@cats,"load_types"] %>
+  </div>
+</div>
+<div class="releaseDiv">
+  <div class="releaseDiv_l"><span class="red">*</span>优惠：</div>
+  <div class="releaseDiv_r" id="s_disc">
+    <input name="discount" type="radio"  <% if @sale.disc_types == Sale::DISC_TYPES[:FEE] %> checked <%end%>
+           value="<%= Sale::DISC_TYPES[:FEE] %>" />金额：<input name="disc_1" id="disc_1" type="text" />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <input name="discount" type="radio" <% if @sale.disc_types == Sale::DISC_TYPES[:DIS] %> checked <%end%>
+           value="<%= Sale::DISC_TYPES[:DIS] %>" />打折：<input name="disc_0" id="disc_0" type="text" />&nbsp;&nbsp;折
+  </div>
+</div>
+<div class="releaseDiv">
+  <div class="releaseDiv_l"><span class="red">*</span>优惠时间：</div>
+  <div class="releaseDiv_r" id="s_time">
+    <input name="disc_time" type="radio" value="<%= Sale::DISC_TIME[:DAY] %>" checked onclick="input_time()" />日&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <input name="disc_time" type="radio" value="<%= Sale::DISC_TIME[:WEEK] %>" onclick="input_time()"
+           <% if @sale.disc_time_types==Sale::DISC_TIME[:WEEK] %>checked <%end%>     />周&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <input name="disc_time" type="radio" value="<%= Sale::DISC_TIME[:MONTH] %>"  onclick="input_time()"
+           <% if @sale.disc_time_types==Sale::DISC_TIME[:MONTH] %>checked <%end%> />月&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <input name="disc_time" type="radio" value="<%= Sale::DISC_TIME[:YEAR] %>" onclick="input_time()"
+           <% if @sale.disc_time_types==Sale::DISC_TIME[:YEAR] %>checked <%end%> />年&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <input name="disc_time" type="radio" value="<%= Sale::DISC_TIME[:TIME] %>" onclick="input_time()" id="is_checked"
+           <% if @sale.disc_time_types==Sale::DISC_TIME[:TIME] %>checked <%end%> />有效期：
+    <input name="started_at" id="started_at" type="text" readonly onclick="WdatePicker()" />&nbsp;&nbsp;到&nbsp;&nbsp;
+    <input name="ended_at" id="ended_at" type="text" readonly onclick="WdatePicker()" />
+  </div>
+</div>
+
+<div class="releaseDiv">
+  <div class="releaseDiv_l"><span class="red">*</span>每辆车享受优惠次数：</div>
+  <div class="releaseDiv_r"><input name="every_car" id="disc_times" type="text" value="1" />&nbsp;&nbsp;次</div>
+</div>
+
+<div class="releaseDiv">
+  <div class="releaseDiv_l"><span class="red">*</span>本次活动车辆总数：</div>
+  <div class="releaseDiv_r"><input id="disc_car_nums" name="car_num" type="text" value="<%= @sale.car_num %>" />&nbsp;&nbsp;辆</div>
+</div>
+
+<div class="releaseDiv">
+  <div class="releaseDiv_l">活动图片：</div>
+  <div class="releaseDiv_r">
+    <input type="hidden" value=""  name="file_size" id="file_size" />
+    <input type="file" name="img_url" id="img_url" onchange="$('#file_size').val(this.width)"  size="50px"/>
+    <span class="show_pic" >
+      <%=  @sale.img_url.nil? ? "" : @sale.img_url.split("/")[-1] %>
+    </span>
+  </div>
+</div>
+<div class="releaseDiv">
+  <div class="releaseDiv_l">是否总店补贴：</div>
+  <div class="releaseDiv_r" id="s_sub">
+    <input name="subsidy" type="radio" <% if @sale.is_subsidy %> checked <%end%>
+           value="<%= Sale::SUBSIDY[:YES] %>"  />是&nbsp;&nbsp;
+    <input name="sub_content" type="text" id="sub_content"  value="<%= @sale.sub_content %>" />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <input name="subsidy" type="radio" <% unless @sale.is_subsidy  %> checked <%end%>
+           value="<%= Sale::SUBSIDY[:NO] %>" />&nbsp;&nbsp;否
+  </div>
+</div>
+
+<div class="releaseDiv">
+  <div class="releaseDiv_l">活动介绍：</div>
+  <div class="releaseDiv_r">
+    <textarea  cols="" rows="" id="content"><%= @sale.introduction %></textarea>
+    <input type="hidden" name="intro"  id="intro"/>
+  </div>
+</div>
+<script type="text/javascript">
+  var editor ;
+  KindEditor.ready(function(K) {
+    editor = K.create('textarea[id="content"]', {
+      allowFileManager : true,
+      resize : false
+    });
+  });
+<% if @sale %>
+  <% if @sale.disc_time_types == Sale::DISC_TIME[:TIME]%>
+      $("#started_at").val('<%= @sale.started_at.nil?? "" : @sale.started_at.strftime("%Y-%m-%d") %>');
+      $("#ended_at").val('<%= @sale.ended_at.nil?? "" : @sale.ended_at.strftime("%Y-%m-%d") %>');
+      $("#started_at,#ended_at").removeAttr("disabled");
+  <% end %>
+    $("#disc_times").val("<%= @sale.everycar_times %>");
+    $("#disc_<%=@sale.disc_types  %>").val("<%= @sale.discount %>")
+<% end %>
+</script>

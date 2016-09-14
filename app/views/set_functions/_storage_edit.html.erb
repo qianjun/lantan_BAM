@@ -1,0 +1,12 @@
+<div class="popup_box">
+  <h1>编辑物料类别<a href="javascript:void(0);" class="close">关闭</a></h1>
+  <div class="popup_body">
+    <div class="popup_body_area">
+      <div class="brand"><span class="red">*</span>物料名称：
+        <input type="text" id="storage_edit_name" value="<%= @category.name %>" style="width:200px;"/></div>
+    </div>
+    <div class="btn_box">
+      <button class="confirm_btn" onclick="edit_storage_commit(<%= @category.id %>, <%= @category.store_id %>)">确定</button>
+    </div>
+  </div>
+</div>

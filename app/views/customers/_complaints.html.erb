@@ -1,0 +1,42 @@
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+  <thead>
+    <tr class="hbg">
+      <td>投诉时间</td>
+      <td>投诉理由</td>
+      <td>投诉要求</td>
+      <td>责任人</td>
+      <td>相关订单</td>
+      <td>处理结果</td>
+      <td>操作</td>
+    </tr>
+  </thead>
+  <tbody>
+    <% @complaints.each do |complaint| %>
+      <tr>
+        <td width="15%" class="wordBreak"><%= complaint.created_at.strftime("%Y-%m-%d %H:%M:%S") if complaint.created_at %></td>
+        <td width="15%" class="wordBreak"><%= complaint.reason.truncate(10) if complaint.reason%></td>
+        <td width="15%" class="wordBreak"><%= complaint.suggestion.truncate(10) if complaint.suggestion%></td>
+        <td width="14%" class="wordBreak"><%= @tech_orders[complaint.o_id].nil? ? "--" :@tech_orders[complaint.o_id] %>
+        </td>
+        <td width="16%" class="wordBreak">
+          <%= link_to "#{complaint.code}", "/orders/#{complaint.o_id}/order_info" ,
+            :remote => "true", "data-type" => "script", :class => "other_a" %>
+        </td>
+        <td width="15%" class="wordBreak"><%= complaint.remark.truncate(10) if complaint.remark %></td>
+        <td>
+          <%= link_to "详细", complaint_detail_store_complaint_path(params[:store_id], complaint.c_id), remote: :true, "data-type" => "script" %>
+          <% if complaint.status == true %>
+            <span style="padding:0 5px">已处理</span>
+          <% else %>
+            <% if permission?(:customers,:deal_complaint) %>
+              <%= link_to "处理", "/orders/#{complaint.c_id}_#{complaint.o_id}/order_staff?comp_page=#{params[:page]}" ,
+                :remote => "true", "data-type" => "script" %>
+            <% end %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<%=  will_paginate_remote(@complaints , "",
+  {:url => "/stores/#{@store.id}/customers/#{@customer.id}/complaints"}) %>

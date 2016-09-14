@@ -1,0 +1,29 @@
+<div style="display: none;">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_tab_table">
+    <thead>
+      <tr class="hbg">
+        <td>条形码</td>
+        <td>物料名称</td>
+        <td>物料类别</td>
+        <td>库存状态</td>
+        <td>库存量(个)</td>
+      </tr>
+    </thead>
+    <tbody id="low_materials_tbody">
+        <% @unsalable_materials.each do |um| %>
+      <tr id="material<%= um.id %>tr">
+        <td width="15%"><%= um.code %></td>
+        <td><%= um.name %></td>
+        <% a = @types.inject(Hash.new){|h,t|h[t.id]=t.name;h} %>
+        <td><%= a[um.category_id.to_i] %></td>
+        <% if um.storage>0 %>
+        <td>存货</td>
+        <% else %>
+        <td>缺货</td>
+        <% end %>
+        <td id="materialstorage<%= um.id %>td"><%= um.storage %></td>
+       </tr>
+        <% end %>
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,6 @@
+<div class="second_menu">
+  <a href="/stores/<%=params[:store_id]%>/complaints" <% if params[:action]=="index"%> class="hover"<%end%>>服务</a>
+  <%#*<a href="/stores/<%=params[:store_id]%>
+  <%#*/complaints/consumer_list" <% if params[:action]=="consumer_list" || params[:action]=="con_list"%>
+  <a href="/stores/<%=params[:store_id]%>/complaints/meta_analysis" <% if params[:action]=="meta_analysis"%> class="hover"<%end%>>汇总分析</a>
+</div> 

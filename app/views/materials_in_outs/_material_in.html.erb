@@ -1,0 +1,9 @@
+<tr id="<%= material_in[:mo_id] %>" class="<% unless @code_num %>newTr_red<% end %>">
+  <td class="mo_code"><%= material_in[:mo_code] %></td>
+  <td class="mat_code"><%= material_in[:mat_code] %></td>
+  <td class="mat_name"><%= material_in[:mat_name] %></td>
+  <td><%= material_in[:mat_unit] %></td>
+  <td><%= text_field_tag "print[#{material_in[:mat_id]}][print_code_num]", material_in[:mat_num], :class=> "mat_item_num", :style => 'width:50px' %></td>
+  <td><a href="javascript:void(0)" onclick="removeRow(this)">删除</a></td>
+  <%= hidden_field_tag "materials[#{material_in[:mat_id]}][mat_code]", material_in[:mat_code] %>
+</tr>

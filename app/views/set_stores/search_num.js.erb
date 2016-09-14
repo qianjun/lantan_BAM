@@ -1,0 +1,8 @@
+<% if @customers.length > 0 %>
+  $("#confirm_customer").html('<%= j(render :partial => "new_customer_list") %>');
+  $("#add_c_btn").css("display","")
+  $("#c_number").css("background-color","red");
+<%else%>
+  $("#c_number").css("background-color","chartreuse");
+  $("#c_number").attr("title","客户可用！");
+<%end%>

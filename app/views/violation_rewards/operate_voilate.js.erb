@@ -1,0 +1,7 @@
+<% if @violations.length >0  %>
+  $(<%=@voi.types ? "reward_span" : "voilate_span"%>).html(<%= @violations.length %>);
+  $(<%=@voi.types ? "reward_pannel" : "voilate_pannel"%>).html('<%= j(render :partial => '/staffs/operate_voilate',:object=>@violations) %>')
+<%else%>
+  $(<%=@voi.types ? "message_reward" : "message_voilate"%>).css("display","none");
+<%end%>
+tishi_alert('<%=@msg%>');

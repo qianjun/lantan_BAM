@@ -1,0 +1,90 @@
+<div class="main">
+  <div class="box">
+    <div class="data_box">
+      <div class="way_menu"><%= link_to "本月工资", store_current_month_salaries_path(@store) %> &gt; 工资详情</div>
+      <div class="staffDetails">
+        <ul>
+          <li><strong>姓名：</strong><%= @staff.name %></li>
+          <li><strong>部门：</strong><%= @departs[@staff.position] %></li>
+          <li><strong>职务：</strong><%= @departs[@staff.department_id] %></li>
+          <li><strong>等级：</strong><%= Staff::LEVELS[@staff.level] %></li>
+          <li><strong>基本工资：</strong><%= @staff.base_salary.round(2) %>元</li>
+          <li><strong>提成方式：</strong>金额/提成率</li>
+          <li><strong>本月订单：</strong><%= @salary_details.length %></li>
+          <li><strong>考核：</strong><%=100-((@score.nil?||@score.sys_score.nil?) ? 0 : @score.sys_score)%>分</li>
+          <li><strong>提成：</strong><%=@salary.nil? ? 0 : @salary.deduct_num.round(2)%>元</li>
+          <li><strong>扣款：</strong><%= @salary.nil? ? 0 : @salary.voilate_fee.round(2) %>元</li>
+          <% if @staff.type_of_w == Staff::S_COMPANY[:FRONT] %>
+            <li><strong>销售总额：</strong><%= @salary_details.map(&:price).compact.inject(0){|sum,n|sum+n}.round(2) %>元</li>
+          <%end%>
+        </ul>
+      </div>
+      <div class="search">
+        <div>统计时间：<%= @statistics_date %></div>
+      </div>
+      <div class="clear"></div>
+      <div class="data_body">
+        <div>
+          <div class="table_box_h">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+              <thead>
+                <tr class="hbg">
+                  <th width="10%">日期</th>
+                  <th width="25%">订单号</th>
+                  <th width="25%">项目</th>
+                  <th width="10%">数量</th>
+                  <th width="15%">总金额</th>
+                  <th width="15%">提成金额</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% unless @salary_details.blank? %>
+                  <% salary_detail = @salary_details[0] %>
+                  <tr>
+                    <td><%=salary_detail.created_at.nil? ? "" : salary_detail.created_at.strftime("%Y-%m-%d") %></td>
+                    <td><%=salary_detail.code %></td>
+                    <% prod = @order_prods[salary_detail.id][0] %>
+                    <td><%= prod.name.nil? ? "--" : prod.name %></td>
+                    <td><%= prod.pro_num.nil? ? "--" : prod.pro_num %></td>
+                    <td><%= (salary_detail.price.nil? ? 0 : salary_detail.price).round(2) %></td>
+                    <td><%=salary_detail.t_deduct.nil? ? 0 : salary_detail.t_deduct.round(2) 
+                    %>元</td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+          <div class="table_box">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+              <thead>
+                <tr class="hbg">
+                  <th width="10%">日期</th>
+                  <th width="25%">订单号</th>
+                  <th width="25%">项目</th>
+                  <th width="10%">数量</th>
+                  <th width="15%">总金额</th>
+                  <th width="15%">提成金额</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @salary_details.each do |salary_detail| %>
+                  <tr>
+                    <td><%=salary_detail.created_at.nil? ? "" : salary_detail.created_at.strftime("%Y-%m-%d") %></td>
+                    <td><%=salary_detail.code %></td>
+                    <% prod = @order_prods[salary_detail.id][0] %>
+                    <td><%= prod.name.nil? ? "--" : prod.name %></td>
+                    <td><%= prod.pro_num.nil? ? "--" : prod.pro_num %></td>
+                    <td><%= (salary_detail.price.nil? ? 0 : salary_detail.price).round(2) %></td>
+                    <td><%= salary_detail.t_deduct.nil? ? 0 : salary_detail.t_deduct.round(2)
+                    %>元</td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="foot"><p>Copyright © 2013 杭州鼎洪 版权所有</p></div>

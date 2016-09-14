@@ -1,0 +1,32 @@
+<% if @type == 0 %>
+  <ul>
+    <% (@search_materials || []).each do |m| %>
+      
+      <li><%= check_box_tag "mat_#{m.id}",m.storage,false,{:onclick=>"select_material(this,'#{m.name}',
+      '#{m.cname}',#{@type})"} %><%= m.name %></li>
+    <% end %>
+  </ul>
+<% elsif @type == 1 %>
+  <ul>
+    <% (@search_materials || []).each do |m| %>
+    <%
+      id = m.is_a?(Hash) ? m["id"] : m.id
+      storage = m.is_a?(Hash) ? m["storage"].to_i : m.storage.to_i
+      name = m.is_a?(Hash) ? m["name"] : m.name
+      types = m.is_a?(Hash) ? m["types"] : m.cname
+      #code = m.is_a?(Hash) ? m["code"] : m.code
+      #cost_price = m.is_a?(Hash) ? m["cost_price"] : m.price
+      #sale_price = m.is_a?(Hash) ? m["sale_price"] : m.sale_price
+    %>
+      <li><%= check_box_tag "mat_#{id}",storage.to_i,false,{:onclick=>"select_order_material(this,
+      '#{types}',#{m.to_json})"} %><label><%= name %></label</li>
+    <% end %>
+  </ul>
+<% elsif @type==2 %>
+<ul>
+    <% (@search_materials || []).each do |m| %>
+      <li><%= check_box_tag "mat_#{m.id}",m.storage,false,{:onclick=>"select_print_material(this,'#{m.name}',
+      '#{m.cname}')",:alt => m.code, :class =>'print_mat', 'data-unit' => m.unit || ""} %><%= m.name %></li>
+    <% end %>
+  </ul>
+<% end %>

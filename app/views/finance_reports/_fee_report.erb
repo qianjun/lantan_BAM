@@ -1,0 +1,53 @@
+<div class="h_finnace_title" id="finnace_title">
+  <ul>
+    <li>总金额：<span><%= @fees.map(&:t_amount).inject(0){|sum,n|sum+n}.round(2)%></span></li>
+    <%@fees.group_by{|i|i.types}.each do |k,v|%>
+      |<li><%=Fee::FEE_TAB[k]%>：<span><%= v.map(&:t_amount).inject(0){|sum,n|sum+n}.round(2)%></span></li>
+    <%end%>
+  </ul>
+</div>
+<div>
+  <div class="table_box_h">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+      <thead>
+        <tr class="hbg">
+          <td width="30px">日期</td>
+          <td width="30px">费用类别</td>
+          <td width="40px">金额</td>
+        </tr>
+      </thead>
+      <tbody>
+        <%unless @fees.blank? %>
+          <%fee= @fees[0] %>
+          <tr>
+            <td><%= fee.date %></td>
+            <td><%= Fee::FEE_TAB[fee.types] %></td>
+            <td><%= fee.t_amount%></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <div class="table_box">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+      <thead>
+        <tr class="hbg">
+          <td width="30px">日期</td>
+          <td width="30px">费用类别</td>
+          <td width="40px">金额</td>
+        </tr>
+      </thead>
+      <tbody>
+        <%unless @fees.blank? %>
+          <% @fees.each do |fee| %>
+            <tr>
+              <td><%= fee.date %></td>
+              <td><%= Fee::FEE_TAB[fee.types] %></td>
+              <td><%= fee.t_amount%></td>
+            </tr>
+          <% end %>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

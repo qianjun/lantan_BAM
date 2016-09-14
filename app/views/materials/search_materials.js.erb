@@ -1,0 +1,28 @@
+<% if @material_ins %>
+  <% if @material_ins.empty? %>
+    $("#ruku_tab .search_result_mat").html("查询结果为空！");
+  <% else %>
+    mat_in_list = $("#ruku_tab .mat-out-list");
+    $("#ruku_tab .search_result_mat").html("");
+    <% @material_ins.each do |mi| %>
+      if(mat_in_list.find("#<%= mi[:mo_id] %>").length > 0){
+      mat_in_list.find("#<%= mi[:mo_id] %>").remove();
+      }
+    <% end %>
+
+    mat_in_list.append('<%= escape_javascript(render :partial => '/materials_in_outs/batch_mat_in') %>');
+  <% end %>
+
+<% else %>
+  <% if @tab_name=="materials" %>
+    $("#kucunliebiao").html('<%= escape_javascript(render :partial => '/materials/page_materials') %>');
+<% elsif @tab_name == "material_losses_materials" %>
+$("#mat_loss_search_result").html('<%= escape_javascript(render :partial => '/materials/mat_loss_search_result') %>');
+  <% elsif @tab_name=="material_losses"%>
+    $("#page_materails_losses").html('<%= escape_javascript(render :partial => 'materials/materials_losses') %>');
+  <% elsif @tab_name=="in_records" %>
+    $("#page_in_records").html('<%= escape_javascript(render :partial => '/materials/in_records') %>');
+  <% elsif @tab_name=="out_records" %>
+    $("#page_out_records").html('<%= escape_javascript(render :partial => '/materials/out_records') %>');
+  <% end %>
+<% end %>

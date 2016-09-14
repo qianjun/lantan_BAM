@@ -1,0 +1,44 @@
+<div class="main">
+  <div class="box">
+    <div class="data_box">
+      <div class="data_menu">
+        <% if permission?(:base_datas, :new_station_data) %><%= link_to "新建工位", new_store_station_data_path(@store), remote: :true, "data-type" => 'script', :class =>"add_btn" %><% end %></div>
+      <div class="clear"></div>
+      <div class="data_body">
+        <div class="station-data">
+          <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+            <thead>
+              <tr class="hbg">
+                <th>工位编号</th>
+                <th>名称</th>
+                <th>可施工服务</th>
+                <th>工位状态</th>
+                <th>是否有工控机</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @stations.each do |station| %>
+                <tr>
+                  <td width =150"><%= station.code %></td>
+                  <td width =180"><%= station.name %></td>
+                  <td width =200"><%= station.products.where(["status = ?", Product::IS_VALIDATE[:YES]]).map(&:name).join("、") %></td>
+                  <td width =150"><%= Station::STAT_NAME[station.status] %></td>
+                  <td width =100"><%= station.is_has_controller ? "有" : "无" %></td>
+                  <td><% if permission?(:base_datas, :edit_station_data) %><%= link_to "编辑", edit_store_station_data_path(@store, station), remote: :true, "data-type" => 'script' %><% end %>
+                      <% if permission?(:base_datas, :del_station_data) %><%= link_to "删除", "/stores/#{@store.id}/station_datas/#{station.id}",remote: :true, "data-type" => 'script',  :confirm => "确定需要删除工位吗？", :method => 'delete' %><% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+          <%= will_paginate @stations, :class => "pageTurn", :previous_label => "上一页",
+            :next_label => "下一页"  unless @stations.empty?%>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="mask"></div>
+<div class="tab_popup" id="station_div" style="display:none;">
+</div>

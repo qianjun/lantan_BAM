@@ -1,0 +1,35 @@
+<div class="item">
+  <label><span class='red'>*</span>物料名称：</label>
+  <input type="text" name="material[name]" id="material_name" value="<%=material.name %>" onkeyup="set_default_value(this,'#prod_name');" />
+</div>
+<div class="item">
+  <label><span class='red'>*</span>物料类型：</label>
+  <select name="material[category_id]" id="material_category_id">
+    <% @cates[Category::TYPES[:material]].each do |k, v| %>
+      <option value="<%= k %>"><%= v %></option>
+    <% end %>
+  </select>
+</div>
+<div class="item">
+  <label><span class='red'>*</span>零售价：</label>
+  <%= text_field_tag 'material[sale_price]', nil,:onkeyup=>"set_default_value(this,'#base_price,#sale_price');" %>
+</div>
+
+<div class="item">
+  <label><span class='red'>*</span>规格：</label>
+  <%= text_field_tag 'material[unit]', material.unit,  :placeholder => "件",:onkeyup=>"set_default_value(this,'#standard');" %>
+</div>
+<div class="item">
+  <label>是否上架：</label><input name="material[create_prod]" id="create_prod" type="checkbox" value="0" onclick='$("#c_prod").css("display",this.checked ? "block" : "none");this.value=this.checked ? 1 : 0;' />
+</div>
+<div class="item">
+  <label><input type="radio" name="material[ifuse_code]" class="new_code" value="0" checked="checked" onclick="enableNextInput(this, false)" />自动生成条码：</label>
+</div>
+
+<div class="item" id="ifuse_code" style="float: right">
+  <label><input type="radio" name="material[ifuse_code]" class="old_code" value="1" onclick="enableNextInput(this, true)"/>使用已有条码：</label>
+  <input name="material[code_value]" id="use_existed_code" value="<%= material.try(:code) %>" disabled="true" type="text"/>
+</div>
+<div class="item_textarea">
+  <label>物料清单：</label><textarea name="material[detailed_list]" id="detailed_list" cols="" rows="" class="width_textarea"><%= %></textarea>
+</div>

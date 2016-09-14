@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>客户管理</title>
+    <%= stylesheet_link_tag    "application" %>
+    <%= javascript_include_tag "application" %>
+    <script type="text/javascript" src="/assets/My97DatePicker/WdatePicker.js" ></script>
+    <script type="text/javascript" src="/assets/stations.js" ></script>
+    <script type="text/javascript" src="/assets/customers.js" ></script>
+    <script type="text/javascript" src="/assets/customers2.js" ></script>
+    <script type="text/javascript" src="/assets/messages.js" ></script>
+    <%= csrf_meta_tags %>
+    <!--[if IE 6]>
+    <script src="/assets/DD_belatedPNG_0.0.8a-min.js"></script>
+    <script>
+      DD_belatedPNG.fix('*');
+    </script>
+    <![endif]-->
+  </head>
+
+  <body>
+    <div class="head">
+      <div class="box">
+        <%= render :partial => "/common/login_header" %>
+        <div class="nav">
+          <ul>
+            <li><a href="/stores/<%= @store.id %>/customers" <% if controller.controller_name=="customers" %>class="hover"<% end %>>客户列表</a></li>
+             <% if permission?(:customers, :revisit_all) %><li><a href="/stores/<%= @store.id %>/revisits" <% if controller.controller_name=="revisits" %>class="hover"<% end %>>客户回访</a></li><% end %>
+            <% if permission?(:customers, :group_msg) %><li><a href="/stores/<%= @store.id %>/messages" <% if controller.controller_name=="messages" %>class="hover"<% end %>>群发短信</a></li><% end %>
+          </ul>
+        </div>
+        <div class="back"><a href="/stores/<%= @store.id %>/welcomes" title="返回">Back</a>客户管理</div>
+      </div>
+    </div>
+    <div class="main">
+      <%= yield %>
+    </div>
+    <div class="foot"><p>Copyright © 2013 杭州鼎洪 版权所有</p></div>
+    <div class="mask"></div>
+    <div class="maskOne"></div>
+    <%= render :partial => "/shared/tishi_alert" %>
+  </body>
+</html>

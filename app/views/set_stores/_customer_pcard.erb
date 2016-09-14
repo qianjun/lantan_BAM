@@ -1,0 +1,34 @@
+<%  unless @pcard.blank? %>
+  <div class="pcard_card" ><span> 套 餐 卡 区</span></div>
+  <% @pcard.each do |card| %>
+    <div class="card_list">
+      <div class="card_register">
+        <div class="order_card">
+          <ul>
+            <li><%=card[:name]%></li>
+            <li class="di_downUp" id="<%=card[:types]%>_<%=card[:c_id]%>" onclick="$('#table_<%=card[:types]%>_<%=card[:c_id]%>').slideToggle(2000,show_hihglight(this))">
+              <span class="highlight">↓</span><span>↑</span></li>
+          </ul>
+        </div>
+        <div id="table_<%=card[:types]%>_<%=card[:c_id]%>">
+          <table  width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+            <tr class="fws">
+              <td>项目名称</td>
+              <td>剩余次数</td>
+              <td>操作</td>
+            </tr>
+            <% card[:content].each do |con| %>
+              <% if @prod[con[0].to_i] %>
+                <tr id="<%=card[:c_id]%>_<%=card[:types]%>_<%=con[0]%>">
+                  <td><%=con[1]%></td>
+                  <td><%=con[2]%></td>
+                  <td id="<%=con[0]%>"><input type="checkbox" value="<%=@prod[con[0].to_i]%>_<%=con[2]%>" onclick="add_prod(this)" /></td>
+                </tr>
+              <%end%>
+            <%end%>
+          </table>
+        </div>
+      </div>
+    </div>
+  <%end%>
+<%end%>

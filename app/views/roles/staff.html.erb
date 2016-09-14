@@ -1,0 +1,38 @@
+<div class="data_box">
+  <% if permission?(:base_datas, :role_conf) || permission?(:base_datas, :role_set) %>
+  <div class="second_menu">
+    <% if permission?(:base_datas, :role_conf) %><a href="/stores/<%= params[:store_id] %>/roles">权限配置</a><% end %>
+    <% if permission?(:base_datas, :role_set) %><a href="/stores/<%= params[:store_id] %>/roles/staff" class="hover">用户设定</a><% end %>
+  </div>
+  <% end %>
+  <div class="search">
+    <div><label>姓名：</label><%= text_field_tag "name",""%></div>
+    <div><button class="search_btn" onclick="search_staff('<%= params[:store_id] %>')">查询</button></div>
+  </div>
+  <div class="clear"></div>
+  <div class="data_body">
+    <div id="role_staffs">
+        <%= render :partial => "roles/role_staff" %>
+    </div>
+  </div>
+</div>
+<div class="mask"></div>
+<div class="tab_popup" style="display: none;" id="set_role">
+  <div class="popup_box">
+    <h1>角色设定<a href="javascript:void(0);" onclick="hide_mask('#set_role');" class="close">关闭</a></h1>
+    <div class="popup_body">
+      <div class="popup_body_area">
+        <div class="groupFunc_b">
+          <ul>
+            <% (@roles || []).each do |role| %>
+                <li>
+                  <%= check_box_tag "check_role_#{role.id}",role.id,false %><%= role.name %>
+                </li>
+            <% end %>
+          </ul>
+        </div>
+      </div><%= hidden_field_tag "staff_id_h","" %>
+      <div class="btn_box"><button class="confirm_btn" onclick="reset_role('<%= params[:store_id] %>')">确定</button></div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,32 @@
+<%= stylesheet_link_tag    "application" %>
+<%= javascript_include_tag "application"%>
+<script type="text/javascript" src="/assets/My97DatePicker/WdatePicker.js" ></script>
+<script type="text/javascript" src="/assets/stored_cards.js" ></script>
+<div>
+   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+       <thead>
+            <tr class="hbg">
+              <td>单号</td>
+              <td>日期</td>
+              <td>内容</td>
+              <td>收入（元）</td>
+              <td>支出（元）</td>
+              <td>总店未支付储值卡余额（元）</td>
+            </tr>
+        </thead>
+        <tbody>
+          <% @svc_returns.each do |svc_return| %>
+            <tr>
+              <td>
+                <%= svc_return.code %></td>
+              <td><%= svc_return.created_at.strftime("%Y.%m.%d--%H:%M") %></td>
+              <td><%= svc_return.content %></td>
+              <td><%= svc_return.price if svc_return.types == SvcReturnRecord::TYPES[:IN] %></td>
+              <td><%= "-"+svc_return.price.to_s if svc_return.types == SvcReturnRecord::TYPES[:OUT] %></td>
+              <td><%= svc_return.total_price %></td>
+            </tr>
+          <% end %>
+        </tbody>
+  </table>
+  <div class="amount">总店未支付储值卡余额  总计：<%= @svc_returns.last.nil? ? 0 : sprintf('%.2f',@svc_returns.last.total_price) %>（元）</div>
+</div>

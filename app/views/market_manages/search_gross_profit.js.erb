@@ -1,0 +1,6 @@
+<% if @flag == "product" %>
+  $("#search_gross_profit").html("<%= j(render :partial => 'gross_product_profit') %>")
+<% else %>
+  $("#search_gross_profit").html("<%= j(render :partial => 'gross_order_profit') %>")
+<% end %>
+$("#total_gross_price").text(<%= @toal_gross_price %>)

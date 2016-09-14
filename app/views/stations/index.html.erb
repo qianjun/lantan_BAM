@@ -1,0 +1,100 @@
+<%= javascript_include_tag "/assets/stations.js" %>
+<meta http-equiv="refresh" content="300" />
+<div class="data_box">
+  <div class="data_body">
+    <div class="siteBox site_pay">
+      <h1>等待付款</h1>
+      <% @waiting_pay.each do |key,wait| %>
+        <div class="site_list">
+          <span class="site_name"><%= @staffs[key] %></span>
+          <ul>
+            <%@waiting_pay[key].each do |num|%>
+              <li><%= link_to "#{num.num}", "/orders/#{num.order_id}/order_info" ,
+                  :remote => "true", "data-type" => "script", :class => "other_a" %></li>
+            <% end unless @waiting_pay[key].blank? %>
+          </ul>
+        </div>
+      <% end  unless @waiting_pay.blank?%>
+    </div>
+    <div class="siteBox site_work">
+      <h1>等待施工</h1>
+      <% @wait_operate.each do |key,wait| %>
+        <div class="site_list">
+          <span class="site_name"><%= @staffs[key] %></span>
+          <ul>
+            <%@wait_operate[key].each do |num|%>
+              <li><%= link_to "#{num.num}", "/orders/#{num.order_id}/order_info" ,
+                  :remote => "true", "data-type" => "script", :class => "other_a" %></li>
+            <% end unless @wait_operate[key].blank? %>
+          </ul>
+        </div>
+      <% end  unless @wait_operate.blank?%>
+    </div>
+    <div class="siteBox site_info">
+      <h1>工位情况</h1>
+      <div class="site_list" id="station_infos">
+        <% unless  @stations.blank?%>
+          <input type="hidden" id="t_status" value="0" />
+          <% @stations.each do |station| %>
+            <div class="site_station" id="<%=station.id%>">
+              <h3 style ="cursor: pointer;" onclick="collect_info(<%= params[:store_id] %>,<%=station.id%>)">工位: <%= station.name %>
+                <span class="countTime" id="time_<%=station.id  %>"></span></h3>
+              <div class="site_m" id="site_<%= station.id %>" style="display:none">
+                <div class="close" onclick="$(this).parent().css('display','none')">关闭</div>
+                <div class="site_table" id="table_<%= station.id %>">
+                  <div class="site_tdThead"><span>&nbsp;</span><span>日</span><span>月</span></div>
+                  <div class="site_tdTbody"id="water_<%=station.id%>">
+                    <span class="site_tdTbody_bt" >水(m³)</span><span>0</span><span>0</span></div>
+                  <div class="site_tdTbody" id="gas_<%= station.id %>">
+                    <span class="site_tdTbody_bt" >气(m³)</span><span>0</span><span>0</span></div>
+                  <div class="site_tdTbody" id="num_<%= station.id %>">
+                    <span class="site_tdTbody_bt" >施工(台)</span><span>0</span><span>0</span></div>
+                </div>
+              </div>
+              <% if  station.status== Station::STAT[:LACK]%>
+                <div class="siteCar wrong_station" title="查看水、气、施工情况"><%=Station::STAT_NAME[station.status] %></div>
+              <% elsif station.status== Station::STAT[:WRONG] %>
+                <div class="siteCar wrong_station" title="查看水、气、施工情况"><%=Station::STAT_NAME[station.status]%></div>
+              <% elsif station.status== Station::STAT[:NO_SERVICE] %>
+                <div class="siteCar wrong_station" title="查看水、气、施工情况"><%=Station::STAT_NAME[station.status]%></div>
+              <%elsif @staff_ids[station.id].nil?%>
+                <div class="siteCar free_station" title="查看水、气、施工情况">空闲</div>
+                <p>技师：暂无技师，<a href="/stores/<%=params[:store_id]%>/stations/show_detail" target="_blank">请分配</a></p>
+              <%elsif  @nums[station.id].nil? %>
+                <div class="siteCar free_station" title="查看水、气、施工情况">空闲</div>
+                <% s_id = @staff_ids[station.id] %>
+                <div class="site_teacher" title="<%= @staff_ids[station.id] %>">技师：<%= truncate_u(@staff_ids[station.id],8,"...") %></div>
+              <% else %>
+                <% s_id = @staff_ids[station.id] %>
+                <div class="siteCar" title="查看水、气、施工情况" onclick="request_order(<%= @nums[station.id][1] %>)"><%=  @nums[station.id][0]  %></div>
+                <div class="site_teacher" title="<%= @staff_ids[station.id] %>">技师：<%= truncate_u(@staff_ids[station.id],8,"...") %></div>
+                <%time = @times[station.id].nil? ? 0 : @times[station.id].to_i %>
+                <script type="text/javascript">
+                  time<%=station.id  %> = <%=  time%>
+                  if (<%=  time%><=0){
+                    $("#time_"+<%= station.id %>).html("时间到");
+                  }else{
+                    $("#time_"+<%= station.id %>).html('<%= (time/60 >=10 ? "#{time/60}:" : "0#{time/60}:")+(time%60 >=10 ? "#{time%60}" : "0#{time%60}")%>');
+                  }
+                  setInterval(function(){
+                    time<%=station.id  %> -= 1;
+                    if (parseInt(time<%=station.id  %>)<=0){
+                      $("#time_"+<%= station.id %>).html("时间到")
+                    }else{
+                      munite<%=station.id%> = parseInt((time<%=station.id  %>)/60)>=10 ? parseInt((time<%=station.id  %>)/60) : "0"+parseInt((time<%=station.id  %>)/60);
+                      seconds<%=station.id%> = parseInt((time<%=station.id  %>)%60)>=10 ? parseInt((time<%=station.id  %>)%60) : "0"+parseInt((time<%=station.id  %>)%60);
+                      $("#time_"+<%= station.id %>).html((munite<%=station.id%>)+":"+(seconds<%=station.id%>));
+                    }
+                  },1000)
+                </script>
+              <% end %>
+            </div>
+          <%end%>
+        <%else%>
+          <%= "暂未创建工位信息" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="related_order_div"></div>

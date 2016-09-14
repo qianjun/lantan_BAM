@@ -1,0 +1,81 @@
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+  <thead>
+    <tr class="hbg">
+      <td><input type="checkbox" value="全选" onclick='set_value(this)' /></td>
+      <td>订单号</td>
+      <td>消费日期</td>
+      <td width="20%">消费项目</td>
+      <td>总价（元）</td>
+      <td>优惠（元）</td>
+      <td>成交（元）</td>
+      <td width="8%">付款方式</td>
+      <td>满意度</td>
+      <td>开发票</td>
+      <td>状态</td>
+      <td width="5%">操作</td>
+    </tr>
+  </thead>
+  <tbody>
+    <% @orders.each do |order| %>
+      <tr>
+        <td><input type="checkbox" id="line_<%= order.id %>" value="<%= order.id %>" /></td>
+        <td><%= link_to "#{order.code}", "/orders/#{order.id}/order_info" ,
+            :remote => "true", "data-type" => "script", :class => "other_a" %></td>
+        <td><%= order.created_at.strftime("%Y-%m-%d %H:%M:%S") %></td>
+        <td>
+          <table width="100%" border="0" cellspacing="1" cellpadding="0" class="s_table">
+            <tr class="fws">
+              <td width="50%">名称</td>
+              <td width="25%">单价</td>
+              <td width="25%">数量</td>
+            </tr>
+            <% @product_hash[order.id].each do |p| %>
+              <tr>
+                <td><%= p.name %></td>
+                <td><%= p.price %></td>
+                <td><%= p.pro_num %></td>
+              </tr>
+            <% end if @product_hash[order.id] %>
+          </table>
+        </td>
+        <% loss = limit_float(@pay_types[order.id].nil? ? 0 : @pay_types[order.id].select{|k,v|OrderPayType::LOSS.include? k}.values.inject(0){|sum,n|sum+n}) %>
+        <%  fact = limit_float(order.price>loss ? order.price-loss : 0)%>
+        <td><%= order.price %></td>
+        <td><%= loss %></td>
+        <td><%= fact%></td>
+        <td><%= @order_pay_type[order.id].nil? ? "" : @order_pay_type[order.id].join(",") %></td>
+        <td><%= Order::IS_PLEASED_NAME[order.is_pleased] %></td>
+        <td><%= order.is_billing ? "是" : "否" %></td>
+        <td><%= Order::RETURN[order.return_types]%></td>
+        <td>
+          <% if permission?(:customers, :revisit) %>
+            <a href="javascript:void(0)"
+               onclick="javascript:customer_revisit(<%= order.id %>, <%= @customer.id %>)">回访</a>
+               <% if (order.status == Order::STATUS[:BEEN_PAYMENT] || order.status == Order::STATUS[:FINISHED]) &&
+                   order.return_types == Order::IS_RETURN[:NO] && @product_hash[order.id] %>
+                 <% if @product_hash[order.id][0].item_types == 4  %>
+                <a href="javascript:void(0)" onclick="tishi_alert('请到储值卡收支记录退卡');">退单</a>
+              <%elsif @product_hash[order.id][0].item_types == 2  %>
+                <a href="javascript:void(0)" onclick="tishi_alert('请到套餐卡记录退卡');">退单</a>
+              <%else%>
+                <a href="javascript:void(0)" onclick="return_order(<%= order.id %>, <%= @customer.id %>)">退单</a>
+              <% end %>
+            <% end %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<% if params[:car_num_id] %>
+ <%=  will_paginate_remote(@orders , "",
+    {:url => "/stores/#{@store.id}/customers/#{@customer.id}/order_prods?car_num_id=#{params[:car_num_id].to_i}"}) %>
+<%else%>
+  <%=  will_paginate_remote(@orders , "",
+    {:url => "/stores/#{@store.id}/customers/#{@customer.id}/order_prods"}) %>
+<%end%>
+<script type="text/javascript">
+  function set_value(e){
+    $("input[id^='line']").attr('checked',e.checked)
+  }
+</script>

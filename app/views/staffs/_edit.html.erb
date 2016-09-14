@@ -1,0 +1,125 @@
+<div class="tab_popup" style="display:none;" id="edit_staff_area">
+  <div class="popup_box">
+    <h1>编辑员工<a href="javascript:void(0)" class="close">关闭</a></h1>
+    <%= form_for(@staff, :url => store_staff_path(@store, @staff), :html => {:method => :put, :multipart => true, "data-type" => 'script'}, :remote => true) do |f| %>
+      <div class="popup_body">
+        <div class="popup_body_area">
+          <div class="item">
+            <label><span class="red">*</span>姓名：</label>
+            <%= f.text_field :name %>
+          </div>
+          <div class="item">
+            <label>性别：</label>
+            <%= f.radio_button :sex, Constant::SEX[:MALE], :checked => f.object.sex ?  true : false %> 男&nbsp;&nbsp;
+            <%= f.radio_button :sex, Constant::SEX[:FEMALE], :checked => f.object.sex ? false : true %> 女
+          </div>
+          <div class="item">
+            <label>部门：</label>
+            <select name="staff[position]" id="staff_position" onchange="load_work();">
+              <%@departs[Department::TYPES[:DEPARTMENT]].each do |pos|%>
+                <option value="<%= pos[0] %>"<% if f.object.position==pos[0] %>selected<%end%>><%= pos[1].name %></option>
+              <%end if @departs[Department::TYPES[:DEPARTMENT]]%>
+            </select>
+          </div>
+          <div class="item">
+            <label>职务：</label>
+            <select name="staff[department_id]" id="staff_department_id">
+              <option value="" style="display:none">请选择</option>
+              <%@departs[Department::TYPES[:POSITION]].each do |pos|%>
+                <option value="<%= pos[0] %>" id="<%=pos[1].dpt_id%>"
+                        <% if f.object.position != pos[1].dpt_id %>style="display:none"<%elsif f.object.department_id==pos[0] %>selected<%end%>><%= pos[1].name %></option>
+                      <%end if @departs[Department::TYPES[:POSITION]]%>
+            </select>
+          </div>
+          <div class="item">
+            <label>类别：</label>
+            <%= f.select :type_of_w, Staff::N_COMPANY.invert %>
+          </div>
+          <div class="item">
+            <label>教育程度：</label>
+            <%= f.select :education, Staff::N_EDUCATION.invert %>
+          </div>
+          <div class="item">
+            <label>等级：</label>
+            <%= f.select :level, Staff::LEVELS.invert %>
+          </div>
+          <div class="item">
+            <label>员工状态：</label>
+            <%= f.select :working_stats, Staff::S_WORKING_STATS.invert %>
+          </div>
+          <div class="item">
+            <label>实习时长(天):</label>
+            <%= f.text_field :probation_days, :disabled => f.object.working_stats == 1 ? true : false %>
+          </div>
+          <div class="item">
+            <label><span class="red" style="display:none">*</span>实习薪资：</label>
+            <%= f.text_field :probation_salary, :disabled => f.object.working_stats == 1 ? true : false %>
+          </div>
+          <div class="item">
+            <label><span class="red">*</span>正式薪资：</label>
+            <%= f.text_field :base_salary %>
+          </div>
+          <div class="item">
+            <label>出生年月：</label>
+            <%= f.text_field :birthday, :class => "Wdate", :readonly => true, :onClick => "WdatePicker();",
+              :value => f.object.birthday.nil? ? "" : f.object.birthday.strftime("%Y-%m-%d") %>
+          </div>
+          <div class="item">
+            <label><span class="red">*</span>联系方式：</label>
+            <%= f.text_field :phone %>
+          </div>
+          <div class="item">
+            <label>籍贯：</label>
+            <%= f.text_field :hometown %>
+          </div>
+          <div class="item">
+            <label><span class="red">*</span>身份证号：</label>
+            <%= f.text_field :id_card %>
+          </div>
+          <div class="item">
+            <label>民族：</label>
+            <%= f.text_field :nation %>
+          </div>
+          <div class="item">
+            <label>政治面貌：</label>
+            <%= f.text_field :political %>
+          </div>
+          <div class="item">
+            <label><span class="red">*</span>地址：</label>
+            <%= f.text_field :address %>
+          </div>
+          <div class="item">
+            <label>是否提成：</label>
+            <%= f.check_box :is_deduct, :value => 1, :checked => true %>
+          </div>
+          <div class="item">
+            <label>社保扣款：</label>
+            <%= f.text_field :secure_fee %>
+          </div>
+          <div class="item">
+            <label>补贴金额：</label>
+            <%= f.text_field :reward_fee %>
+          </div>
+          <div class="item">
+            <label>按考核分发底薪：</label>
+            <%= f.check_box :is_score_ge_salary, :value => 1 %>
+          </div>
+          <div class="item_textarea">
+            <label>上传照片：</label><%= f.file_field :photo, :class => "file" %>
+            <% if !f.object.photo.nil? %>
+              <span class="show_pic"><%= image_tag "#{f.object.photo}" %>
+              <% end %>
+            </span>
+          </div>
+          <div class="item">
+            <label>登录系统：</label>
+            <input type="checkbox" name="is_access" value="1" <% unless @staff.encrypted_password.nil? %> checked<%end%> />
+          </div>
+        </div>
+        <div class="btn_box">
+          <button class="confirm_btn" id="edit_staff_btn" type="button">编辑</button></div>
+        <div class="clear"></div>
+      </div>
+    <% end %>
+  </div>
+</div>

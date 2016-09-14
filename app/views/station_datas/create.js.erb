@@ -1,0 +1,8 @@
+<% if @status==2 %>
+tishi_alert("新建失败，已有同编号的工控机!");
+<% elsif @status==0 %>
+tishi_alert("新建失败!");
+<% else %>
+window.location.href="/stores/<%= @store.id %>/station_datas";
+tishi_alert("新建成功!");
+<% end %>

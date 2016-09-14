@@ -1,0 +1,6 @@
+<label>车牌：</label>
+<select  id="customer_orders" onchange="change_order(<%=params[:store_id]%>)">
+  <% @orders.each do |k,v| %>
+    <option id="<%= "#{k[:c_id]}_#{k[:n_id]}" %>"><%= k[:c_num] %></option>
+  <% end %>
+</select>

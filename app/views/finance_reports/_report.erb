@@ -1,0 +1,111 @@
+<div class="h_finnace_title">
+  <ul>
+    <li><%= "收入共：<span>#{@p_orders.length}</span>笔&nbsp&nbsp".html_safe %></li>
+    <li><%= "金额统计：<span>#{@p_orders.map(&:price).compact.inject(0){|num,p|num+p}.round(2)}</span>&nbsp&nbsp".html_safe %></li>
+    <% if  @order_price
+      if @order_price[Product::PROD_TYPES[:PRODUCT]]
+        product = @order_price[Product::PROD_TYPES[:PRODUCT]].values.compact.inject(0){|num,p|num+p}
+      else
+        product = 0
+      end
+      if @order_price[Product::PROD_TYPES[:SERVICE]]
+        service = @order_price[Product::PROD_TYPES[:SERVICE]].values.compact.inject(0){|num,p|num+p}
+      else
+        service = 0
+      end
+    else
+      product = 0
+      service = 0
+    end
+  %>
+    <li><%= "产品统计：<span>#{product.round(2)}</span>&nbsp&nbsp".html_safe %></li>
+    <li><%= "服务统计：<span>#{service.round(2)}</span>&nbsp&nbsp".html_safe %></li>
+    <%=  @pays.select{|k,v| OrderPayType::FINCANCE_TYPES.keys.include? k}.map{|k,v| "<li>#{OrderPayType::PAY_TYPES_NAME[k]}:<span>#{v.to_f.round(2)}</span></li>"}.join("&nbsp&nbsp").html_safe %>
+    <li>优惠：<span><%= @pays.select{|k,v| !OrderPayType::FINCANCE_TYPES.keys.include? k}.values.compact.inject(0){|sum,n|sum+n}.round(2)%></span></li>
+  </ul>
+</div>
+<%unless @orders.blank? %>
+  <div class="table_box_h">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+      <thead>
+        <tr class="hbg">
+          <td width="20%">单号</td>
+          <td width="10%">客户</td>
+          <td width="10%">服务金额</td>
+          <td width="15%">商品金额</td>
+          <td width="10%">优惠</td>
+          <td width="20%">付款方式</td>
+          <td width="10%">小计</td>
+        </tr>
+      </thead>
+      <tbody>
+        <%unless @orders.blank? %>
+          <%order = @orders[0]%>
+          <tr>
+            <td><%= link_to "#{order.code}", "/orders/#{order.id}/order_info" ,
+                :remote => "true", "data-type" => "script", :class => "other_a" %></td>
+            <td><%= order.c_name %></td>
+            <% service = @order_price[Product::PROD_TYPES[:SERVICE]]
+            service_price = (service && service[order.id] ? service[order.id] : 0).round(2)
+          %>
+            <td><%= service_price %></td>
+            <% product = @order_price[Product::PROD_TYPES[:PRODUCT]]
+            product_price = (product && product[order.id] ? product[order.id] : 0).round(2)
+          %>
+            <td><%= product_price %></td>
+            <% pay_types = @pay_types[order.id]
+            reward = pay_types.nil? ? 0 : pay_types.select{|k,v| !OrderPayType::FINCANCE_TYPES.keys.include? k}.values.compact.inject(0){|num,p|num+p}.round(2)
+          %>
+            <td><%= reward %></td>
+            <td><%= pay_types.nil? ? "--" : pay_types.select{|k,v| OrderPayType::FINCANCE_TYPES.keys.include? k}.map{|k,v|"#{OrderPayType::PAY_TYPES_NAME[k]}"}.join("、") %></td>
+            <td><%= (service_price+product_price-reward).round(2) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="table_box">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+      <thead>
+        <tr class="hbg">
+          <td width="20%">单号</td>
+          <td width="10%">客户</td>
+          <td width="10%">服务金额</td>
+          <td width="15%">商品金额</td>
+          <td width="10%">优惠</td>
+          <td width="20%">付款方式</td>
+          <td width="10%">小计</td>
+        </tr>
+      </thead>
+      <tbody>
+        <%unless @orders.blank? %>
+          <% @orders.each do |order| %>
+            <tr>
+              <td><%= link_to "#{order.code}", "/orders/#{order.id}/order_info" ,
+                  :remote => "true", "data-type" => "script", :class => "other_a" %></td>
+              <td><%= order.c_name %></td>
+              <% service = @order_price[Product::PROD_TYPES[:SERVICE]]
+              service_price = (service && service[order.id] ? service[order.id] : 0).round(2)
+            %>
+              <td><%= service_price %></td>
+              <% product = @order_price[Product::PROD_TYPES[:PRODUCT]]
+              product_price = (product && product[order.id] ? product[order.id] : 0).round(2)
+            %>
+              <td><%= product_price %></td>
+              <% pay_types = @pay_types[order.id]
+              reward = pay_types.nil? ? 0 : pay_types.select{|k,v| !OrderPayType::FINCANCE_TYPES.keys.include? k}.values.compact.inject(0){|num,p|num+p}.round(2)
+            %>
+              <td><%= reward %></td>
+              <td><%= pay_types.nil? ? "--" : pay_types.select{|k,v| OrderPayType::FINCANCE_TYPES.keys.include? k}.map{|k,v|"#{OrderPayType::PAY_TYPES_NAME[k]}"}.join("、") %></td>
+              <td><%= (service_price+product_price-reward).round(2) %></td>
+            </tr>
+          <% end %>
+        <% end %>
+      </tbody>
+    </table>
+    <div class="pageTurn">
+      <%= will_paginate @orders,:class=>"pageTurn",:previous_label=>"上一页",:next_label=>"下一页" unless  @orders.blank?%>
+    </div>
+  </div>
+<% end %>

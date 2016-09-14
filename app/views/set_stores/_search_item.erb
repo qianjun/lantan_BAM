@@ -1,0 +1,26 @@
+<% unless @suitable.empty? %>
+  <% first = @suitable.keys.first %>
+  <ul class="cardClass">
+    <% @suitable.keys.each do |k| %>
+      <li <%if first ==k%>class="hover" <%end%> id="<%=k%>" onclick="show_div(this)"><span><%=@cates[k]%></span></li>
+    <%end%>
+  </ul>
+  <% @suitable.each do |k,objects| %>
+    <div class="card" id="div_<%=k%>" <%if first !=k%>style="display: none;"<%end%>>
+      <% objects.each do |object| %>
+        <div class="serviceItem" <%if params[:item_id].to_i == Category::ITEM_NAMES[:CARD]%> title="适用范围：<%=object[:suit_field]%>"<%end%>>
+          <span style="width:130px;" id="name"><%=object[:name]%></span>
+          <% if params[:item_id].to_i != Category::ITEM_NAMES[:CARD] %>
+          <span style="width:80px;<%if object[:type]== 5 %>display:none<%end%>" >库存：<label id="storage"><%=object[:storage]%></label></span>
+          <%end%>
+          <span style="width:90px;color:blue;" >￥：<label id="price"><%=object[:price]%></label></span>
+          <input type="checkbox" id="<%=k%>_<%=object[:type]%>_<%=object[:id]%>" <%if object[:status]%>checked<%end%> onclick="add_cart(this)" />
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+<%else%>
+  <script type="text/javascript">
+    tishi_alert("未查询到相关信息！");
+  </script>
+<%end%>

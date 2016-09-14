@@ -1,0 +1,8 @@
+<% if @material.nil? %>
+$("#search_by_code").show().find(".no_material_notice").html('未查到物料<br/>')
+<% else %>
+$("#search_by_code").hide().find(".no_material_notice").html('')
+$("#new_material .mat_search_result").html('<%= j (render :partial => 'mat_form', :locals => {:material => @material}) %>')
+$("#new_material .old_code").click();
+$("#new_material #use_existed_code").attr("readonly", true);
+<% end %>

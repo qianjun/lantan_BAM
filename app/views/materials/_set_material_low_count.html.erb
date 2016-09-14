@@ -1,0 +1,14 @@
+<div class="popup_box" >
+  <h1>设置<%= @material.name %>库存预警<a href="javascript:void(0)" class="close">关闭</a></h1>
+  <div class="popup_body">
+    <div class="popup_body_area">
+      <div class="item" >
+        <%= label_tag "库存预警值:" %>&nbsp;<%= text_field_tag "material_low_count", @material.material_low.to_i %>
+      </div>
+    </div>
+    <div class="btn_box">
+      <button  class="confirm_btn" onclick="set_material_low_count_validate(<%= @store_id %>,<%= @material.id %>)">确定</button>
+    </div>
+    <div class="clear"></div>
+  </div>
+</div>

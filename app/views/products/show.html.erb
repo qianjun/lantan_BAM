@@ -1,0 +1,67 @@
+<%= stylesheet_link_tag    "jqzoom" %>
+<%= stylesheet_link_tag    "official_style" %>
+<%= javascript_include_tag "jquery.jqzoom.min" %>
+<div class="main">
+  <div class="box">
+    <div class="rightAera">
+      <div class="rightTitle">
+        <h1><a href="/stores/<%=params[:store_id]%>/products/<%="prod_services" if @prod.is_service %>"><%=@prod.is_service ? "服务"  :  "产品" %></a> &gt; <%= @category%></h1>
+        <div class="pro_show">
+          <div class="bigImg jqzoom">
+            <%if @img_urls[0]%>
+              <img jqimg="<%= @img_urls[0].img_url.nil? ? "" : @img_urls[0].img_url  %>"
+                   src="<%= @img_urls[0].img_url.nil? ? "" : @img_urls[0].img_url.gsub("img#{@prod.id}","img#{@prod.id}_#{Constant::P_PICSIZE[2]}")  %>" />
+                 <% end %>
+          </div>
+          <div class="pic_show">
+            <ul>
+              <%@img_urls.each do |img|%>
+                <li><img src="<%=  img.img_url.nil? ? "" : img.img_url.gsub("img#{@prod.id}","img#{@prod.id}_#{Constant::P_PICSIZE[0]}") %>"    /></li>
+              <% end unless @img_urls.blank?  %>
+            </ul>
+          </div>
+        </div>
+        <div class="pro_price">
+          <h2><%= @prod.name %></h2>
+          <p>全国零售价：<span><%= @prod.base_price %></span>元</p>
+          <p>全国促销价：<span><%= @prod.sale_price %></span>元</p>
+        </div>
+        <div class="clear"></div>
+        <div class="pro_text">
+          <%= @prod.introduction.nil? ? "" : @prod.introduction.html_safe %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+  //产品放大效果
+  $(document).ready(function(){
+    $(".jqzoom").jqueryzoom({
+      xzoom: 300, //zooming div default width(default width value is 200)
+      yzoom: 300, //zooming div default width(default height value is 200)
+      offset: 10, //zooming div default offset(default offset value is 10)
+      position: "right", //zooming div position(default position value is "right")
+      preload:1,
+      lens:1
+    });
+<%if @prod.is_service%>
+      $("#service").addClass("hover");
+      $("#product").removeClass("hover");
+<% end %>
+  });
+
+  //jqzoom产品小图点击替换大图效果
+  $(function(){
+    $('.pic_show li img').click(function(){
+      var imgSrc = $(this).attr('src');
+      var i = imgSrc.lastIndexOf('.');
+      var format = imgSrc.substring(i);
+      imgSrc = imgSrc.substring(0,i);
+      var imgSrc_big = imgSrc.replace("_<%= Constant::P_PICSIZE[0] %>","")+format;
+      var imgSrc_show =imgSrc.replace("_<%= Constant::P_PICSIZE[0] %>","_<%= Constant::P_PICSIZE[2] %>")+format;
+      $('.bigImg img').attr('src',imgSrc_show);
+      $('.bigImg img').attr('jqimg',imgSrc_big);
+    })
+  })
+</script>

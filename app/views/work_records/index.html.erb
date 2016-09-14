@@ -1,0 +1,45 @@
+<div class="main">
+  <div class="box">
+    <div class="data_box">
+      <div class="data_body_p" style="padding: 0 10px 0px 10px;float:left">员工出勤统计：<%= Time.now.strftime("%Y-%m-%d") %></div>
+
+      <input type="hidden" value="<%= @store.id %>" id="store_id"/>
+      <div class="clear"></div>
+      <div class="data_body" id="staff_info">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table" id="staffs_table">
+          <thead>
+            <tr class="hbg">
+              <th>姓名</th>
+              <th>职务</th>
+              <th>等级</th>
+              <th>出勤情况</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @staffs.each do |w_order| %>
+              <tr>
+                <td><%= w_order.name %></td>
+                <td><%= Staff::N_COMPANY[w_order.type_of_w] %></td>
+                <td><%= Staff::LEVELS[w_order.level] %></td>
+                <td>
+                  <select id="change_<%=  w_order.id%>" s_id="<%= w_order.attend_types %>">
+                    <%WorkRecord::ATTEND_NAME.each do |k,v|%>
+                      <option value="<%= k %>" <%if w_order.attend_types== k%>selected<%end%>><%= v %></option>
+                    <% end %>
+                  </select>
+                </td>
+                <td><a href="javascript:void(0)" onclick="adjust_types(<%= w_order.id %>)">调整</a></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+        <%= will_paginate @staffs, :class => "pageTurn", :previous_label => "上一页",
+          :next_label => "下一页" %>
+      </div>
+    </div>
+  </div>
+
+</div>
+<div class="foot"><p>Copyright © 2013 杭州鼎洪 版权所有</p></div>
+

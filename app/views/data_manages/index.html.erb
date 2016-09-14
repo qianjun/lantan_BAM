@@ -1,0 +1,16 @@
+<%=  render '/market_manages/second_menu'%>
+<%= javascript_include_tag "data_manages" %>
+<input type="hidden" value="<%= params[:store_id] %>" id="store_id" />
+<div class="search">
+  <div><label>时间：</label>
+    <input id="c_first" type="text"  onclick="WdatePicker({preLoad:true,maxDate:'<%=Time.now.strftime("%Y-%m-%d")%>',isShowClear:false})" readonly class="Wdate"
+           value="<%=@start_time%>"/> 到
+    <input id="c_last" type="text" onclick="WdatePicker({preLoad:true,maxDate:'<%=Time.now.strftime("%Y-%m-%d")%>',isShowClear:false})" readonly class="Wdate"
+           value="<%=@end_time%>" /></div>
+  <div><button class="search_btn" onclick="search_data(<%=  params[:store_id]%>)">查询</button></div>
+</div>
+<div class="clear"></div>
+<div id="show_index">
+  <%= render :partial=>'index' %>
+</div>
+<div class="tab_popup show_prod_serv"></div>

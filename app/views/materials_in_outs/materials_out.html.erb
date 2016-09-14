@@ -1,0 +1,41 @@
+<div class="main">
+  <div class="mat_notice" style="color:red;"><%= flash[:notice] %></div>
+  <div class="mat_in_out">
+    <div class="search"><label>
+        <input type="radio" name="scan" onclick="disbaleSib(this,'next')"/>
+        请扫描条形码:</label><input name="mat_code" id="mat_code" data_action="m_out" type="text"/></div>
+    <div class="search_alert">*没有查询到系统中您扫描的货物</div>
+    <div class="scan-upload"><label>
+        <input type="radio" name="scan" onclick="disbaleSib(this,'prev')"/>
+        请上传扫描数据:</label>
+      <%= form_tag "/upload_code_matout", :remote => true, :multipart => true, :id => 'upload_code' do |f| %>
+        <input type="file" name="code_file"/>
+        <%= submit_tag "上传文件" %>
+      <% end %>
+    </div>
+  </div>
+  <div class="data_box">
+    <div class="data_menu"></div>
+    <div class="clear"></div>
+    <div class="data_body">
+      <%= form_tag  create_materials_out_path, method: :post do |f|%>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+          <thead>
+            <tr class="hbg">
+              <td>条形码</td>
+              <td>物料名称</td>
+              <td>数量</td>
+              <td>操作</td>
+            </tr>
+          </thead>
+          <tbody class="mat-out-list"></tbody>
+        </table>
+        <div class="clear"></div>
+        <div><%= label_tag "out_types"," 出库类型：" %><%= select("mat_out", "types", MatOutOrder::TYPES.invert.to_a, { :prompt => "选择出库类型" }) %></div>
+        <div class="btn_box_s">
+          <button onclick="checkMatOutNum(this)" type="button" class="confirm_btn">出库</button>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

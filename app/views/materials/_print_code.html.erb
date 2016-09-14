@@ -1,0 +1,31 @@
+<div class="popup_box">
+  <h1>打印条形码<a href="javascript:void(0)" class="close">关闭</a></h1>
+  <div class="popup_body">
+    <form action="/stores/<%= @store_id %>/materials/output_barcode" method="post" target="_blank">
+      <div class="popup_body_area">
+        <%= render :partial => "/common/search_panel", :object => @type %>
+        <div class="pq pq_mb"></div>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_tab_table">
+          <thead>
+            <tr class="hbg">
+              <td>条形码</td>
+              <td>物料名称</td>
+              <td>物料类别</td>
+              <td>规格</td>
+              <td>数量</td>
+              <td>操作</td>
+            </tr>
+          </thead>
+          <tbody id="selected_materials"></tbody>
+        </table>
+
+      </div>
+
+      <div class="btn_box">
+        <label>每行数量：</label><input name="num" value="<%=3%>" size="2"  />
+        <button class="confirm_btn" type="submit" onclick="return checkPrintNum(this)">打印</button>
+      </div>
+    </form>
+    <div class="clear"></div>
+  </div>
+</div>

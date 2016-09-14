@@ -1,0 +1,10 @@
+<h1>编辑套餐卡<a href="javascript:void(0)" class="close">关闭</a></h1>
+<div class="popup_body">
+  <%= form_for :add_pcard,:url=>"/stores/#{params[:store_id]}/package_cards/#{@pcard.id}/update_pcard",:method=>:post,:html=>{:id=>"add_pcard",:multipart=>true} do %>
+    <div class="popup_body_area">
+      <%= render "card_form" %>
+    </div>
+  <% end %>
+  <script type="text/javascript"> $(function(){show_pic();})</script>
+  <div class="btn_box_s"><button class="confirm_btn" onclick="check_add(this)">确定</button></div>
+</div>

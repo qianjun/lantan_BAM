@@ -1,0 +1,78 @@
+<style>
+  #dinghuo_selected_materials input{
+    width:50px;
+  }
+</style>
+
+<%= form_tag material_order_store_materials_url(params[:store_id]), :id => "order_form" do |f| %>
+  <div class="tab_popup dinghuo_tab" id="dinghuo_tab">
+    <div class="popup_box">
+      <h1>订货<a href="javascript:void(0)" class="close">关闭</a></h1>
+      <div class="popup_body">
+        <div class="popup_body_area">
+          <div><%= label_tag "from","供应商:",:style=>"color:#930205;font-weight:bold;" %><%=  render '/suppliers/supplier'%></div>
+          <%= render :partial => "materials/dinghuo_search_panel", :object => @type %>
+          <div class="pq pq_mb"></div>
+          <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_tab_table">
+            <thead>
+              <tr class="hbg">
+                <td>物料名称</td>
+                <td>物料类别</td>
+                <td>进货价</td>
+                <td>零售价</td>
+                <td>订货量</td>
+                <td>总价</td>
+                <td>库存量</td>
+                <td>操作</td>
+              </tr>
+            </thead>
+            <tbody id="dinghuo_selected_materials"></tbody>
+          </table>
+          <table id="add_new_materials" width="100%" border="0" cellspacing="0" cellpadding="0" class="data_tab_table"></table>
+
+          <div class="amount">总计：<span id="total_count">0.0</span></div>
+        </div>
+        <div class="btn_box"><%= hidden_field_tag "selected_items_dinghuo" %>
+          <%= button_to_function "确定","confirm_pay()", :class => "confirm_btn" %>
+        </div>
+        <div class="clear"></div>
+      </div>
+    </div>
+  </div>
+  <div class="tab_popup fukuan_tab" id="fukuan_tab">
+    <div class="popup_box">
+      <h1>确认订货<a href="javascript:void(0)" class="close">关闭</a></h1>
+      <div class="popup_body">
+        <div class="popup_body_area">
+          <h2 class="popup_body_title" id="supplier_from">订货渠道：总部</h2>
+          <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_tab_table">
+            <thead>
+              <tr class="hbg">
+                <td>物料名称</td>
+                <td>物料类别</td>
+                <td>零售价</td>
+                <td>订货量</td>
+                <td>总价</td>
+              </tr>
+            </thead>
+            <tbody id="order_selected_materials">
+            </tbody>
+          </table>
+          <div class="otherWay">
+            <div class="amount">总计：<span id="dh_price_total">0.0</span></div>
+          </div>
+        </div>
+        <div class="fukuan_btn">
+          <span><button class="confirm_btn" id="submit_material" onclick="submit_material_order('order_form',this)" type="button">确定</button>
+            <%= image_tag "ajax-loader.gif", :id => "submit_spinner", :style => "display:none;" %></span>
+          <span><button class="cancel_btn" onclick="hide_mask($('#fukuan_tab'))" type="button">取消</button></span>
+        </div>
+        <div class="clear"></div>
+      </div>
+    </div>
+  </div>
+
+<% end %>
+
+<div class="tab_popup final_fukuan_tab" id="final_fukuan_tab">
+</div>

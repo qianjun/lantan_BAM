@@ -1,0 +1,76 @@
+<%= render 'directory' %>
+<div class="third_menu">
+  <ul>
+    <li><a href="javascript:void(0)" onclick="$('#month').css('display','');$('#day').css('display','none');$('.third_menu a').toggleClass('hover')"
+           <%if params[:action]=="satisfy_degree" || params[:action]=="degree_list"%>    class="hover" <%end%>>月份统计</a></li>
+    <li><a href="javascript:void(0)" onclick="$('#month').css('display','none');$('#day').css('display','');$('.third_menu a').toggleClass('hover')"
+           <%if params[:action]=="time_list"%>    class="hover" <%end%>>查询统计</a></li>
+  </ul>
+</div>
+<div id="month" <%if params[:action]=="time_list" %>  style="display: none" <%end%>>
+  <div class="search">
+    <%= form_for :complaint,:url=>"/stores/#{params[:store_id]}/complaints/search_degree" do%>
+      <div><label>统计月份：</label>
+        <select name="degree">
+          <% curr_month = Time.now.months_ago(1)%>
+          <%  while( curr_month.strftime("%Y-%m") >= Constant::DATE_START)%>
+            <% month = curr_month.strftime("%Y-%m")  %>
+            <option <%if (@degree.nil? ? session[:degree].nil? ? "" : session[:degree] : @degree.current_day.strftime("%Y-%m"))==month%>selected <%end%> value="<%= month %>"><%= month %></option>
+            <% curr_month = curr_month.prev_month%>
+          <% end %>
+        </select>
+      </div>
+      <div><button class="search_btn">查询</button></div>
+    <% end %>
+  </div>
+  <div class="clear"></div>
+  <div class="data_body">
+    <% if @degree.nil?%>
+      暂未当月统计结果
+    <% else%>
+      <img src="<%= @degree.image_url %>" />
+    <% end%>
+  </div>
+</div>
+<div id="day" <%if params[:action]=="degree_list" || params[:action]=="satisfy_degree"%>  style="display: none" <%end%>>
+  <div class="search">
+    <%= form_for :complaint,:url=>"/stores/#{params[:store_id]}/complaints/degree_time" do%>
+      <div>
+        <label>开始时间：</label>
+        <input name="start_degree" id="start_degree" type="text" value="<%= session[:start_degree] %>"  onclick="WdatePicker()" class="Wdate" readonly />
+      </div>
+      <div>
+        <label>结束时间：</label>
+        <input name="end_degree" id="end_degree" type="text" value="<%=  session[:end_degree]  %>" onclick="WdatePicker()" class="Wdate" readonly />
+      </div>
+      <div>
+        <label>性别：</label>
+        <select style="width: 80px;" name="sex">
+          <option value="<%= Complaint::SEX[:NONE] %>">未选择</option>
+          <option <%if Complaint::SEX[:MALE]==session[:sex_degree].to_i%>selected<%end%> value="<%= Complaint::SEX[:MALE] %>">男</option>
+          <option <%if Complaint::SEX[:FEMALE]==session[:sex_degree].to_i%>selected<%end%> value="<%= Complaint::SEX[:FEMALE] %>">女</option>
+        </select>
+      </div>
+      <div>
+        <label>客户姓名：</label>
+        <input name="c_name" id="c_name" type="text" value="<%=  session[:c_name]  %>" />
+      </div>
+      <div>
+        <button class="search_btn">查询</button>
+      </div>
+    <% end %>
+  </div>
+  <div class="clear"></div>
+  <div class="data_body">
+    <div class="data_loadList">
+      <ul>
+        <%if @total_com%>
+          <li><span class="loadList_name" style="width:100px">当前满意度：</span><span class="loadList_box" style="width:320px">
+              <span class="loadList_line" style="width:<%=3.2*@total_com  %>px"><%= @total_com %></span></span></li>
+            <%else%>
+          <li>无统计记录</li>
+        <%end%>
+      </ul>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,81 @@
+<div class="data_item_title">
+  <ul title="<%=  @pays.map{|k,v|"#{OrderPayType::PAY_TYPES_NAME[k]}:#{limit_float(v.to_f)}"}.join("&nbsp&nbsp&nbsp").html_safe%>">
+    <% li_arr = [];
+    @pays.map{|k,v|li_arr << "<li>#{OrderPayType::PAY_TYPES_NAME[k]}:#{limit_float(v.to_f)}</li>"}%>
+    <%= li_arr[0..6].join("&nbsp&nbsp&nbsp").html_safe %>
+  </ul>
+</div>
+<% @orders.each do|order| %>
+  <div class="data_item_list">
+    <div class="di_list_l" id="<%= order.c_id %>"><input id="print_<%=order.id%>" type="checkbox" value="<%=order.id%>" /></div>
+    <div class="di_list_r">
+      <div class="register">
+        <div class="orderGoods">
+          <div class="pingj">评价：<%= order.is_pleased.nil? ? "--" : Order::IS_PLEASED_NAME[order.is_pleased] %></div>
+          <ul>
+            <li>单号：<%= order.code %></li>
+            <li>付款方式：<%=  if order.status == Order::STATUS[:RETURN]
+                "已取消"
+              else
+                if order.return_types!= Order::IS_RETURN[:NO]
+                  Order::RETURN[order.return_types]
+                else
+                  @pay_types[order.id].nil? ? "--"  :
+                    @pay_types[order.id].map{|k,v|"#{OrderPayType::PAY_TYPES_NAME[k]}:#{v.to_f.round(2)}"}.join("&nbsp&nbsp&nbsp").html_safe
+                end
+              end%></li>
+          </ul>
+        </div>
+        <div class="merchant">
+          <ul>
+            <li><strong>开单时间：</strong><%=  order.created_at.nil? ? "--" : order.created_at.strftime("%Y-%m-%d %H:%M")%></li>
+            <li><strong>接待员：</strong><%= @staffs[order.front_staff_id] %></li>
+            <li><strong>技师：</strong>
+              <%if @tech_orders[order.id].nil?%>
+                --
+              <%else%>
+                <%= @tech_orders[order.id]%>
+                <span class="red" style="cursor: pointer;" onclick="edit_deduct(<%=order.id%>,<%=params[:store_id]%>)">(可编辑)</span>
+              <%end%>
+            </li>
+            <li><strong>工位：</strong><%= @stations[order.s_id].nil? ? "--":@stations[order.s_id] %></li>
+            <li><strong>车牌：</strong><%=  order.c_num  %></li>
+            <li><strong>客户姓名：</strong><%=  order.c_name  %></li>
+            <li><strong>手机号码：</strong><%= order.phone %></li>
+            <li><strong>单位：</strong><%= order.group_name.nil? ? "--" : order.group_name %></li>
+          </ul>
+          <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+            <thead>
+              <tr class="hbg">
+                <td>项目</td>
+                <td>数量</td>
+                <td>单价</td>
+                <td>优惠</td>
+                <td>合计</td>
+              </tr>
+            </thead>
+            <tbody>
+              <% loss = limit_float(@pay_types[order.id].nil? ? 0 : @pay_types[order.id].select{|k,v|OrderPayType::LOSS.include? k}.values.inject(0){|sum,n|sum+n}) %>
+              <%  fact = limit_float(order.price>loss ? order.price-loss : 0)%>
+              <%@order_prods[order.id].each do |prod|%>
+                <tr>
+                  <td><%= prod.name %></td>
+                  <td><%= prod.pro_num %></td>
+                  <td><%= limit_float(prod.price) %></td>
+                  <td><%=  loss  %></td>
+                  <td><%= fact %></td>
+                </tr>
+              <% end if @order_prods[order.id] %>
+            </tbody>
+          </table>
+          <div class="accounts">
+            <ul><li>总计：<%= fact %></li></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+<div class="pageTurn">
+  <%= will_paginate @orders,:class=>"pageTurn",:previous_label=>"上一页",:next_label=>"下一页" unless  @orders.blank?%>
+</div>

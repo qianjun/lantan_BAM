@@ -1,0 +1,46 @@
+<div class="tab_popup" style="display:none;" id="add_car_div">
+  <%= form_tag "/stores/#{@store.id}/customers/add_car", :method => :post do %>
+    <div class="popup_box">
+      <h1>添加车辆<a href="javascript:void(0)" class="close">关闭</a></h1>
+      <input type="hidden" name="add_car_cus_id" value="<%= @customer.id %>"/>
+      <div class="popup_body">
+        <div class="popup_body_area">
+          <div class="item">
+            <label><font color="red">*</font>汽车购买年份：</label>
+            <select name="add_car_buy_year">
+              <% (Time.now.year.to_i.downto(Time.now.year.to_i - 30)).each do |i| %>
+                <option value="<%= i %>"><%= i %></option>
+              <% end %>
+            </select>
+          </div>
+          <div class="item">
+            <label><font color="red">*</font>车牌号码：</label>
+            <input type="text" name="add_car_num" id="add_car_num"/>
+          </div>
+          <div class="item">
+            <label><font color="red">*</font>品牌型号：</label>
+            <select class="ymd" onchange="add_car_get_datas(0, this, <%= @store.id %>)">
+              <option value="">--</option>
+              <% Capital.all.each do |ca| %>
+                <option value="<%= ca.id %>"><%= ca.name %></option>
+              <% end %>
+            </select>
+            <select class="ymd" id="add_car_brands" onchange="add_car_get_datas(1, this, <%= @store.id %>)">
+              <option value="">--</option>
+            </select>
+            <select class="ymd" id="add_car_models" name="add_car_models">
+              <option value="">--</option>
+            </select>
+          </div>
+          <div class="item">
+            <label>行驶里程(公里)：</label>
+            <input type="text" id="add_car_distance" name="add_car_distance"/>
+          </div>
+        </div>
+        <div class="btn_box">
+          <button type="button" class="confirm_btn" onclick="add_car_valid(this)">确定</button>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

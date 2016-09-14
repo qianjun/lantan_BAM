@@ -1,0 +1,48 @@
+<%= stylesheet_link_tag    "application" %>
+<%= javascript_include_tag "application"%>
+<script type="text/javascript" src="/assets/My97DatePicker/WdatePicker.js" ></script>
+<script type="text/javascript" src="/assets/stored_cards.js" ></script>
+<div>
+   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+       <thead>
+            <tr class="hbg">
+              <td>日期</td>
+              <td>相关订单</td>
+              <td>服务项目</td>
+              <td>金额（元）</td>
+            </tr>
+        </thead>
+        <tbody>
+          <% @orders.each do |order| %>
+            <tr>
+              <td><%= order.created_at.strftime("%Y.%m.%d--%H:%M") %></td>
+              <td>
+                <%= order.code %>
+              </td>
+              <td>
+                <% if @product_hash[order.id] != 0 %>
+                  <table width="100%" border="0" cellspacing="1" cellpadding="0" class="s_table">
+                    <tr class="fws">
+                      <td>服务名称</td>
+                      <td>数量</td>
+                      <td>单价</td>
+                    </tr>
+                    <% @product_hash[order.id].each do |prod| %>
+                    <tr>
+                      <td><%= prod.name %></td>
+                      <td><%= prod.pro_num %></td>
+                      <td><%= prod.price %></td>
+                    </tr>
+                    <% end if @product_hash[order.id] %>
+                  </table>
+                <% else %>
+                无服务项目
+                <% end %>
+              </td>
+              <td><%= order.price %></td>
+            </tr>
+          <% end %>
+        </tbody>
+  </table>
+  <div class="amount">总计：<%= sprintf('%.2f', @search_total) %></div>
+</div>

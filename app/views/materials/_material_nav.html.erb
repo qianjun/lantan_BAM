@@ -1,0 +1,7 @@
+<div class="nav">
+  <ul>
+    <li><%= link_to "库存", store_materials_url(params[:store_id]), :class => cover_div("materials") %></li>
+    <% if permission?(:materials, :supplier) %><li><%= link_to "供应商", store_suppliers_url(params[:store_id]), :class => cover_div("suppliers") %></li><% end %>
+  </ul>
+</div>
+<div class="back"><a href="/stores/<%= params[:store_id] %>/welcomes" title="返回">Back</a>库存管理</div>

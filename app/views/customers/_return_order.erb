@@ -1,0 +1,122 @@
+<div class="popup_box">
+  <h1>退单<a href="javascript:void(0)" class="close">关闭</a></h1>
+  <div class="popup_body">
+    <div class="popup_body_area">
+      <div class="data_item_list">
+        <div class="di_list_r" style="padding: 0 10px 0 15px;">
+          <div class="register">
+            <div class="orderGoods">
+              <% return_fee = @pay_types.select{|k,v|!OrderPayType::LOSS.include? k}.values.inject(0){|num,n|num+n} %>
+              <ul>
+                <li>付款方式：<%=  if @order.status == Order::STATUS[:RETURN]
+                    "已退单"
+                  else
+                    @pay_types.blank? ? "--"  :
+                      @pay_types.map{|k,v|"#{OrderPayType::PAY_TYPES_NAME[k]}:#{v.to_f.round(2)}"}.join("&nbsp&nbsp&nbsp").html_safe
+                  end%>（可退金额：<%= @pay_types.keys.include?(OrderPayType::PAY_TYPES[:PACJAGE_CARD]) ? @order.price : return_fee%>）</li>
+              </ul>
+            </div>
+            <div class="merchant">
+              <ul>
+                <li>单号：<%= @order.code %></li>
+                <li><strong>开单时间：</strong><%=  @order.created_at.nil? ? "--" : @order.created_at.strftime("%Y-%m-%d %H:%M")%></li>
+                <li>车牌：<%=  @order.c_num  %></li>
+                <li><strong>接待员：</strong><%= @staffs[@order.front_staff_id] %></li>
+                <li><strong>技师：</strong>
+                  <%if  @tech_orders[@order.id].nil?%>
+                    --
+                  <%else%>
+                    <%= @tech_orders[@order.id]%>
+                  <%end%>
+                </li>
+                <li><strong>工位：</strong><%= @order.s_name.nil? ? "--":@order.s_name %></li>
+                <li><strong>客户姓名：</strong><%=  @order.c_name  %></li>
+                <li><strong>手机号码：</strong><%= @order.phone %></li>
+                <li><strong>单位：</strong><%= @order.group_name.nil? ? "--" : @order.group_name %></li>
+              </ul>
+              <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+                <thead>
+                  <tr class="hbg">
+                    <td>项目</td>
+                    <td>数量</td>
+                    <td>单价</td>
+                    <td>优惠</td>
+                    <td>合计</td>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% loss = limit_float(@pay_types.blank? ? 0 : @pay_types.select{|k,v|OrderPayType::LOSS.include? k}.values.inject(0){|sum,n|sum+n}) %>
+                  <%  fact = limit_float(@order.price>loss ? @order.price-loss : 0)%>
+                  <%@order_prods[@order.id].each do |prod|%>
+                    <tr>
+                      <td><%= prod.name %></td>
+                      <td><%= prod.pro_num %></td>
+                      <td><%= limit_float(prod.price) %></td>
+                      <td><%=  loss  %></td>
+                      <td><%= fact %></td>
+                    </tr>
+                  <% end if @order_prods[@order.id] %>
+                </tbody>
+              </table>
+              <div class="accounts">
+                <ul><li>总计：<%= fact %></li></ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="seeProDiv">
+        <div class="seeProDiv_l">退单原因：</div>
+        <select id="return_reason">
+          <% Customer::RETURN_REASON.each do |k,v| %>
+            <option value="<%= k %>"><%= v %></option>
+          <% end %>
+        </select>
+      </div>
+      <%prod = @order_prods[@order.id][0]%>
+      <% if prod.item_types.to_i == 0 %>
+        <div class="seeProDiv">
+          <div class="seeProDiv_l"> 商品去向：</div>
+          <input name="direct" type="radio" checked   value="<%=Order::O_RETURN[:WASTE]  %>"/>报损&nbsp;&nbsp;
+          <input name="direct" type="radio" value="<%= Order::O_RETURN[:REUSE] %>" />&nbsp;&nbsp;回库
+        </div>
+        <div class="seeProDiv bill_table">
+          <div class="seeProDiv_l"> 退款数量：</div>
+          <a class='addre_a' style='font-size:20px;background: #026c93;color: #FFFFFF;' href='javascript:void(0)' onclick='del_m(this,0,1)'>&nbsp;&nbsp;-&nbsp;&nbsp;</a>
+          <input type="text" id="return_num" value="<%=prod.pro_num%>" readonly style ='width:50px;font-size:24px;height:inherit;' />
+          <a class='addre_a' style='font-size:20px;background: #026c93;color: #FFFFFF;' href='javascript:void(0)' onclick='add_m(this,0,<%=prod.pro_num%>)'>&nbsp;&nbsp;+&nbsp;&nbsp;</a>
+        </div>
+        <input type="hidden" value="<%=  prod.p_id%>" id="product_id" />
+        <input type="hidden" value="<%=  prod.pro_num%>" id="max_num" />
+      <%end%>
+      <% if prod.item_types.to_i == 1 %>
+        <input type="hidden" value="<%=  prod.p_id%>" id="product_id" />
+        <input type="hidden" value="<%=  prod.pro_num%>" id="return_num" />
+      <%end%>
+      <input type="hidden" value="<%=  prod.item_types%>" id="item_types" />
+      <input type="hidden" value="<%= @pay_types.keys.include?(OrderPayType::PAY_TYPES[:PACJAGE_CARD]) ? @order.price : return_fee%>" id="return_fee" />
+      <% if @pay_types.keys.include? OrderPayType::PAY_TYPES[:PACJAGE_CARD] %>
+        <div class="seeProDiv">
+          <div class="seeProDiv_l"> 退款方式：</div>
+          <input name="return_type" id="return_type" type="radio" checked />套餐卡&nbsp;&nbsp;
+        </div>
+        <input type="hidden" value="0" id="fact_type" />
+      <%elsif @pay_types.keys.include? OrderPayType::PAY_TYPES[:SV_CARD] %>
+        <div class="seeProDiv">
+          <div class="seeProDiv_l"> 退款方式：</div>
+          <input type="checkbox" name="return_type" id="return_type1" checked onclick="toggle_abled(this,'#sv_fee')"/>储值卡：<input  type="text" id="sv_fee" value="<%=return_fee%>"/>
+          <input type="checkbox" name="return_type" id="return_type2"  onclick="toggle_abled(this,'#cash_fee')"/>现金：<input  type="text" id="cash_fee" disabled/>
+          <input type="hidden" value="1" id="fact_type" />
+        </div>
+      <%elsif (@pay_types.keys | [OrderPayType::PAY_TYPES[:CASH],OrderPayType::PAY_TYPES[:CREDIT_CARD],OrderPayType::PAY_TYPES[:HANG]]) != @pay_types.keys %>
+        <div class="seeProDiv"><div class="seeProDiv_l"> 退款方式：</div>
+          <input name="return_type" id="return_type" type="radio" checked />现金：<input  type="text" id="cash_fee" value="<%=return_fee%>"/>
+          <input type="hidden" value="2" id="fact_type" />
+        </div>
+      <%end%>
+    </div>
+    <div class="btn_box_s"><input value="确定" class="confirm_btn"  onclick="operate_order(<%=@order.id%>,this)" type="button" /></div>
+  </div>
+</div>
+
+

@@ -1,0 +1,52 @@
+<%=  render 'second_menu'%>
+<div class="search">
+  <%= form_for :complaint,:url=>"/stores/#{params[:store_id]}/market_manages/search_sale_order" do%>
+    <div><label>活动名称：</label><select name="order_name">
+        <option value="">全部</option>
+        <% @sale_names.each do |name| %>
+          <option value="<%= name %>" <% if session[:order_name]== name %> selected<%end%>><%= name %></option>
+        <% end unless @sale_names.nil? %>
+      </select></div>
+    <div><label>时间：</label><input class="Wdate" readonly name="o_created" type="text" onclick="WdatePicker()" value="<%= session[:o_created] %>" />&nbsp;到&nbsp;
+      <input class="Wdate" readonly name="o_ended" type="text" onclick="WdatePicker()" value="<%= session[:o_ended] %>"/></div>
+    <div><button class="search_btn">查询</button></div>
+  <% end %>
+</div>
+<div class="clear"></div>
+
+<div class="data_body">
+  <div>
+    <% unless @sale_orders.blank? %>
+      <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+        <thead>
+          <tr class="hbg">
+            <td>活动名称</td>
+            <td>活动时间</td>
+            <td width="300" class="wordBreak">活动内容</td>
+            <td>订单数量</td>
+            <td>订单总价（元）</td>
+            <td>优惠总额（元）</td>
+          </tr>
+        </thead>
+        <tbody>
+          <%@sale_orders.each do |order| %>
+            <tr>
+              <td><%= order.name %></td>
+              <td><%= order.day == "" ? Sale::DISC_TIME_NAME[order.disc_time_types] : order.day  %></td>
+              <td><%= order.intro.nil? ? "" : order.intro %></td>
+              <td><%=order.o_num.to_i %></td>
+              <td><%= format("%.2f",@hash_favor[order.id].nil? ? 0 : @hash_favor[order.id].values.inject(0){|num,price| num+price}) %></td>
+              <td><%= format("%.2f",@hash_favor[order.id].nil? ? 0 : @hash_favor[order.id].select{|k,v|
+                    [OrderPayType::PAY_TYPES[:DISCOUNT_CARD], OrderPayType::PAY_TYPES[:PACJAGE_CARD], OrderPayType::PAY_TYPES[:SALE]].include?(k)}.values.inject(0){|num,price| num+price})  %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+      <div class="pageTurn">
+        <%= will_paginate @sale_orders,:class=>"pageTurn",:previous_label=>"上一页",:next_label=>"下一页" %>
+      </div>
+    <%else%>
+      暂无记录
+    <%end%>
+  </div>
+</div>

@@ -1,0 +1,47 @@
+<div class="data_box">
+  <div class="second_menu">
+    <a href="/stores/<%= params[:store_id] %>/set_stores" >门店信息</a>
+    <a href="/stores/<%= params[:store_id]%>/set_functions">功能设置</a>
+    <a href="/stores/<%= params[:store_id]%>/adverts">led广告设置</a>
+    <a href="/stores/<%= params[:store_id]%>/messages/send_list" class="hover">短信设置</a>
+  </div>
+  <div class="clear"></div>
+  <div class="data_body">
+    <div class="tab_head">
+      <ul>
+        <li onclick="window.location.href='/stores/<%=params[:store_id]%>/messages/send_detailed'">消费明细</li>
+        <li onclick="window.location.href='/stores/<%=params[:store_id]%>/messages/send_alipay'">充值明细</li>
+        <li class="hover">开关设置</li>
+      </ul>
+    </div>
+    <div class="people_group">
+      <ul>
+        <% MessageRecord::SET_MESSAGE.each do |k,v| %>
+          <li class="<%=  @send_list.include?("#{k}") ? "green_li" : "red_li"%>">
+            <a href="javascript:void(0)" style="display: block;" id="a_role"><%= v %></a>
+            <%= text_field_tag "input_role_#{k}",v,{:style => "display:none;",:onblur => "(this,'#{params[:store_id]}')"} %>
+            <span class="group_func">
+              <% if @send_list.include?("#{k}") %>
+                <a href="javascript:void(0)" onclick="set_message(<%= k %>,0,this,<%= params[:store_id]%>)">关闭</a>
+              <%else%>
+                <a href="javascript:void(0)" onclick="set_message(<%= k %>,1,this,<%= params[:store_id]%>)">开启</a>
+              <%end%>
+            </span>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+  $(function(){
+    $(".people_group li").hover(
+    function(){
+      $(this).find(".group_func").css("display","block");
+    },
+    function(){
+      $(this).find(".group_func").css("display","none");
+    }
+  );
+  });
+</script>

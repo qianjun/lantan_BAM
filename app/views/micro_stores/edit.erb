@@ -1,0 +1,25 @@
+<%= javascript_include_tag "/assets/kindEditor/kindeditor-min.js" %>
+<%= javascript_include_tag "/assets/kindEditor/zh_CN.js" %>
+<div class="main">
+  <div class="box">
+    <div class="data_box">
+      <div class="data_body">
+        <div class="tab_head">
+          <ul>
+            <li onclick="window.location.href='/stores/<%= params[:store_id] %>/micro_stores'">新品发布</li>
+            <li class="hover" onclick="window.location.href='/stores/<%=params[:store_id]%>/micro_stores/upload_content'" >宣传推广</li>
+          </ul>
+        </div>
+        <%= javascript_include_tag "ajaxfileupload.js" %>
+        <div class="promotion_add">
+          <div class="promotion_body">
+            <%=  form_for :create_know, :html=>{:id=>"create_know",:multipart=>true},
+              :url=>"/stores/#{params[:store_id]}/micro_stores/#{@know.id}/edit_know" do%>
+              <%=  render "form"%>
+            <%end%>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

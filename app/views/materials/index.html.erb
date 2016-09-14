@@ -1,0 +1,224 @@
+<%= javascript_include_tag "/assets/kindEditor/kindeditor-min.js" %>
+<%= javascript_include_tag "/assets/kindEditor/zh_CN.js" %>
+<div id="mo_notice"><%= render :partial => "notice_panel" %></div>
+
+<% unless  @unsalable_materials.blank? %>
+  <div class="message" id="unsalable_materials_notice">
+    最近30天有 <span class="red" id="unsalable_materials_span"><%=  @unsalable_materials.length %></span>种物料滞销
+    <a href="javascript:void(0)" onclick="toggle_low_materials(this)">点击查看</a>
+    <%= render :partial => 'show_unsalable_materials', :locals => {:unsalable_materials => @unsalable_materials} %>
+  </div>
+<% end %>
+<div class="data_box" id="material_data_box">
+  <div class="data_menu">
+    <% if permission?(:materials, :add) %>
+      <%= link_to "添加物料", new_store_material_path(@current_store), :remote => true, 'data-type' => 'script', :class => "am_btn" %>
+    <% end %>
+    <% if permission?(:materials, :in) %><%= link_to_function "入库","ruku()", :class => "rk_btn" %><% end %>
+    <% if permission?(:materials, :out) %><%= link_to_function "出库","chuku()", :class => "ck_btn" %><% end %>
+    <%= link_to "批量退货", back_good_store_materials_url(@current_store.id), :remote => true, 'data-type' => 'script' %>
+    <% if permission?(:materials, :dinghuo) %><%= link_to_function "订货", "dinghuo(0)", :class => "dh_btn" %><% end %>
+    <% if permission?(:materials, :print) %><%= link_to "打印库存清单",print_store_materials_path(params[:store_id]), :class => "",:target => "_blank" %><% end %>
+    <% if permission?(:materials, :print) %><%= link_to "打印条形码",print_code_store_materials_path(params[:store_id]),:remote => true, 'data-type' => 'script', :class => "",:target => "_blank" %><% end %>
+    <% if permission?(:materials, :check_all) %><%= link_to "库存盘点", "/stores/#{params[:store_id]}/check_materials",:target=>"_blank" %><% end %>
+    <% if permission?(:materials, :material_loss_add) %><%= link_to "新建库存报损", mat_loss_store_materials_path(params[:store_id]), :class => "", :remote => true, 'data-type'=>'script', :target => "_blank" %><% end %>
+  </div>
+  <div class="clear"></div>
+  <div class="tab_head">
+    <ul>
+      <li class="hover">库存列表</li>
+      <li>出库记录</li>
+      <li>入库记录</li>
+      <li>向总部订货记录</li>
+      <li>向供应商订货记录</li>
+      <li>库存损溢</li>
+      <li>退货记录</li>
+    </ul>
+  </div>
+  <div class="data_body">
+    <div>
+      <%= render :partial => "liebiao_panel" %>
+    </div>
+    <div style="display: none;" id="page_outs">
+      <%= render :partial => "out_records_panel" %>
+    </div>
+    <div style="display: none;" id="page_ins">
+      <%= render :partial => "in_records_panel" %>
+    </div>
+    <div style="display: none;" id="head_orders_panel">
+      <%= render :partial => "head_orders_panel" %>
+    </div>
+    <div style="display: none;" id="supp_orders_panel">
+      <%= render :partial => "supplier_orders_panel" %>
+    </div>
+    <div style="display: none;" id="page_loss_div">
+      <%= render :partial => "materials_losses_panel" %>
+    </div>
+    <div style="display: none;">
+      <%= render :partial => "back_materials_records_panel" %>
+    </div>
+  </div>
+</div>
+<div class="mask"></div>
+<div class="maskOne"></div>
+<!--tab-->
+<div class="tab_popup beizhu_tab" id="remark_div">
+</div>
+<!--盘点-->
+<div class="tab_popup" id="batch_check_tab" style="width:800px"></div>
+
+<!--打印条形码-->
+<div class="tab_popup print_code_tab" id="print_code_tab"></div>
+
+<div class="tab_popup" id="setMaterialLow">
+  <div class="popup_box" >
+    <h1>设置库存预警<a href="javascript:void(0)" class="close">关闭</a></h1>
+    <div class="popup_body">
+      <%= form_tag "/stores/#{@current_store.id}/materials/set_material_low_commit" do %>
+        <div class="popup_body_area">
+          <div class="item" >
+            <%= label_tag "库存预警值:" %>&nbsp;<%= text_field_tag "material_low_value", @current_store.material_low.to_i %>
+          </div>
+        </div>
+        <div class="btn_box">
+          <button type="commit" onclick="return set_validate()" class="confirm_btn" id="set_material_low_commit_button">确定</button>
+        </div>
+      <% end %>
+      <div class="clear"></div>
+    </div>
+  </div>
+</div>
+
+<div class="tab_popup ruku_tab" id="ruku_tab">
+  <div class="popup_box">
+    <h1>入库<a href="javascript:void(0)" class="close">关闭</a></h1>
+    <div class="popup_body">
+      <div class="popup_body_area">
+        <%= render :partial => "search_materials", :locals => {:tab_name => "materials", :mat_in_flag => 1, :mo_search => true}  %>
+        <div class="search_result_mat"></div>
+        <div class="data_body">
+          <%= form_tag  "/stores/#{@current_store.id}/create_materials_in" , :id => "create_mat_in_form", :target =>'_blank' do |f|%>
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_tab_table">
+              <thead>
+                <tr class="hbg">
+                  <td>订货编号</td>
+                  <td>条形码</td>
+                  <td>物料名称</td>
+                  <td>规格</td>
+                  <td>数量</td>
+                  <td>操作</td>
+                </tr>
+              </thead>
+              <tbody class="mat-out-list"></tbody>
+            </table>
+            <input type="hidden" id="mat_in_hidden_value" name="mat_in_items"/>
+            <input type="hidden" id="mat_in_create" name="mat_in_create"/>
+            <div class="clear"></div>
+            <div class="btn_box_s">
+              <button onclick="checkNums(<%= @current_store.id %>)" type="button" class="confirm_btn">入库</button>
+              <button onclick="fetchMatIn(this, <%= @current_store.id %>, 0)" type="button" class="confirm_btn">打印入库清单</button>
+              <button onclick="fetchMatIn(this, <%= @current_store.id %>, 1)" type="button" class="confirm_btn">打印条形码</button>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="tab_popup chuku_tab" id="chuku_tab">
+  <div class="popup_box">
+    <h1>出库<a href="javascript:void(0)" class="close">关闭</a></h1>
+    <%= form_tag out_order_store_materials_url(params[:store_id]), :id => "out_order_form" do |f| %>
+      <div class="popup_body">
+        <div class="popup_body_area">
+          <%= render :partial => "/common/search_panel", :object => @type %>
+          <div class="pq pq_mb"></div>
+          <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_tab_table">
+            <thead>
+              <tr class="hbg">
+                <td>物料名称</td>
+                <td>物料类别</td>
+                <td>库存量</td>
+                <td>出库量</td>
+                <td>操作</td>
+              </tr>
+            </thead>
+            <tbody id="selected_materials"></tbody>
+          </table>
+          <div class="search"><%= hidden_field_tag "selected_items" %>
+            <div><%= label_tag "staff","申请人：" %><%= select_tag "staff", options_from_collection_for_select(@staffs,"id","name") %></div>
+            <div><%= label_tag "out_types"," 出库类型：" %>
+              <%= select("mat_out", "types", MatOutOrder::TYPES.invert.to_a, { :prompt => "选择出库类型" }) %>
+            </div>
+            <div><%= label_tag "chuku_remark"," 备注：" %>
+              <input name="remark" id="chuku_remark" />
+            </div>
+          </div>
+        </div>
+        <div class="btn_box"><%= button_to_function "确定","submit_out_order('out_order_form')", :class => "confirm_btn" %>
+        </div>
+        <div class="clear"></div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="tab_popup beizhu_tab" id="order_remark_div">
+
+</div>
+<%= render :partial => '/common/alipay_repay' %>
+
+<div class="tab_popup xiangqing_tab" id="mat_order_detail_tab">
+  <div class="popup_box">
+    <h1>详情<a href="javascript:void(0)" class="close">关闭</a></h1>
+    <div class="popup_body">
+
+    </div>
+  </div>
+</div>
+<%= render :partial => "dinghuo_panel" %>
+
+<div class="tab_popup" id="materials_losses">
+  <div class="popup_box" >
+    <h1>库存报损<a href="javascript:void(0)" class="close">关闭</a></h1>
+    <div class="popup_body">
+      <%= form_tag "/stores/#{@current_store.id}/materials/set_material_low_commit" do %>
+        <div class="popup_body_area">
+          <div class="item" >
+            <%= label_tag "库存预警值:" %>&nbsp;<%= text_field_tag "material_low_value", @current_store.material_low.to_i %>
+          </div>
+        </div>
+        <div class="btn_box">
+          <button type="commit" onclick="return set_validate()" class="confirm_btn" id="set_material_low_commit_button">确定</button>
+        </div>
+      <% end %>
+      <div class="clear"></div>
+    </div>
+  </div>
+</div>
+
+<div class="tab_popup" id="MaterialsLoss">
+</div>
+
+<div  id="material_div">
+
+</div>
+
+<div class="tab_popup" id="tuihuo_div">     <!--退货form-->
+
+</div>
+<script type="text/javascript">
+  $(function() {
+<% if @status %>
+      $('div.tab_head li').eq(3).addClass('hover').siblings().removeClass('hover');
+      $('div.data_body > div').eq(3).show().siblings().hide();
+      $('#select_h_order').find("option[value=1]").attr('selected', 'selected');
+<% end %>
+<% if @mat_in %>
+      $("a.am_btn").click();
+<% end %>
+    odd_even();
+  })
+</script>
+

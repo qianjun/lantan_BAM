@@ -1,0 +1,96 @@
+@charset "utf-8";
+* { padding: 0; margin: 0;}
+body { background: #FFF url(/assets/_bg.jpg) repeat-x; font-family: "微软雅黑", "宋体", Arial; color: #333; font-size: 14px;}
+a {text-decoration: none;}
+li { list-style: none;}
+.clear { clear: both;}
+.mat-head { width: 1000px; height: 60px; margin: 0 auto;}
+.mat-head .logo {
+    width: 248px; 
+	height: 60px; 
+	background: url(/assets/mat_inout_logo.jpg) no-repeat;
+	text-indent: -999px; 
+	overflow: hidden;
+}
+.main { width: 1000px; margin: 0 auto; overflow: hidden;}
+
+.ul_bg { width: 600px; height: 300px; margin: 30px auto 0 auto; background: url(/assets/ul_bg.png) no-repeat; overflow: hidden;}
+
+.io_menu {overflow: hidden; width: 380px; display: block; margin: 50px auto 0 auto;}
+.io_menu li { width: 140px; height: 80px; float: left; margin: 0 25px;}
+.io_menu li a { width: 65px; height: 80px; line-height: 80px; padding-left: 75px; display: block; font-size: 30px; color: #FFF;}
+.io_menu li a.ina { background: #930205 url(/assets/icon.png) no-repeat -32px 6px;}
+.io_menu li a.outa { background: #930205 url(/assets/icon.png) no-repeat -32px -78px;}
+.io_menu li a:hover { background-color: #b10609; box-shadow: 1px 1px 5px rgba(0,0,0,0.5);}
+
+.search{ height: 35px; overflow: hidden; margin: 30px 0 0 20px;}
+.scan-upload{height: 35px; overflow: hidden; margin: 10px 0 0 20px;}
+.mat_in_out .search label, .search_select label, .mat_in_out .scan-upload label{
+    width: 150px;
+	display: inline-block; 
+	height: 32px; 
+	line-height: 32px; 
+	text-align: left;
+	padding-right: 5px; 
+	color:#930205;
+	font-weight:bold;
+	font-size: 18px;
+	 float: left;
+}
+.search_select label{
+    width: 100px;
+}
+.mat_in_out .search input[type="text"] { width: 220px; height: 32px; border: 1px #999999 solid; float: left;}
+
+.search_alert { color: #F00; line-height: 32px; padding-left: 120px; display: none}
+.search_select { width: 350px; height: 35px; overflow: hidden; margin: 60px auto 0 auto;}
+.search_select select { width: 220px; height: 25px; line-height: 25px; border: 1px #999999 solid; float: left; margin-top: 7px;}
+
+.data_menu { height: 24px; line-height: 24px; margin-bottom: 1px; float: right; overflow: hidden;}
+.data_menu a{
+    height: 24px; 
+	display: block; 
+	float: left; 
+	margin-right: 1px; 
+	padding: 0 10px; 
+	background: #930205; 
+	color: #FFF;
+	text-shadow: 1px 1px rgba(51,51,51,0.6);
+}
+.data_menu a:hover{ background: #d42b2f;}
+
+.data_body { padding: 5px 0;}
+
+/*table*/
+.data_table { text-align: center; margin-bottom: 30px;}
+.data_table tr.hbg td, .data_table tr.hbg th { background: #c59fa0; color: #FFF; font-weight: bolder; font-size: 14px;}
+.data_table td, .data_table th { background: #FFF; line-height: 32px; height: 32px; font-size: 12px;}
+.data_table tr.tbg td { background: #fff5f6;}
+.data_table td a { background: #026c93; padding: 0px 5px; color: #FFF; font-size: 12px; margin: 0 5px;}
+
+.data_table td.data_table_img { line-height: inherit; height: inherit; font-size: 0;}
+.data_table td.data_table_img img { margin: 5px 0;}
+
+.data_table td a.other_a {background: none; color: #00F; text-decoration: underline;}
+
+.data_table td .data_input_s { width: 50px; height: 24px; line-height: 24px; border: 1px #CCCCCC solid; text-align: center;}
+
+.newTr_green td { border: 1px #00CC00 solid; border-left: none; border-right: none; box-shadow: 1px 1px 4px rgba(0,0,0,0.5);}
+.newTr_red td { border: 1px #FF3300 solid; border-left: none; border-right: none; box-shadow: 1px 1px 4px rgba(0,0,0,0.5);}
+
+/*btn*/
+button { border: none; cursor: pointer; font-family: "微软雅黑", "宋体", Arial; font-size: 14px;}
+.btn_box { width: 166px; margin: 10px auto;}
+.btn_box_s { width: 85px; margin: 10px auto;}
+.btn_box_w { width: 195px; margin: 10px auto;}
+.confirm_btn { padding: 5px 15px; _padding: 2px 7px; margin: 0 10px; color: #FFF;}
+input[type="submit"].confirm_btn, .confirm_btn { background: #930205;cursor: pointer}
+input[type="submit"].confirm_btn:hover{background: #d42b2f;}
+.message {
+    padding: 5px 10px;
+	margin: 5px 0;
+	background: #fffbc1;
+	border: 1px #ed1010 solid;
+	line-height: 24px;
+	position: relative;
+}

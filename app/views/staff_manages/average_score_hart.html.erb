@@ -1,0 +1,23 @@
+<div class="second_menu">
+  <% if permission?(:datas, :jixiao) %><%= link_to "绩效统计", store_staff_manages_path(@store) %><% end %>
+  <% if permission?(:datas, :shuip) %><a href="/stores/<%= @store.id %>/staff_manages/average_score_hart" class="hover">平均水平统计</a><% end %>
+  <% if permission?(:datas, :ave_cost_detail) %><a href="/stores/<%= @store.id %>/staff_manages/average_cost_detail_summary" style="font-size: 13px">平均成本明细汇总</a><% end %>
+  <% if permission?(:datas, :staff_detail) %><a href="/stores/<%= params[:store_id]%>/complaints/cost_price">员工成本明细</a><% end %>
+</div>
+<form action="/stores/<%= @store.id %>/staff_manages/average_score_hart" method="get">
+<div class="search">
+     <div><label>统计年份：</label>
+              <select name="year" id="statistics_year">
+               <% get_last_ten_years.each do |year| %>
+               <option <%= @year.eql?(year) ? "selected" : "" %>><%= year %></option>
+               <% end %>
+              </select>
+     </div>
+</div>
+</form>
+<div class="clear"></div>
+<div class="data_body">
+     <div><% if @avg_technician.nil? || !FileTest::exist?(File.expand_path(Rails.root)+"/public"+@avg_technician) %>技师平均水平统计没有数据！<% else %><%= image_tag @avg_technician %><% end %></div>
+     <div><% if @avg_front.nil? || !FileTest::exist?(File.expand_path(Rails.root)+"/public"+@avg_front) %>接待平均水平统计没有数据！<% else %><%= image_tag @avg_front %><% end %></div>
+</div>
+      

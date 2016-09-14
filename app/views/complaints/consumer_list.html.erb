@@ -1,0 +1,104 @@
+<%= render 'directory' %>
+<%= form_for :complaint,:url=>"/stores/#{params[:store_id]}/complaints/consumer_search" do%>
+  <div class="search">
+    <div><label>起始时间：</label><input name="list_start" type="text" value="<%=session[:list_start]  %>" onclick="WdatePicker()" class="Wdate" readonly /></div>
+    <div><label>截至时间：</label><input name="list_end" type="text" value="<%=session[:list_end]  %>" onclick="WdatePicker()" class="Wdate" readonly /></div>
+    <div><label>产品/服务类型：</label><select  name="list_prod">
+        <option value="">--</option>
+        <% Product::PRODUCT_TYPES.each do |key,value| %>
+          <option value="<%= key %>" <%if session[:list_prod]== "#{key}" %> selected<%end%> ><%= value %></option>
+        <% end %>
+      </select></div>
+    <div><label>客户性别：</label> <select style="width: 80px;" name="list_sex">
+        <option value="">--</option>
+        <option <%if "#{Complaint::SEX[:MALE]}"==session[:list_sex]%>selected<%end%> value="<%= Complaint::SEX[:MALE] %>">男</option>
+        <option <%if "#{Complaint::SEX[:FEMALE]}"==session[:list_sex]%>selected<%end%> value="<%= Complaint::SEX[:FEMALE] %>">女</option>
+      </select></div>
+    <div><label>购车年份：</label> <select name="list_year">
+        <option value="">--</option>
+        <%  (Constant::DATE_YEAR..Time.now.strftime("%Y").to_i).inject(Array.new){|arr,n| arr << n }.reverse.each do |year| %>
+          <option <%  if  session[:list_year] == "#{year}" %>selected <%end%> value="<%= year %>"><%= year %></option>
+        <% end %>
+      </select></div>
+    <div><label>车型：</label> <select class="ymd" id="capital_div" onchange="choose_brand('#capital_div', '#car_brands', '#car_models')">
+        <option value="">--</option>
+        <% Capital.all.each do |ca| %>
+          <option value="<%= ca.id %>"><%= ca.name %></option>
+        <% end %>
+      </select>&nbsp;
+      <select class="ymd" id="car_brands" name="car_brands" style="width:100px" onchange="choose_model('#car_brands', '#car_models')">
+        <option value="">--</option>
+      </select>
+      <select class="ymd" id="car_models" style="width:100px" name="list_model">
+        <option value="">--</option>
+      </select></div>
+    <div><label>消费金额：</label><select  name="list_fee">
+        <option value="">--</option>
+        <% Constant::CONSUME_P.each do |key,value| %>
+          <option value="<%= value %>" <%if session[:list_fee]== value%> selected<%end%> ><%= key %></option>
+        <% end %>
+      </select>
+    </div>
+    <div><label>客户姓名：</label><input name="list_name" type="text" value="<%=session[:list_name]  %>" /></div>
+    <div><button class="search_btn">查询</button></div>
+  </div>
+<% end %>
+<div class="clear"></div>
+<div class="data_body">
+  <div>
+    <%unless @consumers.blank?%>
+      <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+        <thead>
+          <tr class="hbg">
+            <td>日期</td>
+            <td>相关订单</td>
+            <td>消费内容</td>
+            <td>车型</td>
+            <td>购买年份</td>
+            <td>消费金额</td>
+          </tr>
+        </thead>
+        <tbody>
+          <%@consumers.each do |consumer|%>
+            <tr>
+              <td><%= consumer.created_at.nil? ? "" : consumer.created_at.strftime("%Y.%m.%d") %></td>
+              <td><%= link_to "#{consumer.code}", "/orders/#{consumer.id}/order_info" ,
+                  :remote => "true", "data-type" => "script", :class => "other_a" %></td>
+              <td width="30%">
+                <table width="100%" border="0" cellspacing="1" cellpadding="0" class="s_table">
+                  <%unless @order_prods[consumer.id].blank? %>
+                    <tr class="fws">
+                      <td>名称</td>
+                      <td>单价</td>
+                      <td>数量</td>
+                    </tr>
+                    <%@order_prods[consumer.id].each do |prod|%>
+                      <tr>
+                        <td width="50%"><%= prod.p_name %></td>
+                        <td><%= prod.order_price %></td>
+                        <td><%= prod.pro_num %></td>
+                      </tr>
+                    <%end%>
+                  <%else%>
+                    <tr class="fws">
+                      <td>暂无</td>
+                    </tr>
+                  <% end %>
+                </table></td>
+              <td><%= consumer.name %></td>
+              <td><%= consumer.buy_year %></td>
+              <td><%=format("%.1f", @order_price[consumer.id].nil? ? consumer.price : @order_price[consumer.id] )  %></td>
+            </tr>
+          <%end%>
+        </tbody>
+      </table>
+      <div class="pageTurn">
+        <%= will_paginate @consumers,:class=>"pageTurn",:previous_label=>"上一页",:next_label=>"下一页" %>
+      </div>
+      <div class="amount">总计：<%=format("%.1f",@total_price) %></div>
+    <%else%>
+      无相关记录
+    <%end%>
+  </div>
+</div>
+<div id="related_order_div"></div>

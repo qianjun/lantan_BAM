@@ -1,0 +1,7 @@
+$("#staff_edit").html('<%= escape_javascript(render :partial => '/staffs/edit') %>');
+popup("#edit_staff_area");
+$("#edit_staff_close, #edit_staff_cancel").bind('click',function(){
+    $(".mask").hide();
+    $("#edit_staff_area").html('');
+    return false;
+});

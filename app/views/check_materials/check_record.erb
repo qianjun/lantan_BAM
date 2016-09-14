@@ -1,0 +1,40 @@
+<%= javascript_include_tag "check_materials"%>
+<div class="main">
+  <div class="box">
+    <div class="data_box">
+      <div class="tab_head">
+        <ul>
+          <li onclick="window.location.href='/stores/<%=params[:store_id]%>/check_materials'">库存盘点</li>
+          <li class="hover" >盘点记录</li>
+          <li  onclick="window.location.href='/stores/<%=params[:store_id]%>/check_materials/file_list'">记录文件</li>
+        </ul>
+      </div>
+      <div class="search">
+        <div>
+          <label>盘点状态：</label>
+          <select id="check_status">
+            <option value="-1">全部</option>
+            <% Material::MAT_RECORD.each do |k,v| %>
+              <option value="<%= k%>"><%=v %></option>
+            <% end %>
+          </select>
+        </div>
+        <div>
+          <%= image_tag "ajax-loader.gif", :id => "spinner_user", :style => "display:none;padding:0 10px" %>
+        </div>
+        <div>
+          <button class="search_btn" id="check_btn" onclick="search_check_materials(<%= @current_store.id %>,'#check_status','/check_materials/check_record')">查 询</button>
+        </div>
+        <div>
+          <%= image_tag "ajax-loader.gif", :id => "spinner_user1", :style => "display:none;padding:0 10px" %>
+        </div>
+        <div>
+          <button class="search_btn" id="check_btns" onclick="submit_check(<%= @current_store.id %>)">批量核实</button>
+        </div>
+      </div>
+      <div id="check_div">
+        <%= render :partial=>"check_record" %>
+      </div>
+    </div>
+  </div>
+</div>

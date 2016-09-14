@@ -1,0 +1,61 @@
+<div class="popup_body_area" id="tech_order_popup">
+  <div  style="margin:10px 20px 10px 20px;">
+    <fieldset class="car_fieldset" >
+      <legend class="popup_body_title" style=" padding:0px 10px;">车辆信息</legend>
+      <div class="popup_body_result_car">
+        <div class="car_edit"><label>品牌型号 ：</label>
+          <select class="ymd" onchange="add_car_get_datas(0, this, <%= params[:store_id] %>)">
+            <option value="">--</option>
+            <% Capital.all.each do |ca| %>
+              <option value="<%= ca.id %>"><%= ca.name %></option>
+            <% end %>
+          </select>
+          <select class="ymd" id="add_car_brands" onchange="add_car_get_datas(1, this, <%= params[:store_id] %>)">
+            <option value="">--</option>
+          </select>
+          <select class="ymd" id="add_car_models" name="add_car_models">
+            <option value="">--</option>
+          </select>
+        </div>
+        <div class="car_edit"><label>购买年份:</label>
+          <select id="add_car_buy_year">
+            <% (Time.now.year.to_i.downto(Time.now.year.to_i - 30)).each do |i| %>
+              <option value="<%= i %>"><%= i %></option>
+            <% end %>
+          </select>
+        </div>
+        <div class="car_edit">
+          <label>行驶里程 ：</label>
+          <input type="text" id="add_car_distance" name="add_car_distance" value="0"/>
+        </div>
+      </div>
+    </fieldset>
+  </div>
+
+  <div  style=" margin:10px 20px 10px 20px;">
+    <fieldset class="car_fieldset" >
+      <legend class="popup_body_title" >保存客户信息</legend>
+      <div class="popup_body_result_car" style="padding:0px 10px;">
+        <div  class="car_custom">
+          <table>
+            <tr>
+              <td  class="car_custom_radio"><input type="radio" checked name="customer_types" value="0" /></td>
+              <td colspan="3" ><span>新客户</span></td>
+            </tr>
+            <% @customers.each do |customer| %>
+              <tr>
+                <td class="car_custom_radio"><input type="radio" name="customer_types" value="<%=customer.id%>" /></td>
+                <td  class="car_custom_name"><%= customer.name %></td>
+                <td class="car_custom_adress" style="width:220px;"><%= customer.group_name %></td>
+                <td class="car_custom_cc"><%= customer.address %></td>
+              </tr>
+            <%end if @customers and !@customers.blank?%>
+          </table>
+        </div>
+      </div> 
+    </fieldset>
+  </div>
+  <div style="text-align:center; margin:10px 10px;" ><button  class="confirm_btn" onclick="confirm_btn()">确定</button></div>
+</div>
+
+

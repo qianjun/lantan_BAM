@@ -1,0 +1,42 @@
+<% if @materials_need_check.present? %>
+  <%= form_tag "/stores/#{@current_store.id}/check_materials/batch_check" do |f|%>
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table" id="print_sort_table">
+      <thead>
+        <tr class="hbg">
+          <th width="15%">物料名称</th>
+          <th width="15%">物料条形码</th>
+          <th width="10%">物料类别</th>
+          <th width="5%">规格</th>
+          <th width="7%">库存实数</th>
+          <th width="20%">盘点数量</th>
+          <th width="8%">盘点标记</th>
+          <th width="20%">备注</th>
+        </tr>
+      </thead>
+      <tbody class="pandian_list">
+        <% @materials_need_check.each do |material| %>
+          <tr id="<%= material.id %>" class="<%= material.storage!= material.check_num ? 'tbg' : '' %>">
+            <td <% if !material.is_ignore && material.storage.to_i<=material.material_low.to_i %>class="data_table_error"<% end %>>
+              <%= material.name %></td>
+            <td><%= material.code %></td>
+            <td><%= material.cname %></td>
+            <td><%= material.unit %></td>
+            <td class="su"><span class="storage" id="showmaterial<%= material.id %>span"><%= storage = material.storage %></span></td>
+            <td class="check_num">
+              <a class='addre_a' style='font-size:20px;' href='javascript:void(0)' onclick='del_m(this,1)'>&nbsp;&nbsp;-&nbsp;&nbsp;</a>
+              <% m_num = material.check_num.nil? ? material.storage : material.check_num %>
+              <%= text_field_tag "materials[#{material.id}][check_num]", m_num, :id => "check_num_#{material.id}", :style => 'width:50px;font-size:24px' %>
+              <a class='addre_a' style='font-size:20px;' href='javascript:void(0)' onclick='add_m(this,1)'>&nbsp;&nbsp;+&nbsp;&nbsp;</a>
+            </td>
+            <td><input type="checkbox" style="width:50px;height:40px;" /></td>
+            <td><textarea style="width:150px;height:25px;" name="materials[<%=material.id%>][remark]"><%= material.remark %></textarea></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    <div class="btn_box"><button onclick="if($('.pandian_list').find('tr').length > 0){return confirm('确定提交库存盘点？')} else {tishi_alert('没有物料！');return false; }" type="submit" class="confirm_btn">提交</button></div>
+  <% end %>
+<% else %>
+  没有盘点清单
+<% end %>
+<div class="clear"></div>

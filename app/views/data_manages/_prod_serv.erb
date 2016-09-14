@@ -1,0 +1,48 @@
+<div class="popup_box">
+  <h1><%=@c_name%><a href="javascript:void(0)" class="close">关闭</a></h1>
+  <div class="popup_body">
+    <div class="popup_body_area">
+      <%unless @orders.empty?%>
+        <div class="tab_head">
+          <ul>
+            <span class="data">毛利统计：<%= @orders.values.flatten.map(&:earn_price).inject(0){|sum,t|sum+t}.round(2)%>&nbsp;&nbsp;元</span>
+          </ul>
+        </div>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+          <thead>
+            <tr class="hbg">
+              <td>时间</td>
+              <td>项目名称</td>
+              <td>项目代码</td>
+              <td>数量</td>
+              <td>合计</td>
+              <td>成本</td>
+              <td>毛利</td>
+            </tr>
+          </thead>
+          <tbody>
+            <%@orders.each do |k,v|%>
+              <% m=0%>
+              <%v.each do |prod_serv|%>
+                <tr>
+                  <% m += 1;if m==1 %>
+                    <td rowspan="<%=v.length%>"><strong><%= k %></strong></td>
+                  <%end%>
+                  <td><%= prod_serv.name %></td>
+                  <td><%=  prod_serv.service_code %></td>
+                  <td><%= prod_serv.pro_num  %></td>
+                  <td><%= prod_serv.total_price.round(2)%></td>
+                  <td><%=  prod_serv.t_price%></td>
+                  <td><%=  prod_serv.earn_price.round(2)%></td>
+                </tr>
+              <%end%>
+            <%end%>
+          </tbody>
+        </table>
+  <%#= will_paginate_remote(@pcards ,"" ,{:url =>"/stores/#{params[:store_id]}/market_manages/load_pcard"}) %>
+      <%else%>
+        暂无增值服务类报表
+      <%end%>
+    </div>
+  </div>
+</div>

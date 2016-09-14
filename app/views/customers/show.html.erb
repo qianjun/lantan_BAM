@@ -1,0 +1,56 @@
+<div class="box">
+  <div class="data_box">
+    <%= render :partial => "single_customer" %>
+    <div class="clear"></div>
+    <div class="data_menu" style="width:300px;">
+      <span style="float: left;"> <label>消费总额：</label><span id="total_sum"><%=  @total_orders.map(&:price).compact.reduce(:+)%></span></span>
+      &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+      <a href="javascript:void(0)" style="float: right;" onclick="print_orders(<%= @store.id %>)">打印</a>
+    </div>
+    <div class="tab_head">
+      <ul>
+        <li class="hover">消费记录</li>
+        <li>回访记录</li>
+        <li id="comp_li">投诉记录</li>
+        <li>储值卡收支记录</li>
+        <li>套餐卡记录</li>
+      </ul>
+    </div>
+    <div class="data_body">
+      <div id="order_prods_partial"><%= render :partial => "order_prods_p" %></div>
+      <div id="revisits_partial" style="display: none;"><%= render :partial => "revisits" %></div>
+      <div id="complaints_partial" style="display: none;"><%= render :partial => "complaints" %></div>
+      <div id="sav_card_records" style="display: none;" ><%= render :partial =>'sav_card_records' %></div>
+      <div id="pac_card_records" style="display: none;"><%= render :partial =>'pac_card_records' %></div>
+    </div>
+  </div>
+</div>
+<%= render :partial => "edit_customers" %>
+<%= render :partial => "customer_revisit" %>
+<div class="tab_popup" id="complaint_detail_tab">
+  <div class="popup_box">
+    <h1>详情<a href="javascript:void(0)" class="close">关闭</a></h1>
+    <div class="popup_body">
+
+    </div>
+  </div>
+</div>
+<div id="related_order_div"></div>
+<div id="process_complaint_div"></div>
+<div id="process"></div>
+<div id="show_revisit_detail" class="tab_popup"></div>
+<div id="return_order" class="tab_popup"></div>
+<script type="text/javascript">
+<% if params[:comp] == "1" %>
+    $(".tab_head ul li").removeClass("hover");
+    $("#comp_li").addClass("hover");
+    $(".data_body > div").hide();
+    $("#complaints_partial").show();
+<% end %>
+<% if params[:comp_page] %>
+    $(".tab_head ul li").removeClass("hover");
+    $("#comp_li").addClass("hover");
+    $(".data_body > div").hide();
+    $("#complaints_partial").show();
+<% end %>
+</script>

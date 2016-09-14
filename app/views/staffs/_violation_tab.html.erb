@@ -1,0 +1,36 @@
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table" id="violation_table">
+  <thead>
+    <tr class="hbg">
+      <th><span class="sort_u_s" onclick="sort_change(this)">时间</span></th>
+      <th width="25%">情况描述</th>
+      <th>处理状态</th>
+      <th>处理方式</th>
+      <th>处罚分值</th>
+      <th>处罚金额</th>
+      <th width="25%">理由</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @violations.each do |violation| %>
+      <tr>
+        <td><%= violation.created_at.strftime("%Y-%m-%d") %></td>
+        <td><%= violation.mark %></td>
+        <td>
+          <% unless violation.status %>
+            <% if permission?(:staffs, :deal_violation) %>
+              <%= link_to "处理", "javascript:void(0)", :class => "process_violation", :id => violation.id, :name => @store.id %>
+            <% end %>
+          <% else %>
+            已处理
+          <% end %>
+        </td>
+        <td><%= ViolationReward::N_VIOLATE[violation.process_types] %></td>
+        <td><%= violation.score_num %></td>
+        <td><%= violation.salary_num %></td>
+        <td><%= violation.situation %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<%= will_paginate @violations, :class => "pageTurn", :previous_label => "上一页",
+  :next_label => "下一页" %>

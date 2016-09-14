@@ -1,0 +1,19 @@
+<div class="tab_popup" style="display: none;" id="depot_form">
+  <div class="popup_box">
+    <h1>仓库<a href="javascript:void(0)" class="close">关闭</a></h1>
+    <div class="popup_body">
+      <% @depot ||= Depot.new %>
+      <%= form_tag :id => "Add_depot_form" do |f| %>
+          <div class="popup_body_area">
+            <div class="brand">
+              <%=label_tag 'name','仓库名称：'%>
+              <%= text_field_tag "depot_name"%>
+            </div>
+            <div class="btn_box">
+              <button class="confirm_btn" onclick="new_depot('<%= params[:store_id] %>')">确定</button>
+            </div>
+          </div>
+      <% end %>
+    </div>
+  </div>
+</div>

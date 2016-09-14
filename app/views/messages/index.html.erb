@@ -1,0 +1,80 @@
+<div class="box">
+  <div class="data_box">
+    <div class="search">
+      <% if permission?(:customers, :message_search) %>
+        <%= form_for :customer ,:url=>"/stores/#{@store.id}/messages/search", :method => "post" do %>
+          <div><label>消费时间：</label>
+            <input type="text" name="started_at" id="started_at"
+                   value="<%= session[:started_at] ? session[:started_at] : (Time.now - 15.days).to_date  %>"
+                   class="Wdate" readonly onClick="WdatePicker();"/>&nbsp;到&nbsp;
+            <input type="text" name="ended_at" id="ended_at" value="<%= session[:ended_at] ? session[:ended_at] : Time.now.to_date %>"
+                   class="Wdate" readonly onClick="WdatePicker();"/>
+          </div>
+          <div><label>会员：</label>
+            <select id="is_vip" name="is_vip">
+              <option value="-1" <% if session[:is_vip].nil? or session[:is_vip] == "-1" %>selected<% end %>>全部</option>
+              <option value="<%= Customer::IS_VIP[:VIP] %>" <% if session[:is_vip] == "1" %>selected<% end %>>是</option>
+              <option value="<%= Customer::IS_VIP[:NORMAL] %>" <% if session[:is_vip] == "0" %>selected<% end %>>否</option>
+            </select>
+            <select id="is_visited" name="is_visited">
+              <option value="-1" <% if session[:is_visited].nil? or session[:is_visited] == "-1" %>selected<% end %>>全部</option>
+              <option value="<%= Order::IS_VISITED[:YES] %>" <% if session[:is_visited] == "1" %>selected<% end %>>已回访客户</option>
+              <option value="<%= Order::IS_VISITED[:NO] %>" <% if session[:is_visited] == "0" %>selected<% end %>>未回访客户</option>
+              <option value="2" <% if session[:is_birthday] == "2" %>selected<% end %>>十日内生日</option>
+            </select>
+          </div>
+          <div>
+            <input type="checkbox" name="is_time" id="is_time" value="1" <% unless session[:is_time].nil? %>checked<% end %>/>&nbsp;消费满&nbsp;
+            <input type="text" name="time" id="time" class="input_s" value="<%= session[:time] ? session[:time] : 3 %>"/>&nbsp;次
+          </div>
+          <div>
+            <input type="checkbox" name="is_price" id="is_price" value="1" <% unless session[:is_price].nil? %>checked<% end %>/>&nbsp;金额满&nbsp;
+            <input type="text" name="price" id="price" class="input_s" value="<%= session[:price] ? session[:price] : 500 %>"/>&nbsp;元
+          </div>
+          <div><input type="hidden" name="store_id" id="store_id" value="<%= @store.id %>" />
+            <button type="submit" class="search_btn">查询</button>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+    <div class="clear"></div>
+    <div class="data_body">
+      <div>
+        <fieldset class="popup_body_fieldset">
+          <legend class="popup_body_title">查询结果</legend>
+          <div style="margin: 5px 0 5px 30px;">
+            <input class="select_all" type="checkbox" onclick="selectAllCustomers(this)"/>
+            <label>全选</label>
+          </div>
+          <div class="popup_body_result" id="search_div">
+            <ul>
+              <% @customers.each do |customer| %>
+                <li><input type="checkbox" id="c_<%= customer.cu_id %>" name="c_<%= customer.cu_id %>"
+                           value="<%= customer.cu_id %>" onclick="select_customers()" />
+                  <label id="label_<%= customer.cu_id %>"><%= customer.name %></label>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+        </fieldset>
+        <div class="pq"></div>
+        <fieldset class="popup_body_fieldset">
+          <legend class="popup_body_title">已选择</legend>
+          <div class="popup_body_result" id="send_div"></div>
+        </fieldset>
+        <%= form_for :customer ,:url=>"/stores/#{@store.id}/messages/", :method => "post",
+          :html => {:onsubmit => "return check_message()"} do %>
+          <div class="shortMessage">
+            <h2>短息内容</h2>
+            <a href="javascript:void(0)" onclick="show_name()" class="sMessage_btn">%name%</a>
+            <a href="javascript:void(0)" onclick="javascript:show_store_name('<%= @store.name %>')" class="sMessage_btn">门店名称</a>
+            <input type="hidden" id="customer_ids" name="customer_ids" value=""/>
+            <textarea id="content" name="content" cols="" rows="" class="message_textarea"></textarea>
+          </div>
+          <div class="btn_box"><button type="submit" class="confirm_btn" id="send_message">发送</button></div>
+        <% end %>
+      </div>
+
+    </div>
+  </div>
+</div>

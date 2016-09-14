@@ -1,0 +1,39 @@
+<script type="text/javascript">
+  $(function(){
+    $(".data_table > tbody > tr:odd").addClass("tbg");
+    $(".data_tab_table > tbody > tr:odd").addClass("tbg");
+  });
+</script>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+  <thead>
+    <tr class="hbg">
+      <td width="20%">车牌号码</td>
+      <td>客户姓名</td>
+      <td>手机号码</td>
+      <td width="20%">客户车型</td>
+      <td>客户属性</td>
+      <td>是否会员</td>
+      <td>总计消费金额</td>
+      <td>最近消费日期</td>
+      <td>操作</td>
+    </tr>
+  </thead>
+  <tbody>
+    <% @customers.each do |c| %>
+      <tr>
+        <% str = get_cus_car_num(c.id) %>
+        <td><%= str[0] %></td>
+        <td><%= c.name %></td>
+        <td><%= c.mobilephone %></td>
+        <td><%= str[1] %></td>
+        <td><%= c.property.to_i==Customer::PROPERTY[:PERSONAL] ? "个人客户" : "单位客户" %></td>
+        <td><%= c.is_vip==true ? "是" : "否" %></td>
+        <td><%= c.oprice.to_i %></td>
+        <td><%= c.last_con_time.nil? ? "无" : c.last_con_time.strftime("%Y-%m-%d %H:%M") %></td>
+        <td><a href="/stores/<%= @store_id %>/customers/<%= c.id %>">详情</a></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<%= will_paginate @customers, :previous_label => "上一页", :next_label => "下一页", :class => "pageTurn",
+  :id => "meta_analysis_page"%>

@@ -1,0 +1,26 @@
+<div class="second_menu">
+     <% if permission?(:datas, :mubiao) %>
+    <a href="/stores/<%=params[:store_id]%>/market_manages/"
+       <% if  controller.controller_name == "market_manages" && params[:action]=="index"%> class="hover"<%end%>>目标销售额</a>
+     <% end %>
+     <% if permission?(:datas, :sale) %>
+    <a href="/stores/<%=params[:store_id]%>/market_manages/sale_orders"
+       <% if params[:action]=="sale_orders" || params[:action]=="sale_order_list"%> class="hover"<%end%>>活动订单统计</a>
+     <% end %>
+     <% if permission?(:datas, :xiaos) %>
+    <a href="/stores/<%=params[:store_id]%>/data_manages"
+       <% if controller.controller_name == "data_manages"%> class="hover"<%end%>>销售报表</a>
+     <% end %>
+     <% if permission?(:datas, :yingye) %>
+    <a href="/stores/<%=params[:store_id]%>/market_manages/makets_totals"
+       <% if params[:action]=="makets_list" || params[:action]=="makets_totals"%> class="hover"<%end%>>营业额汇总表</a>
+     <% end %>
+     <% if permission?(:datas, :svcard) %>
+    <a href="/stores/<%= params[:store_id] %>/market_manages/stored_card_record"
+       class="<%= action_name == "stored_card_record" ? "hover" : '' %> fontSize14">储值卡消费记录</a>
+  <% end %>
+     <% if permission?(:datas, :duiz) %>
+    <a href="/stores/<%= params[:store_id] %>/market_manages/stored_card_bill"
+       class="<%= action_name == "stored_card_bill" ? "hover" : '' %>">储值卡对账单</a>
+     <% end %>
+</div>

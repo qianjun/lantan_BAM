@@ -1,0 +1,62 @@
+<script>
+  $(document).ready(function(){
+    $("#back_good_div a").unbind("click");
+    $("#back_good_div a").bind("click", function(){
+      var url = this.href;
+      $.ajax({
+        url : url,
+        dataType: "script",
+        type: "get"
+      })
+      return false;
+    });
+
+    $("#back_good_tab").tablesorter({
+      headers:
+        {
+        0: {sorter: false},
+        3: {sorter: false},
+        4: {sorter: false},
+        5: {sorter: false}
+      }
+    });
+    //after sort
+    $("#back_good_tab").bind("sortEnd", function(){
+      $("#back_good_tab tbody").find("tr").each(function(i){
+        if(i%2==0){
+          $(this).removeClass('tbg');
+        }else{
+          $(this).addClass('tbg');
+        }
+      })
+    })
+  })
+</script>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table" id="back_good_tab">
+  <thead>
+    <tr class="hbg">
+      <th width="150">条形码</th>
+      <th width="200"><span class="sort_u" onclick="sort_change(this)">物料名称</span></th>
+      <th><span class="sort_d" onclick="sort_change(this)">物料类别</span></th>
+      <th width="200">供应商</th>
+      <th>退货量</th>
+      <th>退货单价</th>
+      <th>退货时间</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @back_good_records.each do |b| %>
+      <tr>
+        <td><%= b.mcode ||= "--" %></td>
+        <td><%= b.mname ||= "--" %></td>
+        <td><%= b.cname ||= "--" %></td>
+        <td><%= b.sname ||= "--" %></td>
+        <td><%= b.material_num.to_i %></td>
+         <td><%= b.b_price ||= "--" %></td>
+        <td><%= b.created_at.nil? ? "----" : b.created_at.strftime("%Y-%m-%d %H:%M") %></td>
+      </tr>
+    <% end if @back_good_records %>
+  </tbody>
+</table>
+<%= will_paginate_remote(@back_good_records,"back_type=#{@back_type}&back_name=#{@back_name}&back_code=#{@back_code}&back_supp=#{@back_supp}" ,{:url => page_back_records_store_materials_url(@current_store.id),
+    :class => "pageTurn",:prev_label => "上一页",:next_label => "下一页", :id => "back_good_div"}) %>

@@ -1,0 +1,160 @@
+<div class="accountsTab_client">
+  <div class="at_client_con">
+    <ul>
+      <li><span>客户姓名：</span><%=  @customer.name%></li>
+      <li><span>手机号码：</span><%=@customer.mobilephone%></li>
+      <li><span>车牌：</span><%=@car_num.num%></li>
+      <li>
+        <%if @customer.group_name %>
+          <span>单位：</span><%=@customer.group_name%>
+        <%else%>
+          <span>客户属性：</span>个人客户
+        <%end%>
+      </li>
+    </ul>
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_tab_table">
+      <thead>
+        <tr class="hbg">
+          <td style="display: none" id="return_order">退单</td>
+          <td id="code_num">订单号</td>
+          <td>项目</td>
+          <td>数量</td>
+          <td>单价</td>
+          <td>总价</td>
+          <td>已优惠</td>
+          <td>小计</td>
+          <td style="display: none" id="input_loss">优惠</td>
+          <td style="display: none" id="reason">优惠备注</td>
+        </tr>
+      </thead>
+      <tbody>
+        <% @orders.each do |order| %>
+          <tr>
+            <% loss = (@order_pays[order.id].nil? ? 0 : @order_pays[order.id]).round(2)  %>
+            <%  fact = (order.price>loss ? order.price-loss : 0).round(2)%>
+            <td style="display: none" id="return_order_<%=order.id%>">
+              <input type="hidden" value="<%= fact  %>" id="loss_<%= order.id %>" />
+              <input type="checkbox" id="l_<%=order.id%>" onclick="return_check(this)" />
+            </td>
+            <td id="code_num"><%= order.code %></td>
+            <% if @order_prods[order.id] %>
+              <% prod = @order_prods[order.id][0] %>
+              <td><%= prod.name %></td>
+              <td><%= prod.pro_num %></td>
+              <td><%= prod.price.round(2) %></td>
+            <%else%>
+              <td><%= "--" %></td>
+              <td><%= "--" %></td>
+              <td><%= "--" %></td>
+            <%end%>
+            <td><%= order.price.round(2) %></td>
+            <td><%= loss %></td>
+            <td><%= fact %></td>
+            <td style="display: none" id="input_<%= order.id %>">
+              <input type="text" value="0" id="in_<%= order.id %>" size="5px" onblur="set_reward(this)"/>
+              <input type="hidden" value="0" id="hipay_<%=order.id%>" /></td>
+            <td style="display: none" id="reason_<%= order.id %>"><input type="text" value="" size="30px" /></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<%total = @orders.map(&:price).inject(0){|sum,num|sum+num} %>
+<%reward = @order_pays.select{|k,v| @orders.map(&:id).include? k}.values.inject(0){|sum,num|sum+num}%>
+<div class="due_pay_money"><span>应收：</span><span id="due_money"><%=(total > reward ? total-reward : 0).round(2)%></span></div>
+<div id="sv_card_used">
+  <% @sv_card.each do |card| %>
+    <div class="accountsTab_pay" >
+      <div class="accountsTab_pay_title"><h3>储值卡</h3><span class="pay_span" title="<%=card.name%>"><%=  truncate_u(card.name,8)%>(卡号：<label id="svc_<%=card.id%>"><%=card.id_card%></label>)
+          <a class="" href="javascript:void(0)" onclick="show_edit(<%=params[:store_id]%>,<%=card.id%>)">编辑</a></span>
+        <div>
+          <span style="float: left;margin-left: 140px;"  id="<%=card.order_id%>_<%=card.id%>">
+            <input id="radio_<%= card.id %>" type="checkbox"  onclick="check_sum(<%= card.id %>,this)" class="pay_check" />使用此卡支付</span>
+          <span style="float: right;">
+            <%  cas = card.ci.split(',').inject(Array.new){|arr,c|arr << @cates[c.to_i]}%>
+            <label title="<%=cas.join("、")%>">使用范围：<%=cas[0..1].join('、')%>..</label></span>
+        </div>
+      </div>
+      <div class="accountsTab_pay_item">
+        <label>可用余额：<span id="left_<%= card.id %>"><%=  card.left_price.round(2) %></span></label>
+      </div>
+      <div class="accountsTab_pay_item">
+        <label>本单：</label><input onblur="check_num()" value="0" type="text" id="order_<%=card.id%>" disabled />
+      </div>
+      <div class="accountsTab_pay_item">
+        <label>储值卡密码：</label><input  type="password" id="pwd_<%=card.id%>" disabled value=""/><% if  card.sa == CSvcRelation::STATUS[:invalid] %>(新增卡)<%end%>
+      </div>
+    </div>
+  <% end %>
+</div>
+<div class="deal_money">
+  <ul>
+    <li>应付金额：<span id="due_pay"><%= (total > reward ? total-reward : 0).round(2)%></span>
+      <span id="hidden_pay" style="display:none"><%=(total > reward ? total-reward : 0).round(2)%></span>
+      <span style="float: right;display: none;"><input id="clear_per" type="checkbox"  onclick="change_pay(this)"
+                                                       <%if (total > reward ? total-reward : 0).round(2) <=10 %> disabled <%end%> />抹零</span>
+      <input type="hidden" value="0" id="clear_value" />
+    </li>
+    <li>付款总计：<span id="total_pay"><%=0%></span></li>
+    <li>待付金额：<span id="left_pay"><%= (total > reward ? total-reward : 0).round(2)%></span></li>
+    <li><%= image_tag "ajax-loader.gif", :id => "spinner_due_over", :style => "display:none;" %>
+      <a href="javascript:void(0)" class="deal_money_btn" id="due_over" onclick="check_post(<%=params[:store_id]%>,<%=@customer.id%>,<%=@car_num.id%>)" style="display: none">可以结账</a></li>
+  </ul>
+</div>
+<div class="accountsTab_way">
+  <div class="at_way_h">
+    <ul id="pay_type">
+      <li class="hover" id="<%=OrderPayType::PAY_TYPES[:CASH]%>">现金</li>
+      <li id="<%=OrderPayType::PAY_TYPES[:CREDIT_CARD]%>">刷卡</li>
+      <li id="<%=OrderPayType::PAY_TYPES[:HANG]%>">挂账</li>
+      <li style="border-right: none;" id="<%=OrderPayType::PAY_TYPES[:IS_FREE]%>">免单</li>
+    </ul>
+  </div>
+  <div class="at_way_b">
+    <div>
+      <div class="way_item">
+        <label>现金实收：</label>
+        <input id="cash_<%=OrderPayType::PAY_TYPES[:CASH]%>" onblur="calulate_v(<%=OrderPayType::PAY_TYPES[:CASH]%>)" type="text" value="0" />元
+      </div>
+      <div class="way_item">
+        <label>找零：</label>
+        <input id="change_<%=OrderPayType::PAY_TYPES[:CASH]%>" type="text" readonly value="0" />元</div>
+    </div>
+    <div style="display: none">
+      <div class="way_item">
+        <label>银行卡实付：</label>
+        <input id="cash_<%=OrderPayType::PAY_TYPES[:CREDIT_CARD]%>"  type="text" value="0" />元</div>
+      <div class="way_item">
+        <label>流水账号：</label>
+        <input id="c_set_<%=OrderPayType::PAY_TYPES[:CREDIT_CARD]%>" type="text" value="" /></div>
+    </div>
+    <div style="display: none">
+      <div class="way_textarea">
+      </div>
+    </div>
+    <div style="display: none">
+      <div class="way_item">
+        <label>输入权限密码：</label>
+        <input id="cash_<%=OrderPayType::PAY_TYPES[:IS_FREE]%>" type="password" value="" /></div>
+    </div>
+  </div>
+  <div class="btn_box">
+    <%= image_tag "ajax-loader.gif", :id => "spinner_user", :style => "display:none;" %>
+    <button class="confirm_btn" id="confirm_order" onclick="confirm_pay_order(<%=params[:store_id]%>,<%=@customer.id%>,<%=@car_num.id%>)">确定</button>
+    <button class="confirm_btn" id="print_orders" onclick="window.open('/stores/'+<%=params[:store_id]%>+'/set_stores/single_print?order_id=<%=@orders.map(&:id).join(',')  %>','_blank','height=520,width=625,left=10,top=100');">打印小票</button>
+    <button class="confirm_btn" id="print_orders" onclick="window.open('/stores/'+<%=params[:store_id]%>+'/set_stores/three_line_print?o_id=<%=@orders.map(&:id).join(',')  %>','_blank','height=585,width=825,left=10,top=100');">打印单据</button>
+    <input type="checkbox" id="is_biling">发票</input>
+  </div>
+</div>
+<script type="text/javascript">
+  //accountsTab_way切换
+  $(function() {
+    $('div.at_way_h li').bind('click',function(){
+      $(this).addClass('hover').siblings().removeClass('hover');
+      var index = $('div.at_way_h li').index(this);
+      $('div.at_way_b > div').eq(index).show().siblings().hide();
+      $('div.at_way_b > div').eq(index).find("input").first().focus();
+    });
+  })
+</script>

@@ -1,0 +1,8 @@
+<tr id="material<%= material.id %>tr">
+  <td width="15%"><%= material.code %></td>
+  <td><%= material.name %></td>
+  <% a = @types.inject(Hash.new){|h,t|h[t.id]=t.name;h} if @types %>
+  <td><%= a[material.category_id.to_i] %></td>
+  <td>缺货</td>
+  <td id="materialstorage<%= material.id %>td"><%= material.storage %></td>
+</tr>

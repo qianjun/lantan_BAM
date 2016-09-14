@@ -1,0 +1,42 @@
+<div class="item">
+  <label><span class="red">*</span>名称：</label><input name="name" id="name" type="text" value="<%= @package.name %>" />
+</div>
+<div class="item">
+  <label><span class="red">*</span>施工时间(分)：</label><input name="cost_time" id="cost_time" type="text" value="<%= @package.cost_time %>" />
+</div>
+<div class="item">
+  <label>技师：</label>
+  <select name="level1" id="level1" class="staff">
+    <% Staff::LEVELS.each do |key,value| %>
+      <option value="<%= key %>" <%if @package.staff_level==key%> selected<%end%> ><%= value %></option>
+    <% end %>
+  </select>
+  <select name="level2" id="level2" class="staff">
+    <% Staff::LEVELS.each do |key,value| %>
+      <option value="<%= key %>" <%if @package.staff_level_1==key%> selected<%end%> ><%= value %></option>
+    <% end %>
+  </select>
+</div>
+<div class="item">
+  <label><span class="red">*</span>技师提成(元)：</label>
+  <input name="techin_price" id="techin_price" type="text" value="<%= @package.techin_price %>" />
+</div>
+<div class="clear"></div>
+<div class="item_blockArea">
+  <div class="item">
+    <label>自动回访：</label><input name="auto_revist" id="auto_revist" type="checkbox" value="<%= @package.is_auto_revist.nil? ? Product::IS_AUTO[:NO] : @package.is_auto_revist  %>"
+                               onclick="check_revist()" <% if @package.is_auto_revist %>checked<%end%>/>
+  </div>
+  <div class="item"><label>回访间隔：</label>
+    <select  id="time_revist" name="time_revist" <%unless @package.is_auto_revist%>disabled <%end%>>
+      <option value="">请选择</option>
+      <% Product::REVIST_TIME.each do |key| %>
+        <option value="<%= key %>" id="<%=key%>" <%if @package.auto_time ==key%> selected<%end%> ><%= key %>小时</option>
+      <% end %>
+    </select>
+  </div>
+  <div class="item_textarea">
+    <label>回访内容：</label><textarea name="con_revist" id="con_revist" cols="" rows="" class="width_textarea"
+                                  <%unless @package.is_auto_revist%>disabled <%end%>><%=  @package.is_auto_revist ? @package.revist_content : ""  %></textarea>
+  </div>
+</div>

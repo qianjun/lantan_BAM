@@ -1,0 +1,17 @@
+<%= javascript_include_tag "/assets/sales.js" %>
+<div class="main">
+  <div class="box">
+    <div class="data_box">
+      <div class="data_body">
+        <div>
+          <%= form_for @sale,:url=>"/stores/#{params[:store_id]}/sales/#{params[:id]}/update_sale",:method=>:post,:html=>{:multipart => true,:id=>"one_sale"} do  %>
+            <%= render 'form' %>
+          <% end %>
+        </div>
+        <script type="text/javascript"> $(function(){show_pic();})</script>
+        <div class="btn_box"><button class="confirm_btn" type="submit" onclick="publish_sale(this)">确定</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="foot"><p>Copyright © 2013 杭州鼎洪 版权所有</p></div>

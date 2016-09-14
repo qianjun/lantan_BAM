@@ -1,0 +1,23 @@
+<div class="popup_box">
+  <h1>回访详情<a href="javascript:void(0)" class="close">关闭</a></h1>
+  <div class="popup_body">
+    <div class="popup_body_area">
+      <div class="item">
+        <label>回访时间：&nbsp;</label>
+        <div class="seeProDiv_r"><%= @revisit.created_at.strftime("%Y-%m-%d %H:%M:%S") if @revisit.created_at %></div>
+      </div>
+      <div class="item">
+        <label>回访类别：&nbsp;</label>
+        <div class="seeProDiv_r"><%= Revisit::TYPES_NAME[@revisit.types] %></div>
+      </div>
+      <div class="item_textarea">
+        <label>回访内容：&nbsp;</label>
+        <div style="margin-left: 110px;  width: 380px; line-height: 24px;"><%= @revisit.content %></div>
+      </div>
+       <div class="item_textarea">
+         <label>客户回答：&nbsp;</label>
+        <div style="margin-left: 110px;  width: 380px; line-height: 24px;"><%= @revisit.answer %></div>
+      </div>
+    </div>
+  </div>
+</div>

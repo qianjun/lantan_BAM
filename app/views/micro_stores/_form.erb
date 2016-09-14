@@ -1,0 +1,46 @@
+<div  class="prom_add_body">
+  <div style=" border:1px solid #cccccc;">
+    <p>封面</p>
+    <div class="pro_img" >
+      <p>
+        <img width="230px" height="200px" style="margin:0px 20px 20px -20px;"
+             src="<%= @know && @know.img_url.gsub("img#{@know.id}","img#{@know.id}_#{Constant::MICRO_STORE[1]}") %>" />
+      </p>
+    </div>
+    <p><span style="font-size: 6px;font-weight: lighter;margin-left: 20px;">*图片大小建议尺寸：300像素*200像素</span></p>
+    <p style="text-align:center;">
+      <input type="file" id="upload_img_file" name="upload_img_file" style="width:166px; height:28px;margin:10px 0px;" />
+    </p>
+  </div>
+  <input name="create_know[knowledge_type_id]" value="<%= @know.nil? ? params[:know_id] : @know.knowledge_type_id  %>" type="hidden" />
+  <div class="prom_button">
+    <input type="button" value="提&nbsp;&nbsp;交"class="img_button"
+           style="width:183px; height:60px; font-size:30px; font-weight:bold;" onclick="upload_know_img()" />
+  </div>
+</div>
+<div  class="prom_add_body" style=" width:60%;">
+  <div class="prom_add_message" >
+    <p>标题</p>
+    <p><input type="text" id="title" name="create_know[title]" value="<%= @know && @know.title %>" /></p>
+    <p>摘要<span>（摘要文字最多不能超过30个字）</span></p>
+    <p><input type="text" name="create_know[description]" id="description" value="<%= @know && @know.description %>" /></p>
+    <!--<p><input type="checkbox"><label>封面图片显示在正文中</label></p>-->
+    <p>内容</p>
+    <p>
+      <textarea  id="multi_content" cols="" rows="" class="width_textarea" style="width:533px;height:500px;">
+        <%= @know && @know.content.html_safe %>
+      </textarea>
+    </p>
+    <input type="hidden" name="create_know[content]" id="content" value="<%=@know && @know.content %>" />
+  </div>
+</div>
+<script type="text/javascript">
+  var serv_editor;
+  $(function() {
+    serv_editor = KindEditor.create('textarea[id="multi_content"]', {
+      allowFileManager : true
+    });
+  });
+</script>
+
+

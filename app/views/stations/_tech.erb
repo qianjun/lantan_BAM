@@ -1,0 +1,25 @@
+<div   class="pcard_card" ><span>技 师</span></div>
+<div class="card_list">
+  <%@staffs.each do |k,v|%>
+    <% if k%2 == tech %>
+      <div class="card_register">
+        <div class="tech_card">
+          <ul>
+            <li><%= @departs[k] %></li>
+            <li class="di_downUp"  onclick="$('#tech_<%=k%>').slideToggle(2000,show_hihglight(this))">
+              <span class="highlight">↓</span><span>↑</span></li>
+          </ul>
+        </div>
+        <div style="border:1px dashed #d4d4d4;" id="tech_<%= k %>">
+          <ul class="technician_info" id="all_tech">
+            <% v.each do |staff| %>
+              <li>
+                <img src="<%= staff.photo ||  '/assets/tech.jpg' %>" id="<%= staff.id %>" alt="<%= staff.name %>" />
+                <span>&nbsp;&nbsp;<%= truncate_u(staff.name,4,"") %></span></li>
+            <%end%>
+          </ul>
+        </div>
+      </div>
+    <%end%>
+  <%end%>
+</div>

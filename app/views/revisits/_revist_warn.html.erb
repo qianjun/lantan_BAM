@@ -1,0 +1,41 @@
+
+<% unless @send_msg.blank? %>
+  <div class="message" id="complaint_h">
+    有 <span class="red"><%= @send_msg.size %></span> 条回访和提醒信息
+    <a href="javascript:void(0)" onclick="javascript:show_complaint('complaint')">点击查看</a>
+  </div>
+  <div class="message" id="complaint_s" style="display: none;">
+    有 <span class="red"><%= @send_msg.size %></span> 条回访和提醒信息
+    <a href="javascript:void(0)" onclick="javascript:hide_complaint('complaint')" >隐藏</a>
+    <div class="data_menu">
+      <a href="javascript:void(0)" onclick="send_message(<%=params[:store_id]%>,<%=SendMessage::STATUS[:FINISHED]%>)">发送</a>
+      <a href="javascript:void(0)" onclick="send_message(<%=params[:store_id]%>,<%=SendMessage::STATUS[:IGNORE]%>)">忽略</a>
+    </div>
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_tab_table">
+      <thead>
+        <tr class="hbg">
+          <td><input type="checkbox" title="全选" onclick="$('#tbody_revist :checkbox').attr('checked',this.checked)" /></td>
+          <td>车牌号码</td>
+          <td>客户姓名</td>
+          <td>回访信息</td>
+          <td>信息状态</td>
+          <td>信息类别</td>
+          <td>默认时间</td>
+        </tr>
+      </thead>
+      <tbody id="tbody_revist">
+        <% @send_msg.each do |revist| %>
+          <tr>
+            <td width="10%" class="wordBreak"><input type="checkbox" value="<%=revist.id%>" /></td>
+            <td width="10%" class="wordBreak"><%= @car_nums[revist.car_num_id] %></td>
+            <td width="10%" class="wordBreak"><%= revist.name %></td>
+            <td width="25%" class="wordBreak" title="<%=revist.content%>"><%= revist.content[0..20]+"..." %></td>
+            <td width="10%" class="wordBreak"><%= SendMessage::SATS_NAMES[revist.status] %></td>
+            <td width="15%" class="wordBreak"><%= SendMessage::TYPES_NAMES[revist.types] %></td>
+            <td width="25%" class="wordBreak"><%= revist.send_at.nil? ? "--" : revist.send_at.strftime("%Y-%m-%d %H:%M:%S") %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>

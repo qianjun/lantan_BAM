@@ -1,0 +1,84 @@
+<% if @tab.eql?("work_record_tab") %>
+  <% if @cal_style.nil? || @cal_style.empty? || @cal_style.eql?("day") %>
+    $("#work_record_tab").html('<%= escape_javascript(render :partial => '/staffs/work_record_tab') %>');
+  <% end %>
+
+  <% if @cal_style.eql?("week") || @cal_style.eql?("month") %>
+    $("#work_record_tab").html('<%= escape_javascript(render :partial => '/staffs/work_record_week_month_tab') %>');
+  <% end %>  
+<% end %>
+
+<% if @tab.eql?("month_score_tab") %>
+  $("#month_score_tab").html('<%= escape_javascript(render :partial => '/staffs/month_score_tab') %>');
+  $("#month_score_tab").prepend("<script>$('#month_score_table > tbody > tr:odd').addClass('tbg');</script>");
+  $("#month_score_table").tablesorter({headers:{1: { sorter: false },2: { sorter: false },3: { sorter: false }}});
+  $("#month_score_table").bind("sortEnd",function() {
+        $("#month_score_table").find('tr').each(function(i){
+            if(i%2==0){
+                $(this).removeClass('tbg');
+            }else{
+                $(this).addClass('tbg');
+            }
+        })
+    });
+<% end %>
+
+<% if @tab.eql?("reward_tab") %>
+  $("#reward_tab").html('<%= escape_javascript(render :partial => '/staffs/reward_tab') %>');
+  $("#reward_tab").prepend("<script>$('#reward_table > tbody > tr:odd').addClass('tbg');</script>");
+  $("#reward_table").tablesorter({headers:{1: { sorter: false },2: { sorter: false },3: { sorter: false },4: { sorter: false }}});
+  $("#reward_table").bind("sortEnd",function() {
+        $("#reward_table").find('tr').each(function(i){
+            if(i%2==0){
+                $(this).removeClass('tbg');
+            }else{
+                $(this).addClass('tbg');
+            }
+        })
+    });
+<% end %>
+
+<% if @tab.eql?("violation_tab") %>
+  $("#violation_tab").html('<%= escape_javascript(render :partial => '/staffs/violation_tab') %>');
+  $("#violation_tab").prepend("<script>$('#violation_table > tbody > tr:odd').addClass('tbg');</script>");
+  $("#violation_table").tablesorter({headers:{1: { sorter: false },2: { sorter: false },3: { sorter: false },4: { sorter: false }}});
+   $("#violation_table").bind("sortEnd",function() {
+        $("#violation_table").find('tr').each(function(i){
+            if(i%2==0){
+                $(this).removeClass('tbg');
+            }else{
+                $(this).addClass('tbg');
+            }
+        })
+    });
+<% end %>
+
+<% if @tab.eql?("salary_tab") %>
+  $("#salary_tab").html('<%= escape_javascript(render :partial => '/staffs/salary_tab') %>');
+  $("#salary_tab").prepend("<script>$('#salary_table > tbody > tr:odd').addClass('tbg');</script>");
+  $("#salary_table").tablesorter({headers:{1: { sorter: false },2: { sorter: false },3: { sorter: false },4: { sorter: false },5: { sorter: false }}});
+  $("#salary_table").bind("sortEnd",function() {
+        $("#salary_table").find('tr').each(function(i){
+            if(i%2==0){
+                $(this).removeClass('tbg');
+            }else{
+                $(this).addClass('tbg');
+            }
+        })
+    });
+<% end %>
+
+<% if @tab.eql?("train_tab") %>
+  $("#train_tab").html('<%= escape_javascript(render :partial => '/staffs/train_tab') %>');
+  $("#train_tab").prepend("<script>$('#train_table > tbody > tr:odd').addClass('tbg');</script>");
+  $("#train_table").tablesorter({headers:{1: { sorter: false },2: { sorter: false },3: { sorter: false },4: { sorter: false },5: { sorter: false }}});
+   $("#train_table").bind("sortEnd",function() {
+        $("#train_table").find('tr').each(function(i){
+            if(i%2==0){
+                $(this).removeClass('tbg');
+            }else{
+                $(this).addClass('tbg');
+            }
+        })
+    });
+<% end %>

@@ -1,0 +1,13 @@
+<div class="popup_box">
+  <h1>修改技师提成<a href="javascript:void(0);" class="close">关闭</a></h1>
+  <div class="popup_body">
+    <div class="popup_body_area" id="tech_order_popup">
+      <%@tech_orders.each do |tech_order|%>
+        <div class="brand" style="width:150px;"><%=@staffs[tech_order.staff_id]%>：
+          <input type="text" id="<%=tech_order.id%>" style="width:80px;height:26px;padding: 0 0;" value="<%=tech_order.own_deduct%>"/></div>
+      <%end%>
+    </div>
+    <div class="btn_box">
+      <button class="confirm_btn" id="confirm_deduct" onclick="post_deduct(<%=params[:store_id]%>,<%=@order.id%>)">确定</button>（提成总额：<%=@order.technician_deduct%>）</div>
+  </div>
+</div>

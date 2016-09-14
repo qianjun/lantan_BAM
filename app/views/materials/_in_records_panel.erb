@@ -1,0 +1,6 @@
+<% if permission?(:materials, :rk_search) %>
+<%= render :partial => 'search_materials', :locals => {:tab_name => "in_records"} %>
+<% end %>
+<div id="page_in_records">
+  <%= render :partial => "in_records" %>
+</div>

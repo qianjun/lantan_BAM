@@ -1,0 +1,93 @@
+<div class="data_item_title">
+  <ul><li>待付款客户：<%= @orders.length %></li></ul>
+</div>
+<% n = 0 %>
+<% @orders.each do |k,v|%>
+  <% if n%10==0 %> <div id="page_<%=n/10%>" <% if n/10 !=0 %>style="display:none"<%end%>><%end%>
+    <div class="data_item_list">
+      <div class="di_list_r">
+        <div class="register">
+          <div class="orderGoods">
+            <div class="di_downUp" id="<%="#{k[:c_id]}_#{k[:n_id]}"%>" onclick="$('#c_<%= "#{k[:c_id]}_#{k[:n_id]}"%>').slideToggle(1000,show_hihglight(this))">
+              <span class="highlight">&darr;</span><span>&uarr;</span></div>
+            <ul>
+              <li>客户姓名：<%= k[:c_name].nil? ? "--" : k[:c_name] %></li>
+              <li>车牌：<%= k[:c_num] %></li>
+              <li>手机号码：<%=k[:tel].nil? ? "--" :k[:tel] %></li>
+              <li><%if k[:g_name] %>单位：<%=k[:g_name]%><%else%>客户属性：个人客户<%end%></li>
+            </ul>
+          </div>
+          <div class="merchant" id="c_<%= "#{k[:c_id]}_#{k[:n_id]}" %>" style="display:none">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+              <thead>
+                <tr class="hbg">
+                  <td>开单时间</td>
+                  <td>订单编号</td>
+                  <td>工位</td>
+                  <td>接待员</td>
+                  <td>技师</td>
+                  <td>项目</td>
+                  <td>数量</td>
+                  <td>单价</td>
+                  <td>合计</td>
+                  <td>已优惠</td>
+                  <td>小计</td>
+                </tr>
+              </thead>
+              <tbody>
+                <%v.each do |order|%>
+                  <tr>
+                    <% loss = limit_float(@order_pays[order.id].nil? ? 0 : @order_pays[order.id].to_f)  %>
+                    <td><%= order.created_at.strftime("%Y-%m-%d %H:%M") %></td>
+                    <td><%= order.code %></td>
+                    <td><%= @stations[order.s_id].nil? ? "--" : @stations[order.s_id] %></td>
+                    <td><%= @staffs[order.front_staff_id] %></td>
+                    <td><%= @techs[order.id].nil? ? "--" : @techs[order.id]%></td>
+                    <% prod = @order_prods[order.id] && @order_prods[order.id][0] %>
+                    <% if prod %>
+                      <%  o_prod = @order_prods[order.id][0]%>
+                      <td><%= o_prod.name %></td>
+                      <% num = limit_float(o_prod.pro_num.nil? ? 0 : o_prod.pro_num) %>
+                      <td><%=  num %></td>
+                      <% price = limit_float(o_prod.price.nil? ? 0 : o_prod.price) %>
+                      <td><%=  price %></td>
+                    <% else %>
+                      <td><%= "--"%></td>
+                      <td><%= "--"%></td>
+                      <td><%= "--" %></td>
+                    <%end%>
+                    <td><%= limit_float(order.price) %></td>
+                    <td><%= loss %></td>
+                    <% fact = limit_float(order.price > loss ? order.price.to_f-loss : 0) %>
+                    <td><%= fact %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+            <div class="accounts">
+              <ul>
+                <%total = v.map(&:price).inject(0){|sum,num|sum+num} %>
+                <%reward = @order_pays.select{|k,i| v.map(&:id).include? k}.values.inject(0){|sum,num|sum+num}%>
+                <%  fa = limit_float(total > reward ? (total-reward) : 0)%>
+                <li>总计：<%=  fa %></li>
+                <li>
+                  <a class="accounts_btn" href="/stores/<%=params[:store_id]%>/set_stores/plus_items?num=<%=k[:c_num]%>" target="_blank">添加订单</a>
+                  <a href="javascript:void(0)" class="accounts_btn" onclick="pay_this_order(<%=params[:store_id]  %>,<%=k[:c_id]  %>,<%=k[:n_id]  %>)">结 账</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <% n+= 1 %>
+    <% if n%10==0 || n==@orders.length %> </div><%end%>
+<% end %>
+<div class="pageTurn">
+  <%for i in 0..(@orders.length%10==0 ? @orders.length/10-1 : @orders.length/10)  do %>
+    <%if i==0%>
+      <em id="<%= i %>" class="current"><%=  i+1%></em>
+    <%else%>
+      <a href="javascript:void(0)" id="<%=i%>" onclick="show_current(this)" ><%= i+1 %></a>
+    <%end%>
+  <% end %>
+</div>

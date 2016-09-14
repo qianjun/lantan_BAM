@@ -1,0 +1,44 @@
+<%= form_for [@current_store, @material], :id => "material_tab_form", :remote => true, :html => {"data-type" => "script"} do |f| %>
+  <div class="tab_popup" id="edit_material">
+    <div class="popup_box">
+      <h1>编辑物料<a href="javascript:void(0)" class="close">关闭</a></h1>
+      <div class="popup_body">
+        <div class="popup_body_area">
+          <div class="mat_search_result">
+            <div class="item">
+              <label><span class='red'>*</span>物料名称：</label>
+              <%= text_field_tag 'material[name]', @material.name,:onkeyup=>"set_default_value(this,'#prod_name');" %>
+            </div>
+            <div class="item">
+              <label><span class='red'>*</span>物料类型：</label>
+              <select id="material_types" name="material[types]">
+                <% @cates[Category::TYPES[:material]].each do |k,v| %>
+                  <option value="<%= k%>" <% if @material.category_id== k%>selected<% end %>><%= v%></option>
+                <% end %>
+              </select>
+            </div>
+            <div class="item">
+              <label><span class='red'>*</span>零售价：</label>
+              <%= text_field_tag 'material[sale_price]', @material.sale_price,:onkeyup=>"set_default_value(this,'#base_price,#sale_price');" %>
+            </div>
+            <div class="item">
+              <label><span class='red'>*</span>规格：</label>
+              <%= text_field_tag 'material[unit]', @material.unit,  :placeholder => "件" %>
+            </div>
+            <div class="item">
+              <label>是否上架：</label><input name="material[create_prod]" id="create_prod" type="checkbox" value="0"
+                                         <% if @material.create_prod   %> checked disabled <%end%>
+                                         onclick='$("#c_prod").css("display",this.checked ? "block" : "none");this.value=this.checked ? 1 : 0;' /></div>
+            <div class="item_textarea">
+              <label>物料清单：</label><textarea name="material[detailed_list]" id="detailed_list" cols="" rows="" class="width_textarea"><%=@material.detailed_list.nil? ? "" : @material.detailed_list.gsub("<br/>","\r\n")  %></textarea>
+            </div>
+            <%= render "prod_material" %>
+          </div>
+        </div>
+        <div class="btn_box"><button type="button" onclick="checkMaterial(this)" id="material_ce_bn" class="confirm_btn">确定</button></div>
+        <div class="clear"></div>
+      </div>
+    </div>
+  </div>
+  <%= render '/products/img_url' %>
+<% end %>

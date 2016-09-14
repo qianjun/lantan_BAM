@@ -1,0 +1,11 @@
+<tr class="<% unless @code_num %>newTr_red<% end %>">
+  <td class="mat_code"><%= material_out.code %></td>
+  <td class="mat_name"><%= material_out.name %></td>
+  <td class ="mat_item_num"><%= (@code_num and @code_num[material_out.code])? @code_num[material_out.code] : 1%></td>
+  <td class ="num_box" style="display:none"><%= text_field_tag "material_order[#{material_out.id}][material_num]", "#{(@code_num and @code_num[material_out.code])? @code_num[material_out.code] : 1}", :style => 'width:50px', :onblur=>"hideInput(this)"%></td>
+  <td><a href="#" onclick="changeNum(this)" class="bz_btn">编辑</a><a href="#" onclick="removeRow(this)">退回</a></td>
+  <%= hidden_field_tag "material_order[#{material_out.id}][material_id]", material_out.id %>
+  <%= hidden_field_tag "material_order[#{material_out.id}][price]", material_out.price%>
+  <%= hidden_field_tag "material_order[#{material_out.id}][staff_id]", @staff.id%>
+  <td class="material_storage" style="display:none"><%= material_out.storage %></td>
+</tr>

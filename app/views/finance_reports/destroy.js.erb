@@ -1,0 +1,3 @@
+<% template = ["fee_manage","manage_assets"] %>
+$("#"+<%=template[params[:render_index].to_i]%>).html('<%= j(render :partial => "#{template[params[:render_index].to_i]}")%>');
+odd_even();

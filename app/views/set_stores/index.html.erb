@@ -1,0 +1,123 @@
+<%= javascript_include_tag "set_stores" %>
+<%= javascript_include_tag "/assets/kindEditor/kindeditor-min.js" %>
+<%= javascript_include_tag "/assets/kindEditor/zh_CN.js" %>
+<div class="data_box">
+  <div class="second_menu">
+    <a href="/stores/<%= @store.id %>/set_stores" class="hover">门店信息</a>
+    <a href="/stores/<%= @store.id %>/set_functions">功能设置</a>
+    <a href="/stores/<%= @store.id %>/adverts">led广告设置</a>
+    <a href="/stores/<%= @store.id %>/messages/send_detailed">短信设置</a>
+  </div>
+  <div class="clear"></div>
+  <div class="data_body">
+    <div>
+      <%= form_for(@store, :url => store_set_store_path(@store, @store), :html => {:method => :put, :multipart => true}) do %>
+        <div class="item">
+          <label><span class="red">*</span>选择省市：</label>
+          <select id="store_province" name="store_province" onchange="select_city(this.value,<%= @store.id %>)" class="staff">
+            <option value="0">请选择</option>
+            <% @province.each do |p| %>
+              <option value="<%= p.id %>"<% if @store_city.parent_id == p.id %>selected<% end %>><%= p.name %></option>
+            <% end %>
+          </select>
+          <select id="store_city" name="store_city" class="staff">
+            <option value="0">请选择</option>
+            <% @cities.each do |c| %>
+              <option value="<%= c.id %>" <% if @store_city.id == c.id %>selected<% end %>><%= c.name %></option>
+            <% end %>
+          </select>
+        </div>
+        <div class="item">
+          <label><span class="red">*</span>门店名称：</label><input id="store_name" name="store_name" type="text" value="<%= @store.name %>"/>
+        </div>
+        <div class="item">
+          <label><span class="red">*</span>负责人：</label><input id="store_contact" name="store_contact" type="text" value="<%= @store.contact %>"/>
+        </div>
+        <div class="item">
+          <label><span class="red">*</span>联系电话：</label><input id="store_phone" name="store_phone" type="text" value="<%= @store.phone %>"/>
+        </div>
+        <div class="item">
+          <label><span class="red">*</span>地址：</label><input id="store_address" name="store_address" type="text" value="<%= @store.address %>"/>
+        </div>
+        <div class="item">
+          <label><span class="red">*</span>开店时间：</label><input type="text" id="store_opened_at" name="store_opened_at" class="Wdate"
+                                                               value="<%= @store.opened_at.nil? ? "" : @store.opened_at.strftime("%Y-%m-%d") %>"
+                                                               onclick="WdatePicker();" readonly/>
+        </div>
+        <div class="item">
+          <label>门店状态：</label>
+          <select id="store_status" name="store_status">
+            <% Store::S_STATUS.each do |key, value| %>
+              <option value="<%= key.to_i %>"<% if @store.status == key.to_i %>selected<% end %>><%= value %></option>
+            <% end %>
+          </select>
+        </div>
+        <div class="item">
+          <label><span class="red">*</span>门店坐标：</label>
+          <span>X:</span><input id="store_position_x" name="store_position_x" type="text" class="xyAxis" value="<%= @store.position.split(',')[0] if @store.position %>"/>
+          <span>Y:</span><input id="store_position_y" name="store_position_y" type="text" class="xyAxis" value="<%= @store.position.split(',')[1] if @store.position %>"/>
+          <a href="http://api.map.baidu.com/lbsapi/getpoint/index.html" target="_blank" class="mapIcon"><img src="/assets/mapIcon.png"  alt="点击获取地图坐标" title="点击获取地图坐标"/></a>
+        </div>
+        <div class="item">
+          <label>pad收银权限：</label>
+          <input type="radio" name="store_cash_auth" value="0" <% if @store.cash_auth.to_i==0 %>checked<% end %>/>否&nbsp;&nbsp;&nbsp;&nbsp;
+          <input type="radio" name="store_cash_auth" value="1" <% if @store.cash_auth.to_i==1 %>checked<% end %>/>是
+        </div>
+        <% if permission?(:base_datas, :edit_limited_pwd) %>
+          <div class="item">
+            <label><span class="red">*</span>免单密码：</label>
+            <input type="text" id="limited_password"  name="limited_password" />
+          </div>
+        <%end%>
+        <div class="item">
+          <label>自动回访、提醒：</label>
+          <input type="radio" name="auto_send" value="0" <% if @store.auto_send.to_i==0 %>checked<% end %>/>否&nbsp;&nbsp;&nbsp;&nbsp;
+          <input type="radio" name="auto_send" value="1" <% if @store.auto_send.to_i==1 %>checked<% end %>/>是
+        </div>
+        <div class="item_textarea">
+          <label><span class="red">*</span>门店照片：</label>
+          <input type="file" class="file" name="store_img"/>
+          <span class="show_pic">
+            <img style="width:60px;height:60px;" src="<%= @store.img_url.nil? ? "" : @store.img_url.gsub("img#{@store.id}", "img#{@store.id}_#{Constant::STORE_PICSIZE[1]}") %>"/>
+          </span>
+        </div>
+        <div class="item_textarea">
+          <label>门店介绍：</label>
+          <button type="button" onclick="show_center('#show_intro')" title="*在微信中显示“关于我们”的按钮，请填写门店的介绍等信息" >添加</button>
+          <input type="hidden" name="store_intro" id="store_intro" value="<%= @store.store_intro %>" />
+        </div>
+        <div class="clear"></div>
+        <div class="btn_box">
+          <button type="button" onclick="edit_store_validate(this)" class="confirm_btn">确定</button>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="clear"></div>
+  </div>
+</div>
+<div class="tab_popup add_tab" id="show_intro">
+  <div class="popup_box">
+    <h1>门店介绍<a href="javascript:void(0)" class="close">关闭</a></h1>
+    <div class="popup_body">
+      <div class="popup_body_area">
+        <textarea  id="add_intro" cols="" rows="" class="width_textarea" style="width:625px;height:300px;">
+          <%= @store.store_intro && @store.store_intro.html_safe %>
+        </textarea>
+      </div>
+      <div class="btn_box_s"><input value="确定" class="confirm_btn" onclick="submit_btn()" type="button"  /></div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+  var serv_editor;
+  $(function() {
+    serv_editor = KindEditor.create('textarea[id="add_intro"]', {
+      allowFileManager : true
+    });
+  });
+  function submit_btn(){
+    $('#store_intro').val(serv_editor.html());
+    $('#show_intro').css('display','none')
+  }
+</script>

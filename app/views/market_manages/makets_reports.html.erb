@@ -1,0 +1,35 @@
+<%= javascript_include_tag "complaints.js" %>
+<%=  render 'second_menu'%>
+<input type="hidden" value="<%= params[:store_id] %>" id="store_id" />
+<div class="search">
+  <div><label>时间：</label>
+    <input name="created" type="text" id="created" readonly onclick="WdatePicker()" value="<%= session[:r_created] %>"  class="Wdate"/>&nbsp;到&nbsp;
+    <input name="ended" id="ended" type="text" readonly onclick="WdatePicker()" value="<%= session[:r_ended] %>" class="Wdate"/></div>
+  <div><input name="time" type="radio" value="<%= Sale::DISC_TIME[:DAY] %>"  checked />日&nbsp;&nbsp;
+    <input name="time" type="radio" value="<%= Sale::DISC_TIME[:WEEK] %>" <%if session[:time]==Sale::DISC_TIME[:WEEK]%>checked<%end%> />周&nbsp;&nbsp;
+    <input name="time" type="radio" value="<%= Sale::DISC_TIME[:MONTH] %>" <%if session[:time]==Sale::DISC_TIME[:MONTH]%>checked<%end%> />月</div>
+  <div><button class="search_btn" onclick="search_first()">查询</button></div>
+</div>
+<div class="clear"></div>
+<div class="tab_head">
+  <ul>
+    <li class="hover" id="0">服务类</li>
+    <li id="1">商品类</li>
+    <li id="2">增值服务类</li>
+  </ul> 
+</div>
+
+<div class="data_body">
+  <div id="service_list">数据加载中。。。。。</div>
+  <div style="display:none;" id="product_list">数据加载中。。。。。</div>
+  <div style="display:none;" id="pcard_list">数据加载中。。。。。</div>
+  <script type="text/javascript">
+    load_goal("/stores/<%= params[:store_id] %>/market_manages/load_service");
+    setTimeout(function(){
+      load_goal("/stores/<%= params[:store_id] %>/market_manages/load_product");
+    },2000)
+    setTimeout(function(){
+      load_goal("/stores/<%= params[:store_id] %>/market_manages/load_pcard");
+    },4000)
+  </script>
+</div>

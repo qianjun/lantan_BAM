@@ -1,0 +1,6 @@
+$("#add_products .popup_body_result ul").html("<%= j(render :partial => 'add_products_search') %>");
+<%if @products.blank?%>
+  $("#select_all").attr("disabled",true);
+<%else%>
+  $("#select_all").attr("disabled",false);
+<%end%>

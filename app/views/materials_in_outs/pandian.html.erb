@@ -1,0 +1,25 @@
+<%= stylesheet_link_tag  "application"%>
+<link rel="stylesheet" type="text/css" media="print" href="/assets/style.css" />
+<%= javascript_include_tag "application", "main"%>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+  <thead>
+    <tr class="hbg">
+      <td>订货编号</td>
+      <td>条形码</td>
+      <td>物料名称</td>
+      <td>规格</td>
+      <td>数量</td>
+    </tr>
+  </thead>
+  <tbody class="mat-out-list">
+    <% @mat_in_list.each do |mo| %>
+      <tr>
+        <td><%= mo[:mo_code] %></td>
+        <td><%= mo[:mat_code] %></td>
+        <td><%= mo[:mat_name] %></td>
+        <td><%= mo[:mat_unit] %></td>
+        <td><%= mo[:num] %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

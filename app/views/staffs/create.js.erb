@@ -1,0 +1,6 @@
+<% if @flash_notice == "success" %>
+  window.location.replace("<%= store_staffs_path(@store) %>");
+<% else %>
+  tishi_alert("<%= @flash_notice.html_safe() %>");
+  $("#new_staff_btn").removeAttr("disabled");
+<% end %>

@@ -1,0 +1,39 @@
+<%unless @serv.blank? %>
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+    <thead>
+      <tr class="hbg">
+        <td>时间</td>
+        <td>详细</td>
+      </tr>
+    </thead>
+    <tbody>
+      <%@serv.each do |prod|%>
+        <tr>
+          <td><%= session[:time]==Sale::DISC_TIME[:WEEK] ? (Time.now.monday-((Time.now.strftime("%W").to_i-prod[0].split("-")[1].to_i)*7).days).strftime("%Y-%m-%d") : prod[0] %></td>
+          <td>
+            <table width="100%" border="0" cellspacing="1" cellpadding="0" class="s_table">
+              <tr class="fws">
+                <td width="300px">服务项目</td>
+                <td>服务代码</td>
+                <td>数量</td>
+                <td>合计（元）</td>
+              </tr>
+              <%prod[1].each_with_index do |pro,index|%>
+                <tr>
+                  <td><%= pro.name %></td>
+                  <td><%= pro.service_code %></td>
+                  <td><%= pro.prod_num.to_i %></td>
+                  <td><%= format("%.2f",@total_service["#{pro.id}-#{pro.day}"]) %></td>
+                </tr>
+              <% end %>
+            </table>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <%= will_paginate_remote(@serv ,"" ,{:url =>"/stores/#{params[:store_id]}/market_manages/load_service"}) %>
+  <div class="amount">总计：<%= format("%.1f",@total_serv) %></div>
+<% else %>
+  暂无服务类报表
+<% end %>

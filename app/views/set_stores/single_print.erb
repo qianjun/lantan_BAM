@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <%= javascript_include_tag "application" %>
+    <style type="text/css">
+      /* CSS Document */
+      * { padding: 0; margin: 0;}
+      body { font-family: "微软雅黑", "宋体", Arial; font-size: 6px; background:#e9ebea; color: #2c2c2c;}
+      p { margin: 2px 5px;}
+      .prod_span{ width: 55%; display: inline-block;}
+      .prod_span1{ width: 20%; display: inline-block;float:none; text-align: center}
+      .prod_span2{ width: 18%; display: inline-block; float: none}
+      .prod_span3{ width: 25%; display: inline-block; float: right;}
+      .bill { width: 150px; margin: 0 auto; background: #ffffff; padding: 5px;}
+      .dashed { border-bottom: 1px dashed #2c2c2c; margin-bottom: 10px; height: 5px;}
+      .solid { border-bottom: 1px solid #2c2c2c; margin-bottom: 3px;}
+
+      .lineTxt { background: #ffffff; position: relative; left: 50px; padding: 0 5px;}
+      .tit { font-weight: bold;}
+      .span1 { width: 60%; display: inline-block;}
+      .prod_div{float:right; width:60%; text-align:left;}
+      .prod_div_meal{ float:none;  display:block; text-align:left; width:100%;}
+      .prod_span_balance{ width:35%; display:inline; float:left;}
+      .prod_span_balance li{ display:inline; list-style-type:none; }
+      .prod_span_baqlance ul{ list-style-type:none;}
+      .car_span{ word-wrap:break-word; word-break:break-all;  }
+    </style>
+    <title>打印小票</title>
+  </head>
+  <body>
+
+    <div class="bill">
+      <h1><%=@store.name%></h1>
+      <p><label>电话：</label><span><%= @customer.mobilephone %></span></p>
+      <p><label>车牌：</label><span><%= @car_nums.map(&:num).compact.uniq.join("、") %></span></p>
+      <%@order_prods.each do |k,order_ps|%>
+        <div class="dashed" ><span class="lineTxt"><%= k.to_i == 0 ? "商品" : k.to_i ==1 ? "服务" : "卡类" %></span></div>
+        <div class="detail">
+          <p class="tit"><span class="prod_span">品名</span><span class="prod_span1">数量</span>&nbsp;<span class="prod_span2">金额</span></p>
+          <% order_ps.each do |p| %>
+            <% num = p.pro_num.nil? ? 0 : p.pro_num %>
+            <% price = p.price.nil? ? 0 : p.price %>
+            <p><span class="prod_span"><%=  p.name%></span><span class="prod_span1"><%=num.to_f.round(2)%></span>&nbsp;<span class="prod_span2"><%=(num*price).to_f.round(2)%></span></p>
+            <% tech = @tech_orders[p.order_id] %>
+            <%unless tech.blank? %>
+              <p><label>--技师：</label><span><%=tech.map(&:name).join("、")%></span></p>
+            <% end %>
+          <%end%>
+        </div>
+      <%end%>
+      <div class="dashed"><span class="lineTxt">综合</span></div>
+      <div class="detail">
+        <p class="tit"><span class="span1">合计：</span><span class="prod_span3"><%=  @orders.map(&:price).reduce(:+).round(2)%></span></p>
+        <%@order_pays.each do |k,v|%>
+          <p><span class="span1"><%=OrderPayType::PAY_TYPES_NAME[k]%>：</span><span class="prod_span3"><%=v.to_f.round(2)%></span></p>
+        <%end%>
+        <% @sv_cards.each do |sv_card| %>
+          <p><span class="span1"><%=sv_card.name%>（余）：</span><span class="prod_span3"><%=  sv_card.left_price.round(2)%></span></p>
+        <% end unless @sv_cards.blank? %>
+        <% @pcards.each do |pcard| %>
+          <p class="car_span"><label><%= pcard.name %>：</label><%= pcard.content.split(",").map{|c|"#{c.split('-')[1]}(#{c.split('-')[2]})"}.join("，") %></p>
+        <%end unless @pcards.blank?%>
+        <p>
+          <span class="span1">备注：</span><br/>
+          <%@favour_notices.each_with_index do |notice,index|%>
+            <span><%= "#{index+1}.#{notice.second_parm}"%></span><br/>
+          <%end if @favour_notices %>
+        </p>
+      </div>
+      <div class="solid"></div>
+      <span class="time"><%=Time.now.strftime("%Y.%m.%d")%></span>
+      <button onclick="$(this).css('display','none');window.print();" style="float: right;">打印</button>
+    </div>
+  </body>
+
+</html>

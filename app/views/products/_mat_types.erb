@@ -1,0 +1,7 @@
+<% unless @materials.blank? %>
+  <% @materials.each do |material| %>
+    <li><input  type="checkbox" value="<%=  material.id  %>" id="prod_<%=material.id  %>" onclick="add_this(this,'<%= material.name %>')" ><%= material.name %></input></li>
+    <% end %>
+  <% else %>
+    <%= "未查询到相关物料信息"  %>
+  <% end %>

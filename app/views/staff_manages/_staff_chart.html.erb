@@ -1,0 +1,23 @@
+<div class="tab_popup" style="display:none;" id="staff_month_chart_detail">
+    <div class="popup_box">
+         <h1>查看绩效<a href="javascript:void(0)" class="close">关闭</a></h1>
+         <div class="popup_body">
+              <div class="popup_body_area">
+                   <div class="data_body_p">
+                     <span>姓名：<%= @staff.name %></span>
+                     <span>工作岗位：<%= Staff::N_HEAD[@staff.position] %></span>
+                     <span>职务：<%= Staff::N_COMPANY[@staff.type_of_w] %></span></div>
+                   <div class="search">
+                        <div><label>统计年份：</label>
+                            <select name="<%= @staff.id %>" id="statistics_year">
+                              <% get_last_ten_years.each do |year| %>
+                              <option><%= year %></option>
+                              <% end %>
+                            </select>
+                        </div>
+                   </div>
+                   <div class="tj_pic"><span id="no_data" style="<%= @chart_url.nil? ? "display:block" : "display:none" %>">绩效统计没有数据！</span><%= image_tag @chart_url, :style => @chart_url.nil? ? "display:none;" : "display:block" %></div>
+              </div>
+         </div>
+    </div>
+</div>

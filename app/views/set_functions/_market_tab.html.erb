@@ -1,0 +1,40 @@
+<script type="text/javascript">
+  $(function(){
+    $(".people_group li").hover(
+    function(){
+      $(this).find(".group_func").css("display","block");
+      $(this).find(".group_x").css("display","block");
+    },
+    function(){
+      $(this).find(".group_func").css("display","none");
+      $(this).find(".group_x").css("display","none");
+    }
+  );
+  });
+</script>
+<div class="people_group">
+  <div class="search">
+    <div><button class="search_btn" onclick="market_new(<%= @store.id %>, <%= Category::TYPES[:good] %>)">新建产品类别</button></div>
+  </div>
+  <ul class="func_set_ul">
+    <% @market_goods.each do |mg| %>
+      <li>
+        <a href="javaScript:void(0)"><%= mg.name %></a>
+        <span class="group_func">
+          <a href="javaScript:void(0)" onclick="market_edit(<%= mg.id %>, <%= @store.id %>)">编辑</a>
+        </span>
+      </li>
+    <% end if @market_goods %>
+  </ul>
+  <div class="search">
+    <div><button class="search_btn" onclick="market_new(<%= @store.id %>, <%= Category::TYPES[:service] %>)">新建服务类别</button></div>
+  </div>
+  <ul class="func_set_ul">
+    <%  @market_servs.each do |ms| %>
+      <li>
+        <a href="javaScript:void(0)"><%= ms.name %></a>
+        <span class="group_func"><a href="javaScript:void(0)" onclick="market_edit(<%= ms.id %>, <%= @store.id %>)">编辑</a></span>
+      </li>
+    <% end if  @market_servs %>
+  </ul>
+</div>

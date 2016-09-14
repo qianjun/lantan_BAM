@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>门店后台管理系统</title>
+    <%= stylesheet_link_tag "login" %>
+    <%= javascript_include_tag  "application", "logins", "main" %>
+    <%= csrf_meta_tags %>
+    <!--[if IE 6]>
+    <script src="/assets/DD_belatedPNG_0.0.8a-min.js"></script>
+    <script>
+      DD_belatedPNG.fix('*');
+    </script>
+    <![endif]-->
+  </head>
+
+  <body>    
+    <div class="login_bg">      
+      <div class="login_box">
+
+        <%= form_for :user, :url=>"/logins/", :method => "post", :html => {:onsubmit => "return check_login()"} do %>
+          <div class="login_list"><input id="user_name" name="user_name" type="text" value="<%= @user_name.nil? ? "" : @user_name %>"/></div>
+          <div class="login_list"><input id="user_password" name="user_password" type="password" /></div>
+          <div class="login_btn"><button type="submit" id="login_exam">登录</button></div>
+          <div class="losePassWord"><a href="javascript:void(0)" id="forgot_password">忘记密码?</a></div>
+        <% end %>
+      </div>
+    </div>
+    <%= render :partial => "/shared/tishi_alert" %>
+    <div class="mask"></div>
+    <div class="tab_popup" style="display:none;z-index:10;width:500px;" id="forgot_password_area">
+        <div class="popup_box">
+            <h1>忘记密码<a href="javascript:void(0)" class="close">关闭</a></h1>
+            <form accept-charset="UTF-8" action="/logins/forgot_password" method="post" data-remote="true" data-type="script">
+             <div class="popup_body">
+                  <div class="popup_body_area">
+                       <div class="losePassWord_list"><label>手机号码：</label><input name="telphone" type="text" id="telphone"/><button class="confirm_btn" id="send_validate_code">获取验证码</button></div>
+                       <div class="losePassWord_list"><label>验证码:</label><input type="text" name="validate_code" id="validate_code"/></div>
+                  </div>
+                  <div class="btn_box"><button class="confirm_btn" id="forgot_password_btn" type="button">确定</button><button class="cancel_btn" type="button">取消</button></div>
+             </div>
+            </form>
+        </div>
+   </div>
+  </body>
+</html>

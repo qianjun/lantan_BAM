@@ -1,0 +1,31 @@
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+  <thead>
+    <tr class="hbg">
+      <td>回访时间</td>
+      <td>类别</td>
+      <td>回访内容</td>
+      <td>客户回答</td>
+      <td>相关订单</td>
+      <td>操作</td>
+    </tr>
+  </thead>
+  <tbody>
+    <% @revisits.each do |revisit| %>
+      <tr>
+        <td width="18%" class="wordBreak"><%= revisit.created_at.strftime("%Y-%m-%d %H:%M:%S") if revisit.created_at %></td>
+        <td width="5%" class="wordBreak"><%= Revisit::TYPES_NAME[revisit.types] %></td>
+        <td width="24%" class="wordBreak"><%= truncate(revisit.content, :length => 15) %></td>
+        <td width="24%" class="wordBreak"><%= truncate(revisit.answer, :length => 15) %></td>
+        <td width="20%" class="wordBreak">
+          <%= link_to "#{revisit.code}", "/orders/#{revisit.o_id}/order_info" , 
+            :remote => "true", "data-type" => "script", :class => "other_a" %>
+        </td>
+        <td>
+           <a href="javascript:void(0)" onclick="show_revisit_detail(<%= revisit.r_id %>, <%= params[:store_id] %>)">详情</a>
+        </td>      
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<%=  will_paginate_remote(@revisits , "",
+  {:url => "/stores/#{@store.id}/customers/#{@customer.id}/revisits"}) %>

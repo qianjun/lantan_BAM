@@ -1,0 +1,44 @@
+<div class="popup_box">
+  <h1>批量退货<a href="javascript:void(0)" class="close">关闭</a></h1>
+  <div class="popup_body">
+    <div class="popup_body_area">
+      <div class="search">
+        <div>
+          <label>退货渠道：</label>
+          <%= select_tag "back_good_supplier", options_from_collection_for_select(@suppliers, "id", "name")  %>
+        </div>
+      </div>
+      <div class="search">
+        <div><label>物料类型：</label><span><%= select_tag "back_good_type", options_from_collection_for_select(@types, "id", "name") %></span></div>
+        <div><label>物料名称：</label><%= text_field_tag "back_good_name" %></div>
+        <div><%= button_to_function "查询", "back_good_search(#{@store_id})", :class => "search_btn" %></div>
+      </div>
+      <fieldset class="popup_body_fieldset" id="back_good_search_list_fieldset" style="display: none;">
+        <legend class="popup_body_title">查询结果</legend>
+        <div class="popup_body_result" id="back_good_search_list">
+        </div>
+      </fieldset>
+      <div class="pq pq_mb"></div>
+      <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_tab_table">
+        <thead>
+          <tr class="hbg">
+            <td>物料名称</td>
+            <td>物料类型</td>
+            <td>物料库存</td>
+            <td>订货量</td>
+            <td>退货数量</td>
+            <td>退货单价</td>
+            <td>操作</td>
+          </tr>
+        </thead>
+        <tbody id="back_good_tbody">      
+        </tbody>
+      </table>
+    </div>
+    <div class="clear"></div>
+    <div class="btn_box">
+      <button type="button" id="submit_back" class="confirm_btn" onclick="back_good_validate(<%= @store_id %>)">确定</button>
+      <%= image_tag "ajax-loader.gif", :id => "submit_spinner", :style => "display:none;" %>
+    </div>
+  </div>
+</div>

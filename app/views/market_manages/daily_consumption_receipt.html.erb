@@ -1,0 +1,43 @@
+<%= render 'second_menu'%>
+<div class="search">
+  <div><label>开始时间：</label>
+    <input  type="text" id="c_time" value="<%= @c_time %>" class="Wdate" readonly onClick="WdatePicker();"/></div>
+  <div><label>结束时间：</label>
+    <input  type="text" id="e_time" value="<%= @e_time %>" class="Wdate" readonly onClick="WdatePicker();"/></div>
+  <div><label>类型：</label>
+    <select id="types">
+      <option value="">全部</option>
+      <%Order::RETURN.each do |k,v|%>
+        <option value="<%= k %>" <% if params[:return_types] == "#{k}" %>selected<%end%>><%= v %></option>
+      <% end %>
+    </select>
+  </div>
+  <div><button class="search_btn"
+               onclick="t_search('/stores/<%= @store.id %>/market_manages/daily_consumption_receipt')">查询</button></div>
+</div>
+<input type="hidden" id="store_id" value="<%= @store.id %>"/>
+<div class="data_body_title">
+  <h2 class="data_body_h">当日销售额：<%= sprintf('%.2f', @search_total) %>（元）</h2>
+</div>
+<div class="data_menu">
+  <% if permission?(:datas, :print) %>
+    <a href="/stores/<%= @store.id %>/market_manages/daily_consumption_receipt_blank?c_time=<%=@c_time%>&e_time=<%= @e_time %><%=  "&return_types=#{@types}" if !params[:return_types].nil?  and  params[:return_types] != "" %>" class="add_btn" id="print_daily_receipt" target="_blank">打印单据</a>
+  <% end %>
+</div>
+<div class="clear"></div>
+
+<div class="data_body">
+  <%= render :partial => "/market_manages/daily_receipt_partial" %>
+</div>
+<div class="maskOne"></div>
+<div id="related_order_div"></div>
+<div id="print_receipt_div">
+  <div class="tab_popup" id="print_receipt_partial">
+    <div class="popup_box">
+      <h1>打印单据<a href="javascript:void(0)" class="close">关闭</a></h1>
+      <div class="popup_body">
+        <div class="popup_body_area"></div>
+      </div>
+    </div>
+  </div>
+</div>

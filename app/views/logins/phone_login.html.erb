@@ -1,0 +1,125 @@
+<html>
+  <head>
+    <title>澜泰数据管理系统</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <%= stylesheet_link_tag "phone_manage" %>
+    <style type="text/css">
+      * { padding: 0; margin: 0;}
+      body {
+        background: #9db79a;
+        /*background:-webkit-gradient(linear, 0 0, 0 100%, from(#638382), to(#9db79a));
+	background:-moz-linear-gradient(top, #638382,#9db79a);
+	-ms-filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#638382,endColorstr=#9db79a,grandientType=1);
+	*/
+        font-family:"微软雅黑", "宋体", Arial;
+        font-size: 14px;
+      }
+      li { list-style: none;}
+      .white_bg { background: #FFF;}
+      .login {
+        width: 310px;
+        padding: 10px 0;
+        background: #030;
+        margin: 10px auto;
+        overflow: hidden;
+        background: #FFF;
+        box-shadow: 0px 0px 5px rgba(0,0,0,0.5);
+        border-radius: 10px;
+      }
+      .login h1 { text-align: center; line-height: 40px; margin-top: 20px; color: #A30104; font-size: 24px;}
+      .login_item { margin: 20px 10px; border-radius: 10px;}
+      .login_item li { margin-bottom: 20px;}
+      .login_item input {
+        width: 240px;
+        height: 50px;
+        line-height: 50px;
+        background: none;
+        border: none;
+        padding-left: 50px;
+        font-size: 24px;
+      }
+      .login_item input.name {background: url(/assets/login.png) no-repeat 10px -10px #e9e7e7;}
+      .login_item input.pressword {background: url(/assets/login.png) no-repeat 10px -92px #e9e7e7;}
+      .login_btn {margin: 50px 10px;}
+      .login_btn button {
+        width: 100%;
+        height: 60px;
+        border: 1px #730002 solid;
+        background: #a30104;
+        /*
+	background:-webkit-gradient(linear, 0 0, 0 100%, from(#b60004), to(#a30104));
+	background:-moz-linear-gradient(top, #b60004,#a30104);
+	-ms-filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#b60004,endColorstr=#a30104,grandientType=1);
+	*/
+        font-size: 30px;
+        color: #FFF;
+        line-height: 60px;
+        cursor: pointer;
+        border-radius: 5px;
+        font-family:"微软雅黑", "宋体", Arial;
+      }
+
+      .head { background: #a30104; color: #FFF; padding: 20px 10px;}
+      .head h1 { font-size: 24px; line-height: 32px;}
+      .head p { font-size: 18px; line-height: 40px;}
+      .main { background: #FFF;}
+      .box {
+        border-bottom: 1px #CCCCCC solid;
+        margin-bottom: 5px;
+        padding: 10px 10px;
+        font-size: 18px;
+        line-height: 40px;
+        overflow: hidden;
+      }
+      .box .day, .box .week, .box .month {
+        color: #FFF;
+        line-height: 40px;
+        text-align: center;
+      }
+      .box .day { background: #090; width: 150px;}
+      .box .week { background: #06F; width: 200px;}
+      .box .month { background: #FC0; width: 250px;}
+
+      .box dl { padding: 10px 0; }
+      .box dt { font-weight:bold;}
+      .box dd span, .box dd em { color: #a30104;}
+      .box dd em { margin-left: 10px;}
+      .all {overflow: hidden;}
+      .all .all_money { float: left; margin-right: 50px;}
+      .all .all_amount { float: left;}
+
+      .all .up, .all .down {
+        width: 20px;
+        height: 40px;
+        display: inline-block;
+        overflow:hidden;
+        text-indent: -999px;
+        margin: 0 5px;
+      }
+      .all .up {
+        background: url(/assets/icon-1.png) no-repeat 0px 0px;
+        background-size: 20px 40px;
+      }
+      .all .down {
+        background: url(/assets/icon-2.png) no-repeat 0px 0px;
+        background-size: 20px 40px;
+      }
+    </style>
+    <%= javascript_include_tag  "application", "logins", "main" %>
+  </head>
+  <body>   
+    <div class="login">
+      <h1>澜泰数据管理系统</h1>
+      <%= form_for :login,:url=>"/logins/login_phone",:method=>:post,:html=>{:id=>"phone_form"} do %>
+        <div class="login_item">
+          <ul>
+            <li><input class="name" type="text" value="<%= @user_name.nil? ? "" : @user_name %>" /></li>
+            <li><input type="password" class="pressword" value="" /></li>
+          </ul>
+        </div>
+      <% end %>
+      <div class="login_btn"><button onclick="check_phone()">登录</button></div>
+    </div>
+    <%= render :partial => "/shared/tishi_alert" %>
+  </body>
+</html>

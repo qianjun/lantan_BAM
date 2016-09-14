@@ -1,0 +1,43 @@
+<div style="display: none;" class="<% if mo_class_name.present? %> <%= mo_class_name %> <% end %>">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_tab_table">
+    <thead>
+      <tr class="hbg">
+        <td>订货单号</td>
+        <td>详细内容</td>
+        <td>总价</td>
+        <td>订货时间</td>
+        <td>预计到货时间</td>
+        <td>物流状态</td>
+        <td>物流信息</td>
+      </tr>
+    </thead>
+    <tbody>
+      <% (mo_notices || []).each do |record| %>
+        <tr id="<%= record.id %>">
+          <td><%= record.code %></td>
+          <td>
+            <table width="100%" border="0" cellspacing="1" cellpadding="0" class="s_table">
+              <tr class="fws">
+                <td>名称</td>
+                <td>单价</td>
+                <td>数量</td>
+              </tr>
+              <% (record.mat_order_items || []).each do |item| %>
+                <tr>
+                  <td><%= item.material.try(:name) %></td>
+                  <td><%= item.price %></td>
+                  <td><%= item.material_num.to_i %></td>
+                </tr>
+              <% end %>
+            </table>
+          </td>
+          <td><%= record.price %></td>
+          <td><%= record.created_at.strftime("%Y-%m-%d") if record.created_at %></td>
+          <td><%= record.arrival_at.strftime("%Y-%m-%d") if record.arrival_at %></td>
+          <td><%= material_status record.m_status, 1 %></td>
+          <td><%= record.carrier %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

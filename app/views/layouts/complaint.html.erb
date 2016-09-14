@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+  <head>
+    <%= stylesheet_link_tag    "application" %>
+    <%= javascript_include_tag "application","material_order_manages","jquery.tablesorter.min","complaints.js" %>
+    <%= javascript_include_tag "/assets/My97DatePicker/WdatePicker.js" %>
+    <%= stylesheet_link_tag    "/assets/My97DatePicker/skin/WdatePicker" %>
+    <script type="text/javascript" src="/assets/stored_cards.js" ></script>
+    <title><%= @title.nil? ? "统计管理" : @title %></title>
+    <%= csrf_meta_tags %>
+    <!--[if IE 6]>
+    <script src="js/DD_belatedPNG_0.0.8a-min.js"></script>
+    <script>
+      DD_belatedPNG.fix('*');
+    </script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="head">
+      <div class="box">
+        <%= render :partial => "/common/login_header" %>
+        <div class="nav">
+          <ul>
+            <li><a href="/stores/<%=params[:store_id]%>/complaints"
+                   <%if controller.controller_name=="complaints" &&controller.action_name != "cost_price"%> class="hover"<%end%>>客户</a>
+            </li>
+            <li><a href="/stores/<%=params[:store_id]%>/market_manages"
+                   <%if ["market_manages","data_manages"].include? controller.controller_name%> class="hover"<%end%>>营销</a>
+            </li>
+            <% if permission?(:datas, :kucun) %>
+              <li>
+                <%= link_to "库存", store_material_order_manages_path(@store), :class => controller.controller_name == "material_order_manages" ? "hover" : '' %>
+              </li>
+            <% end %>
+            <li><%= link_to "员工", store_staff_manages_path(@store), :class => (controller.controller_name == "staff_manages" || controller.action_name == "cost_price") ? "hover" : '' %></li>
+          </ul>
+        </div>
+        <div class="back"><a href="/stores/<%= params[:store_id] %>/welcomes" title="返回">Back</a>统计管理</div>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="box">
+        <div class="data_box">
+          <%= yield %>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><p>Copyright © 2013 杭州鼎洪 版权所有</p></div>
+    <div class="mask"></div>
+    <div class="maskOne"></div>
+    <%= render :partial => "/shared/tishi_alert" %>
+  </body>
+</html>
+

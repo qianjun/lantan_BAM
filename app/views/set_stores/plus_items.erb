@@ -1,0 +1,60 @@
+<%= javascript_include_tag "set_stores" %>
+<div class="billWhole">
+  <div class="billUserinfo" id="bill_user_info">
+    <%= render "customer_info" %>
+  </div>
+  <div class="billDtl">
+    <span class="billDtlTit">订单详情</span>
+    <table  width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+      <tr>
+        <th width="20%">名称</th>
+        <th width="12%">单价</th>
+        <th width="30%">数量</th>
+        <th width="12%">小计</th>
+        <th width="16%">类型</th>
+        <th width="10%">操作</th>
+      </tr>
+      <tbody id="table_item"></tbody>
+    </table>
+    <div>
+      <div class="billTotal">
+        <span>金额总计：</span>
+        <span id="total_price"><%= 0.round(2) %></span>
+        <button class="blue_btn"onclick="submit_item(<%=params[:store_id]%>)" id="submit_item" >开单</button>
+        <%= image_tag "ajax-loader.gif", :id => "submit_spinner", :style => "display:none;" %>
+        <button class="blue_btn" title="卡类（套餐卡和打折卡）" onclick="search_card(<%=params[:store_id]%>)">重载卡类</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="tab_popup" id="customer_popup" style="width:675px;">
+  <div class="popup_box" style="width:675px;">
+    <h1>确认车牌的客户信息<a href="javascript:void(0);" class="close">关闭</a></h1>
+    <div class="popup_body" id="confirm_customer"></div>
+  </div>
+</div>
+<div class="serviceClassBar" id="search_item">
+  <ul>
+    <%Category::SEARCH_ITEMS.each do |k,v|%>
+      <li <%if k == 0%> class="hover" <%end%> id="<%=k%>"
+                        onclick="$(this).addClass('hover').siblings().removeClass('hover')"><%= v %></li>
+                      <%end%>
+  </ul>
+  <div class="searchBox">
+    <input type="text" id="item_name" />
+    <button class="search_btn" onclick="search_item(<%=params[:store_id]%>)" id="item_btn">查询</button>
+    <%= image_tag "ajax-loader.gif", :id => "spinner_user", :style => "display:none;" %>
+  </div>
+</div>
+<div class="cardDtl"></div>
+
+<div style=" position: fixed; top: 100px; left: 22px; width: 150px; height: 200px;" id="discount_card">
+  <%= render "customer_cards" %>
+</div>
+<div style=" position: fixed; top: 100px; right: 22px; width: 150px; height: 200px;" id="pcard">
+  <%= render "customer_pcard" %>
+</div>
+<script type="text/javascript">
+  var shutin = {"c":["川"],"e":["鄂"],"g":["赣","贵","桂","甘"],"h":["沪","黑"],"j":["京","津","冀","晋","吉"],"l":["辽","鲁"],
+    "m":["蒙","闽"],"n":["宁"],"q":["青","琼"],"s":["苏","陕"],"w":["皖"],"x":["湘","新"],"y":["渝","豫","粤","云"],"z":["浙","藏"]};
+</script>

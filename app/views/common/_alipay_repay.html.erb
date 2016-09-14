@@ -1,0 +1,16 @@
+<div class="tab_popup" id="alipay_confirm">
+  <div class="popup_box">
+    <h1>支付宝付款<a href="javascript:void(0)" class="close">关闭</a></h1>
+    <div class="popup_body">
+      <div class="popup_body_area">
+        <div style="text-align:center">完成付款后请根据你的情况点击下面的按钮:</div>
+        <div class="fukuan_btn">
+          <%= hidden_field_tag "pay_order_id","0" %>
+          <span><a href="javascript:void(0)" class="confirm_btn" onclick="pay_material_order('alipay_confirm',1,<%= params[:store_id] %>, this)">重新付款</a></span>
+          <span><button class="confirm_btn" type="button" onclick="window.location.reload()">支付完成</button></span>
+        </div>
+        <div class="clear"></div>
+      </div>
+    </div>
+  </div>
+</div>

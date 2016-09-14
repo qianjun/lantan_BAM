@@ -1,0 +1,87 @@
+<div class="data_box">
+  <%= render "second_menu" %>
+  <div class="tab_head">
+    <ul>
+      <li onclick="window.location.href='/stores/<%=params[:store_id]%>/messages/send_detailed'">消费明细</li>
+      <li class="hover">充值明细</li>
+      <li onclick="window.location.href='/stores/<%=params[:store_id]%>/messages/send_list'">开关设置</li>
+    </ul>
+  </div>
+  <div class="clear"></div>
+  <div class="data_body">
+    <div class="data_menu afterClear"><a href="javascript:void(0)" onclick="show_center('#alipay_tab')" id="cash_refresh">充值</a></div>
+    <div class="collect">
+      <ul>
+        <li><span>余额：<%=@store.message_fee%></span></li>
+      </ul>
+      <div class="data_item" id="cash_over">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+          <thead>
+            <tr class="hbg">
+              <td width="20%">时间</td>
+              <td width="20%">充值金额</td>
+              <td width="20%">充值类型</td>
+              <td width="20%">状态</td>
+              <td width="20%">余额（元）</td>
+            </tr>
+          </thead>
+          <tbody>
+            <% unless @alipay_messages.blank? %>
+              <%@alipay_messages.each do |message|%>
+                <tr>
+                  <td><%= message.created_at.strftime("%Y-%m-%d %H:%M:%S")%></td>
+                  <td><%= message.pay_price %></td>
+                  <td><%= MessageRecord::PAY_NAME[message.pay_types] %></td>
+                  <td><%=  AlipayRecord::STAT_NAME[message.pay_status]  %></td>
+                  <td><%= message.left_price %></td>
+                </tr>
+              <% end%>
+            <%else%>
+              <tr><td  colspan="5">暂无明细</td></tr>
+            <%end%>
+          </tbody>
+        </table>
+        <div class="pageTurn">
+          <%= will_paginate @alipay_messages,:class=>"pageTurn",:previous_label=>"上一页",:next_label=>"下一页" if @alipay_messages.length >0%>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="mask"></div>
+<div class="maskOne"></div>
+<div class="tab_popup" style="width: 500px;" id="alipay_tab">
+  <div class="popup_box">
+    <h1>短信费用充值<a class="close" href="javascript:void(0)">关闭</a></h1>
+    <div class="popup_body">
+      <div class="popup_body_area">
+        <div class="item" style="padding: 22px 80px;">
+          <label>短信充值金额：</label>
+          <input type="text" id="pay_fee"/>
+          <span style="color: #930205; font-weight: bold;">元</span>
+        </div>
+      </div>
+      <div style="text-align: center; margin: 30px;">
+        <a class="zfb" href="javascript:void(0)" onclick="pay_fee(<%= params[:store_id] %>)" ></a></div>
+    </div>
+  </div>
+</div>
+<div class="tab_popup" style="width: 500px;" id="confirm_tab">
+  <div class="popup_box">
+    <h1>短信费用充值<a class="close" href="javascript:void(0)">关闭</a></h1>
+    <div class="popup_body">
+      <div class="popup_body_area">
+        <div class="info_box">
+          <p class="title">请在打开的支付宝页面完成充值</p>
+          <p><span style="color:red">*</span>充值完成前请不要关闭此窗口</p>
+          <p><span style="color:red">*</span>完成充值后根据你的情况点击下面的按钮</p>
+        </div>
+      </div>
+      <div class="btn_box">
+        <button class="confirm_btn" onclick="window.location.reload();">已完成充值</button>
+        <button class="confirm_btn" onclick="pay_fee(<%= params[:store_id] %>)">重新充值</button>
+      </div>
+    </div>
+  </div>
+</div>
+

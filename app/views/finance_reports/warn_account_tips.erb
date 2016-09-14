@@ -1,0 +1,33 @@
+<% unless @get_accounts.blank? %>
+  <div class="message" id="complaint_h">
+    有 <span class="red"><%= @get_accounts.size %></span> 条投诉
+    <a href="javascript:void(0)" onclick="javascript:show_complaint('complaint')">点击查看</a>
+  </div>
+  <div class="message" id="complaint_s" style="display: none;">
+    有 <span class="red"><%= @get_accounts.size %></span> 条投诉
+    <a href="javascript:void(0)" onclick="javascript:hide_complaint('complaint')" >隐藏</a>
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_tab_table">
+      <thead>
+        <tr class="hbg">
+          <td>客户姓名</td>
+          <td>首笔日期</td>
+          <td>结账周期</td>
+          <td>挂账额度</td>
+          <td>已用额度</td>
+        </tr>
+      </thead>
+      <tbody>
+        <% @get_accounts.each do |account| %>
+          <tr>
+            <td width="15%" class="wordBreak"><%= @customers[account.customer_id].name %></td>
+            <td width="15%" class="wordBreak"><%= account.min_time %></td>
+            <% unit = @customers[account.customer_id]== Customer::CHECK_TYPE[:MONTH] ? "月" : "周" %>
+            <td width="15%" class="wordBreak"><%= "#{ @customers[account.customer_id].check_time}个#{unit}" %></td>
+            <td width="25%" class="wordBreak"><%= @customers[account.customer_id].debts_money %></td>
+            <td width="20%" class="wordBreak"><%= account.total_price %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>

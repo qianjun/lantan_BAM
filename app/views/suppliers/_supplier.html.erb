@@ -1,0 +1,21 @@
+<span class="relevance">
+  <% max = @suppliers.map(&:name).inject([]){|arr,s|arr << check_str(s);}.max%>
+  <input name="" type="text" size="<%=max.nil? ? 2 : max*0.8%>px" id="supplier_n" onPropertyChange="s_supplier()" oninput="s_supplier()" />(名称 or 助记码)
+  <div class="relevance_box" id="supplier_box">
+    <ul>
+      <li id="<%= 0%>" dir="<%='zb'%>" style="display: none" ><%=  "总部"%></li>
+      <%@suppliers.each do |supplier|%>
+        <li id="<%=  supplier.id%>" dir="<%=supplier.cap_name%>" style="display: none" ><%=  supplier.name%></li>
+      <%end unless  @suppliers.blank?%>
+    </ul>
+  </div>
+</span>
+<script type="text/javascript">
+  $(".relevance_box li").click(function(){
+    $(".relevance_box li").removeClass("fixed");
+    $(".relevance input").val($(this).html());
+    $(".relevance_box li").css("display","none");
+    $(this).addClass("fixed");
+  });
+  $("#supplier_box ul").append('<li  style="display: none" >未匹配</li>')
+</script>

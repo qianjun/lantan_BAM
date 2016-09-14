@@ -1,0 +1,18 @@
+<% if @status == true %>
+  tishi_alert('删除成功!');
+<% else %>
+  tishi_alert('删除失败!');
+<% end %>
+$("#page_loss_div #search_material_type").html("<option value='-1' selected>全部</option><% @types.each do |t| %><option value='<%= t.id %>'><%= t.name %></option><% end %>");
+$("#page_loss_div #search_material_name").val("");
+$("#page_loss_div #search_material_code").val("");
+$("#page_materails_losses").html('<%= escape_javascript(render :partial => '/materials/materials_losses') %>');
+$("#kucunliebiao").html('<%= escape_javascript(render :partial => '/materials/page_materials') %>');
+$("#kucunliebiao #search_material_type option").first().attr("selected","selected");
+$("#kucunliebiao #search_material_name").val("");
+$("#kucunliebiao #search_material_code").val("");
+<% if @low_materials.blank? %>
+$("#low_mat_notice").remove();
+<% else %>
+$("#low_mat_notice").html("有<span class='red' id='low_materials_span'><%=  @low_materials.length %></span>个物料库存量过低<a href='javascript:void(0)' onclick='toggle_low_materials(this)'>点击查看</a><%= j(render :partial => '/materials/show_low_materials', :locals => {:low_materials => @low_materials}) %>");
+<% end %>

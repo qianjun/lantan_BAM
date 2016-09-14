@@ -1,0 +1,57 @@
+<div class="main">
+  <div class="box">
+    <div class="data_box">
+      <div class="data_body">
+        <div class="tab_head">
+          <ul>
+            <li onclick="window.location.href='/stores/<%= params[:store_id] %>/micro_stores'">新品发布</li>
+            <li class="hover" >宣传推广</li>
+          </ul>
+        </div>
+        <div class="promotion">
+          <ul>
+            <%@knows.each do |know|%>
+              <li class="know_li">
+                <a href="/stores/<%= params[:store_id] %>/micro_stores/new?know_id=<%= know.id %>" title="点我创建<%=know.name%>类别的小知识" id="types_<%=know.id%>"><%= know.name %></a>
+                <input id="change_<%= know.id %>"  style="display:none;" type="text" value="<%= know.name %>" />
+                <span class="edit_types" >
+                  <a href="javascript:void(0)" id="edit_know_<%=know.id%>" onclick="change_types(<%= know.id %>)">编 辑</a>
+                  <a href="javascript:void(0)" style="display: none;" id="types_know_<%=know.id%>" onclick="submit_types(<%= know.id %>,<%= know.store_id %>)">确 定</a>
+                </span>
+              </li>
+            <%end%>
+          </ul>
+        </div>
+        <div class="clear"></div>
+        <div class="prom_message_over" >
+          <%(@knowledges || Knowlege.sample).each do |knowledge|%>
+            <div  class="prom_one_message">
+              <div style="overflow:hidden; height:200px;">
+                <% if  knowledge.img_url%>
+                  <div class="prom_one_img">
+                    <img src="<%= knowledge.img_url.nil? ? "" : knowledge.img_url.gsub("img#{knowledge.id}","img#{knowledge.id}_#{Constant::MICRO_STORE[0]}") %>" />
+                  </div>
+                <%end%>
+                <div class="prom_one_product">
+                  <p style="padding:5px 0;font-size: 10px;font-weight: bold;"><%= knowledge.title %></p>
+                  <p>&nbsp;&nbsp;&nbsp;&nbsp;<%= knowledge.description %></p>
+                </div>
+              </div>
+              <!--当鼠标移到此处top为-25，否则为4px-->
+              <% if @knowledges %>
+                <div style="top:-26px;" class="prom_operate">
+                  <a class="prom_edit"  href="/stores/<%= params[:store_id] %>/micro_stores/<%=knowledge.id  %>/edit" target="_blank">编&nbsp;&nbsp;辑</a>
+                  <span style="float:left;">&nbsp;|&nbsp;</span>
+                  <a class="prom_del" href="javascript:void(0)" onclick="del_know(<%= knowledge.id %>,<%= knowledge.store_id %>)" >删&nbsp;&nbsp;除</a><span style="float:left;">&nbsp;|&nbsp;</span>
+                  <a href="javascript:void(0)"onclick="on_weixin('Knowlege','<%=  knowledge.id %>',this)"
+                     title="<%= knowledge.on_weixin ?  '不' : '' %>在微信上推荐该知识"><%= knowledge.on_weixin ?  '不' : '' %>推&nbsp;&nbsp;荐
+                  </a>
+                </div>
+              <%end%>
+            </div>
+          <%end%>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

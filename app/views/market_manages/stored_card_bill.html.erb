@@ -1,0 +1,39 @@
+<%= render 'second_menu'%>
+<form accept-charset="UTF-8" action="/stores/<%= @store.id %>/market_manages/stored_card_bill" method="get">
+<div class="search">
+      <div><label>时间：</label>
+        <input name="started_at" type="text" id="start_at" value="<%= @start_at %>" class="Wdate" readonly onClick="WdatePicker();"/>&nbsp;到&nbsp;
+        <input name="ended_at" id="end_at" type="text" value="<%= @end_at %>" class="Wdate" readonly onClick="WdatePicker();"/></div>
+      <div><button class="search_btn">查询</button></div>
+</div>
+</form>
+<div class="data_menu"><a href="/stores/<%= @store.id %>/market_manages/stored_card_bill_blank?started_at=<%= @start_at %>&ended_at=<%= @end_at %>" class="add_btn" target="_blank">打印单据</a></div>
+<div class="clear"></div>
+<input type="hidden" id="store_id" value="<%= @store.id %>"/>
+<div class="data_body">
+  <%= render :partial => "/market_manages/stored_card_bill_partial" %>
+</div>
+<div class="mask"></div>
+<div class="maskOne"></div>
+<div id="related_order_div"></div>
+<div id="card_bill_div">
+  <div class="tab_popup" id="print_card_bill_partial">
+    <div class="popup_box">
+      <h1>打印单据<a href="javascript:void(0)" class="close">关闭</a></h1>
+      <div class="popup_body">
+        <div class="popup_body_area"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="material_order_div">
+  <div class="tab_popup" id="material_order_detail">
+    <div class="popup_box">
+      <h1>订货编号<a href="javascript:void(0)" class="close">关闭</a></h1>
+      <div class="popup_body">
+        <div class="popup_body_area"></div>
+      </div>
+    </div>
+  </div>
+</div>

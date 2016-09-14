@@ -1,0 +1,30 @@
+$(".mask").hide();
+$("#process").html('');
+<%if @simple.nil? %>
+  <% if !@rewards.nil? %>
+    $("#reward_tab").html('<%= escape_javascript(render :partial => '/staffs/reward_tab') %>');
+    tishi_alert("处理奖励成功!");
+  <% end %>
+  <% if !@violations.nil? %>
+    $("#violation_tab").html('<%= escape_javascript(render :partial => '/staffs/violation_tab') %>');
+    $(".process_violation").each(function(){
+    if($(this).attr("id") == <%= @violation_reward.id.to_s %>){
+    $(this).parent().append("已处理");
+    $(this).parent().next().html("<%= @violation_reward.mark %>")
+    $(this).remove();
+    }
+    })
+    tishi_alert("处理违规成功!");
+  <% end %>
+<%else%>
+  <% if @violations.length > 0  %>
+    $("#"+'<%=  @simple%>'+"_pannel").html('<%= escape_javascript(render :partial => '/staffs/operate_voilate',:object=>@violations) %>');
+    $("#"+'<%=@simple%>'+"_span").html(<%=@violations.length  %>)
+    $("#score_num,#salary_num,#violation_reward_situation,#violation_reward_mark").val('');
+    $("#violation_reward_belong_types  option:selected,#violation_reward_process_types option:selected").removeAttr("selected");
+  <%else%>
+    $("#message"+'<%=  @simple%>').css("display","none");
+  <% end %>
+  $("#op_"+'<%=@simple%>').css("display","none");
+  tishi_alert("处理成功!");
+<%end%>

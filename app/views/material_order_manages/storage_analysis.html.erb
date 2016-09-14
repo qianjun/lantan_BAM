@@ -1,0 +1,36 @@
+<div class="second_menu">
+  <a href="/stores/<%= @store_id %>/material_order_manages">订货分析</a>
+  <a href="/stores/<%= @store_id %>/material_order_manages/flow_analysis">流量分析</a>
+  <a href="/stores/<%= @store_id %>/material_order_manages/storage_analysis"  class="hover">库存结构分析</a>
+</div>
+<div class="data_body">
+  <%#*<div class="data_body_h">按类别分析</div>%>
+  <div class="collect">
+    <ul>
+      <li><span>总金额：<%= @t_price.nil? || @t_price <= 0 ? 0 : sprintf("%.2f", @t_price) %>元</span></li>
+      <li><span>总数量：<%= @t_count.nil? ? 0 : @t_count %></span></li>
+    </ul>
+  </div>
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+    <thead>
+      <tr class="hbg">
+        <td>类别</td>
+        <td>金额</td>
+        <td>金额占比</td>
+        <td>数量</td>
+        <td>数量占比</td>
+      </tr>
+    </thead>
+    <tbody>
+      <% @mat_list.each do |ml| %>
+      <tr>
+        <td><strong><%= ml.name %></strong></td>
+        <td><p><%= ml.price.nil? ? 0.00 : sprintf("%.2f", ml.price) %></p></td>
+        <td><%= @t_price.nil? || @t_price <= 0 ? "0%" : "#{sprintf("%.2f",(ml.price.to_f * 100)/@t_price)}%" %></td>
+        <td><p><%= ml.count.to_i %></p></td>
+        <td><%= @t_count.nil? || @t_count <= 0 ? "0%" : "#{sprintf("%.2f",(ml.count.to_f * 100)/@t_count)}%" %></td>
+      </tr>
+       <% end if @mat_list %>      
+    </tbody>
+  </table>
+</div>

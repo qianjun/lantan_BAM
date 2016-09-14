@@ -1,0 +1,96 @@
+<div class="main">
+  <div class="box">
+    <div class="data_box">
+      <div class="way_menu"><%= link_to "员工一览", store_staffs_path(@store) %> &gt; 员工详情</div>
+      <div class="data_body_title">
+        <div class="data_body_p">
+          <span>姓名：<%= @staff.name %></span>
+          <span>部门：<%= @departs[@staff.position]%></span>
+          <span>等级：<%= Staff::LEVELS[@staff.level] %></span>
+          <span>职务：<%=@departs[@staff.department_id]%></span>
+          <% if permission?(:staffs, :edit_show_staff) %>
+          <a href="javascript:void(0)" id="staff_detail" onclick="show_staff(<%=@staff.id%>,<%=@staff.store_id%>)">详情</a><% end %></div>
+      </div>
+      <div class="clear"></div>
+      <div class="tab_head">
+        <ul>
+          <li class="hover">绩效记录</li>
+          <li>培训记录</li>
+          <li>奖励记录</li>
+          <li>违规记录</li>
+          <li>工资记录</li>
+        </ul>
+      </div>
+      <div class="data_body" id="ajax_paginate">
+        <div>
+          <div id="work_record_tab">
+            <%= render :partial => "work_record_tab" %>
+          </div>
+        </div>
+
+
+        <div style="display:none;" id="train_tab">
+          <%= render :partial => "train_tab" %>
+        </div>
+
+        <div style="display:none;" id="reward_tab">
+          <%= render :partial => "reward_tab" %>
+        </div>
+
+        <div style="display:none;" id="violation_tab">
+          <%= render :partial => "violation_tab" %>
+        </div>
+
+        <div style="display:none;" id="salary_tab">
+          <%= render :partial => "salary_tab" %>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="foot"><p>Copyright © 2013 杭州鼎洪 版权所有</p></div>
+<div class="mask"></div>
+<div class="maskOne"></div>
+
+<div class="tab_popup" style="display:none;" id="manage_score_area">
+  <% if @current_month_score.nil? %>
+    <div class="popup_box">
+      <h1>店长打分<a href="javascript:void(0)" class="close">关闭</a></h1>
+      <div class="popup_body">
+        <div class="popup_body_area">
+          <div class="item">
+            系统没有上一个月的绩效记录
+          </div>
+          <div class="clear"></div>
+        </div>
+      </div>
+    </div>
+  <% else %>
+    <%= form_for(@current_month_score, :url => store_month_score_path(@store, @current_month_score), :html => {:method => :put, "data-type" => 'script'}, :remote => true) do |f| %>
+      <div class="popup_box">
+        <h1>店长打分<a href="javascript:void(0)" class="close">关闭</a></h1>
+        <div class="popup_body">
+          <div class="popup_body_area">
+            <div class="item">
+              <label>分数：</label>
+              <%= f.text_field :manage_score %>
+            </div>
+            <div class="clear"></div>
+            <div class="item_textarea">
+              <label>理由：</label>
+              <%= f.text_area :reason, :cols => "", :rows => "", :class => "width_textarea" %>
+            </div>
+            <input type="hidden" name="month_score[is_syss_update]" value="1"/>
+            <input type="hidden" name="staff_id" value="<%= @staff.id %>"/>
+            <div class="btn_box"><button class="confirm_btn" id="manage_score_btn_validate">确定</button><button class="cancel_btn">取消</button></div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+</div>
+
+<div id="process"></div>
+<div id="staff_edit"></div>

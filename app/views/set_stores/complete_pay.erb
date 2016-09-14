@@ -1,0 +1,30 @@
+<%= javascript_include_tag "set_stores" %>
+<div class="data_box">
+  <div class="tab_head">
+    <ul><li onclick="window.location.href='/stores/<%=params[:store_id]%>/set_stores/cash_register'">等待付款</li>
+      <li class="hover" >已付款</li></ul>
+  </div>
+  <div class="data_body">
+    <div>
+      <div class="search">
+        <div><label>时间：</label><input id="c_first" type="text" id="date03" onclick="WdatePicker({preLoad:true,dateFmt:'HH:mm',
+          minDate:'04:00',maxDate:'21:00',qsEnabled:false,quickSel:['10:00:00','12:00:00','14:00:00','16:00:00','18:00:00']})" readonly class="Wdate"
+                                      value="<%=params[:first]%>"/> 到
+          <input id="c_last" type="text" id="date04" onclick="WdatePicker({preLoad:true,dateFmt:'HH:mm',
+          minDate:'04:00',maxDate:'24:00',qsEnabled:false,quickSel:['10:00:00','12:00:00','14:00','16:00:00','18:00:00']})" readonly class="Wdate"
+                 value="<%=params[:last]%>" /></div>
+        <div>
+          <label>车牌号：</label>
+          <input type="text" id="c_num" value="" />
+        </div>
+        <div><button class="search_btn" onclick="load_search(<%=params[:store_id]%>)">查询</button></div>
+        <div class="data_menu afterClear"><a href="javascript:void(0)" onclick="single_order_print(<%=params[:store_id]%>)">打印小票</a></div>
+        <div class="data_menu afterClear"><a href="javascript:void(0)" onclick="three_order_print(<%=params[:store_id]%>)">打印单据</a></div>
+      </div>
+      <div class="data_item" id="cash_over">
+        <%=  render "cash_over"%>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="tab_popup"  id="edit_deduct" style="width:450px"></div>

@@ -1,0 +1,57 @@
+<% index = 1 %>
+<% unless @complaints.blank? %>
+  <div class="message message<%= index%2 == 1 ? 1 : 2 %>" id="complaint_h">
+    <% index +=1 %>
+    有 <span class="red"><%= @complaints.size %></span> 条投诉
+    <a href="javascript:void(0)" onclick="javascript:show_complaint('complaint')">点击查看</a>
+  </div>
+  <div class="message" id="complaint_s" style="display: none;">
+    有 <span class="red"><%= @complaints.size %></span> 条投诉
+    <a href="javascript:void(0)" onclick="javascript:hide_complaint('complaint')" >隐藏</a>
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_tab_table">
+      <thead>
+        <tr class="hbg">
+          <td>车牌号码</td>
+          <td>客户姓名</td>
+          <td>相关订单</td>
+          <td>投诉理由</td>
+          <td>投诉要求</td>
+          <td>操作</td>
+        </tr>
+      </thead>
+      <tbody>
+        <% @complaints.each do |complaint| %>
+          <tr>
+            <td width="15%" class="wordBreak"><%= complaint.num %></td>
+            <td width="15%" class="wordBreak"><%= complaint.name %></td>
+            <td width="15%" class="wordBreak"><%= link_to "#{complaint.code}", "/orders/#{complaint.o_id}/order_info" ,
+                :remote => "true", "data-type" => "script", :class => "other_a" %>
+            </td>
+            <td width="25%" class="wordBreak"><%= complaint.reason %></td>
+            <td width="20%" class="wordBreak"><%= complaint.suggestion %></td>
+            <td width="10%" class="wordBreak">
+              <%= link_to "详细", complaint_detail_store_complaint_path(params[:store_id], complaint.id), remote: :true, "data-type" => "script" %>
+              <% if permission?(:customers,:deal_complaint) %>
+                <a href="/stores/<%= @store.id %>/customers/<%= complaint.cu_id %>?comp=1">处理</a>
+              <% end %></td>
+          </tr>
+        <% end %>
+
+      </tbody>
+    </table>
+  </div>
+<% end %>
+<% unless @notices.blank? %>
+  <div class="message message<%= index%2 == 1 ? 1 : 2 %>" id="notice_h">
+    有 <span class="red"><%= @notices.length %></span> 生日提醒
+    <a href="javascript:void(0)" onclick="javascript:show_complaint('notice')">点击查看</a>
+  </div>
+  <div class="message message2" id="notice_s" style="display: none;">
+    有 <span class="red"><%= @notices.length %></span> 生日提醒
+    <a href="javascript:void(0)" onclick="javascript:hide_complaint('notice')" >隐藏</a>
+    <% @notices.each do |notice| %>
+      <div><span> <%= notice.name %> 即将过生日</span>
+        <a href="javascript:void(0)" onclick="javascript:single_send_message(<%= notice.id %>)">短信问候</a></div>
+    <% end %>
+  </div>
+<% end %>

@@ -1,0 +1,131 @@
+<%= javascript_include_tag "application" %>
+<title>打印单据</title>
+<h2 style="text-align:center;">
+  <%= @store.name %>
+</h2>
+<h4 style="text-align:center;">
+  车辆维修结算单</h4>
+<table style="width:800px">
+  <col width="10%" />
+  <col width="15%" />
+  <col width="10%" />
+  <col width="35%" />
+  <col width="10%" />
+  <col width="20%" />
+  <tr>
+    <td>日期：
+    </td>
+    <td><label><%=Time.now.strftime("%Y/%m/%d")%></label>
+    </td>
+    <td>地址：
+    </td>
+    <td><label><%=@store.address%></label>
+    </td>
+    <td>电话：
+    </td>
+    <td><label><%=@store.phone%></label>
+    </td>
+  </tr>
+</table>
+<br />
+<table style="width:800px;" border="1">
+  <col width="13%" />
+  <col width="20%" />
+  <col width="13%" />
+  <col width="20%" />
+  <col width="13%" />
+  <col width="20%" />
+  <tr>
+    <td>车牌号：</td>
+    <td><label><%=  @car_num.map(&:num).join(" ")%></label></td>
+    <td>车型：</td>
+    <td><label><%= CarModel.where(:id=>@car_num.map(&:car_model_id)).map(&:name).join(" ")  %></label></td>
+    <td>进厂里程：</td>
+    <td><label><%=@car_num.map(&:distance).join(" ")  %></label></td>
+  </tr>
+  <tr>
+    <td>联系人：</td>
+    <td><label><%= @customer.name %></label></td>
+    <td>联系电话：</td>
+    <td><label><%= @customer.mobilephone %></label></td>
+    <td>单位：</td>
+    <td><label><%=@customer.group_name  %></label></td>
+  </tr>
+  <tr>
+    <td>客户地址：</td>
+    <td colspan="5"><label><%=@customer.address%></label></td>
+  </tr>
+</table>
+
+<table style="width:800px;" border="1">
+  <col width="50%" />
+  <col width="10%" />
+  <col width="10%" />
+  <col width="10%" />
+  <col width="10%" />
+  <col width="10%" />
+  <tr style="text-align:center">
+    <td>项目名称</td>
+    <td>数量</td>
+    <td>单价</td>
+    <td>优惠</td>
+    <td>金额</td>
+  </tr>
+  <%sum = 0%>
+  <% @orders.each do |order| %>
+    <% loss = @order_pays[order.id].nil? ? 0 : @order_pays[order.id].select{|k,v|OrderPayType::LOSS.include? k}.values.inject(0){|sum,n|sum+n} %>
+    <%  fact = (order.price>loss ? order.price-loss : 0).round(2)%>
+    <% sum += fact %>
+    <%  prod = @order_prods[order.id][0] %>
+    <tr id="order_<%=order.id%>">
+      <td style="text-align:center"><input type="text" value="<%= prod.name %>" style="border: 0px;" /></td>
+      <td style="text-align:center"><input type="text" value="<%= prod.pro_num %>" id="num_<%=order.id%>" style="border: 0px;" onblur="sum_price(this)"/></td>
+      <td style="text-align:center"><input type="text" value="<%= prod.price %>" id="price_<%=order.id%>" style="border: 0px;" onblur="sum_price(this)"/></td>
+      <td style="text-align:center"><input type="text" value="<%= loss.round(2) %>" id="reward_<%=order.id%>" style="border: 0px;" onblur="sum_price(this)"/></td>
+      <td style="text-align:center"><%=fact.round(2)%></td>
+    </tr>
+  <%end%>
+  <tr>
+    <td colspan="5" style="text-align:right" class="style1">合计：<span id="total_num"><%=sum.round(2)%></span></td>
+  </tr>
+</table>
+<br />
+<br />
+<br />
+<br />
+<br />
+<table style="width:800px;">
+  <col width="12%" />
+  <col width="14%" />
+  <col width="30%" />
+  <tr>
+    <td>
+      收银员：</td>
+    <td><label><%= cookies[:user_name] %></label>
+    </td>
+    <td>
+      客户签名：</td>
+    <td>
+      <button onclick="$(this).css('display','none');window.print();" style="float: right;">打印</button>
+    </td>
+  </tr>
+</table>
+<script type="text/javascript">
+  function sum_price(e){
+    var this_value = round(e.value,2);
+    var order_trs = $("tr[id*='order_']");
+    if (isNaN(this_value) || this_value <1){
+      this_value = 1;
+    }
+    var sum = 0;
+    for(var i =0;i<order_trs.length;i++){
+      var this_id = order_trs[i].id.split("_")[1];
+      var  num = round($("#num_"+this_id).val(),4);
+      var  price = round($("#price_"+this_id).val(),4);
+      var reward = round($("#reward_"+this_id).val(),4);
+      $(order_trs[i]).find("td :last").html(round(num*price-reward,2))
+      sum += round(num*price-reward,2);
+    }
+    $("#total_num").html(round(sum,2));
+  }
+</script>

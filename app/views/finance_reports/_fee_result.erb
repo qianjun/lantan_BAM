@@ -1,0 +1,86 @@
+<% Fee::FEE_TAB.each do |k,v|%>
+  <% fee_types = @fees[k] %>
+  <div class="finnace_title" id="finnace_title_<%=k%>" <%if @position != k %>style="display: none;" <%end%> >
+    <ul>
+      <li>单据：<span><%= fee_types.nil? ? 0 : fee_types.length%></span>笔</li>
+      <li>总金额：<span><%= fee_types.nil? ? 0 : fee_types.map(&:amount).inject(0){|sum,n|sum+n}.round(2)%></span></li>
+      <li>分摊金额：<span><%= fee_types.nil? ? 0 : fee_types.inject(0){|num,n| unless n.share_month.nil?
+              num+n.m_amount
+            else
+              num
+            end}.round(2)%></span></li>
+    </ul>
+  </div>
+  <div class="nothing" id="content_<%=k%>" <%if @position != k %>style="display: none;" <%end%>>
+    <div class="table_box_h">
+      <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+        <thead>
+          <tr class="hbg">
+            <td width="18%">单据编号</td>
+            <td width="18%">名称</td>
+            <td width="8%">支付日期</td>
+            <td wdth="8%">入账日期</td>
+            <td width="8%">金额</td>
+            <td width="8%">经手人</td>
+            <td width="10%">分摊月</td>
+            <td width="8%">分摊金额</td>
+            <td width="10%">操作</td>
+          </tr>
+        </thead>
+        <tbody>
+          <%unless fee_types.blank? %>
+            <% fee = fee_types[0] %>
+            <tr>
+              <td><%= fee.code %></td>
+              <td><%= fee.name %></td>
+              <td><%= fee.pay_date.strftime("%Y-%m-%d")%></td>
+              <td><%= fee.fee_date.strftime("%Y-%m-%d") %></td>
+              <td><%= fee.amount %></td>
+              <td><%= @customers[fee.operate_staffid] %></td>
+              <td><%= fee.share_month %></td>
+              <td><%= fee.m_amount %></td>
+              <td><a href="javascript:void(0)" onclick="show_fee(<%= fee.id %>,<%= fee.store_id %>)">详情</a>
+                <a href="javascript:void(0)" onclick="destroy_fee('fee',<%= fee.id %>,<%= fee.store_id %>,0)">删除</a>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    <div class="table_box">
+      <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+        <thead>
+          <tr class="hbg">
+            <td width="18%">单据编号</td>
+            <td width="18%">名称</td>
+            <td width="8%">支付日期</td>
+            <td wdth="8%">入账日期</td>
+            <td width="8%">金额</td>
+            <td width="8%">经手人</td>
+            <td width="10%">分摊月</td>
+            <td width="8%">分摊金额</td>
+            <td width="10%">操作</td>
+          </tr>
+        </thead>
+        <tbody>
+          <%unless fee_types.blank? %>
+            <% fee_types.each do |fee| %>
+              <tr>
+                <td><%= fee.code %></td>
+                <td><%= fee.name %></td>
+                <td><%= fee.pay_date.strftime("%Y-%m-%d")%></td>
+                <td><%= fee.fee_date.strftime("%Y-%m-%d") %></td>
+                <td><%= fee.amount %></td>
+                <td><%= @customers[fee.operate_staffid] %></td>
+                <td><%= fee.share_month %></td>
+                <td><%= fee.m_amount %></td>
+                <td><a href="javascript:void(0)" onclick="show_fee(<%= fee.id %>,<%= fee.store_id %>)">详情</a>
+                  <a href="javascript:void(0)" onclick="destroy_fee('fee',<%= fee.id %>,<%= fee.store_id %>,0)">删除</a></td>
+              </tr>
+            <% end %>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<% end %>

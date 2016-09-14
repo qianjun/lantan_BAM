@@ -1,0 +1,104 @@
+<div class="popup_body_area">
+  <div class="seeProDiv">
+    <div class="seeProDiv_l">订单编码：</div>
+    <div class="seeProDiv_r"><%= @mo.code ||= "------" %></div>
+  </div>
+  <div class="seeProDiv">
+    <div class="seeProDiv_l">到货时间：</div>
+    <div class="seeProDiv_r"><%= @mo.arrival_at.nil? ? "------" : @mo.arrival_at.strftime("%Y-%m-%d") %></div>
+  </div>
+  <div class="seeProDiv">
+    <div class="seeProDiv_l">物流状态：</div>
+    <div class="seeProDiv_r">
+      <%= @mo.transfer_status %>
+    </div>
+  </div>
+  <div class="seeProDiv">
+    <div class="seeProDiv_l">物流信息：</div>
+    <div class="seeProDiv_r">物流单号：<%= @mo.logistics_code ||= "------" %><br/>&nbsp;承运人：<%= @mo.carrier ||= "------" %></div>
+  </div>
+  <div class="seeProDiv">
+    <div class="seeProDiv_l">付款状态：</div>
+    <div class="seeProDiv_r">
+       <%= @mo.pay_status %>
+    </div>
+  </div>
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_tab_table">
+    <thead>
+      <tr class="hbg">
+        <td>名称</td>
+        <td>单价（元）</td>
+        <td>数量（个）</td>
+      </tr>
+    </thead>
+    <tbody>
+      <% if @mo.mat_order_items.blank? %>
+        <tr>
+          <td colspan="3">无！</td>
+        </tr>
+      <% else %>
+        <% @mo.mat_order_items.each do |moi| %>
+          <tr>
+            <td><%= moi.material.try(:name) %></td>
+            <td><%= moi.price %></td>
+            <td><%= moi.material_num %></td>
+          </tr>
+        <% end %>
+      <% end %>
+    </tbody>
+  </table>
+  <% unless @mo.sale_id.blank? or @mo.sale_id==0 %>
+  <% sale = Sale.find @mo.sale_id %>
+  <h2>活动：</h2>
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_tab_table">
+    <thead>
+      <tr class="hbg">
+        <td>名称</td>
+        <td>描述</td>
+        <td>总部补贴</td>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><%= sale.name %></td>
+        <td><%= sale.introduction %></td>
+        <td><%= sale.sub_content %></td>
+      </tr>
+    </tbody>
+  </table>
+  <% end %>
+   <div class="otherWay">
+    <div class="amount">总计：<%= '%.2f' % @total_money.to_f %></div>
+    <% if @mo.svc_use_price %><div class="amount">储值卡抵用：<%= @mo.svc_use_price %></div><% end %>
+    <% if @mo.sale_price %><div class="amount">活动优惠：<%= @mo.sale_price %></div><% end %>
+    <% if @mo.pay_type_name %><div class="amount"><%= @mo.pay_type_name %>：<%= @mo.price %></div><% end %>
+  </div>
+</div>
+<div class="fukuan_btn">
+  <% if @mo.supplier_id == 0 && permission?(:materials, :cuihuo) %>
+    <% if @mo.m_status == MaterialOrder::M_STATUS[:no_send] && @mo.status != MaterialOrder::STATUS[:cancel]%>
+      <span><button class="confirm_btn" onclick="cuihuo(<%= @mo.id %>,1,<%= @store_id %>)">催货</button></span>
+    <% end %>
+  <% end %>
+  <% if permission?(:materials, :tuihuo) %>
+      <% if @mo.m_status != MaterialOrder::M_STATUS[:save_in] && @mo.m_status != MaterialOrder::M_STATUS[:returned] %>
+      <span><%= link_to "退货", tuihuo_store_material_path(@store_id, @mo.id), :class=> "confirm_btn", :remote => true, 'data-type'=> 'script'  %></span>
+      <% end %>
+  <% end %>
+  <% if permission?(:materials, :shouhuo) %>
+      <% if @mo.m_status != MaterialOrder::M_STATUS[:received] && @mo.m_status != MaterialOrder::M_STATUS[:save_in] %>
+      <span><%= link_to "确认收货", receive_order_store_material_path(@store_id, @mo.id), :class=> "confirm_btn", :remote => true, 'data-type'=> 'script'  %>
+        </span>
+    <% end %>
+  <% end %>
+  <% if permission?(:materials, :pay) %>
+    <% if @mo.status == MaterialOrder::STATUS[:no_pay] %>
+      <span><button class="confirm_btn" onclick="pay_order(<%= @mo.id %>,<%= @store_id %>)">付款</button></span>
+    <% end %>
+  <% end %>
+  <% if permission?(:materials, :cancel) %>
+    <% if @mo.status == MaterialOrder::STATUS[:no_pay] && @mo.m_status == MaterialOrder::M_STATUS[:no_send] %>
+      <span><button class="confirm_btn" onclick="cancel_order(<%= @mo.id %>,1,<%= @store_id %>, <%= @mo.supplier_type %>)">取消订单</button></span>
+    <% end %>
+  <% end %>
+</div>

@@ -1,0 +1,10 @@
+<% if @status == 0 || @status == 1%>
+  tishi_alert("<%= @flash_notice.html_safe() %>");
+  $("#material_div").hide();
+  $(".mask").css('display','none');
+  window.location.reload();
+
+<% elsif @status == 2 %>
+  tishi_alert("<%= @flash_notice.html_safe() %>");
+  $("#new_material #material_ce_bn").attr('disabled', false);
+<% end %>

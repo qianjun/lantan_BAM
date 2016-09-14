@@ -1,0 +1,83 @@
+<%Account::TYPES_NAMES.each do |k,v|%>
+  <%accounts = @accounts[k]%>
+  <div <%if k != @position%> style="display: none"<%end%> id="show_<%=k%>">
+    <div class="finnace_title" id="finnace_title" style="height:32px;">
+      <ul>
+        <li><%=v%>账户：<span><%= accounts.nil? ? 0 : accounts.length%></span></li>
+      </ul>
+    </div>
+    <div>
+      <div class="table_box_h">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+          <thead>
+            <tr class="hbg">
+              <%if  k == Account::TYPES[:CUSTOMER] %>
+                <td width="20%">客户名称</td>
+                <td width="20%">客户属性</td>
+              <%else%>
+                <td width="40%">供应商名称</td>
+              <%end%>
+              <td width="15%">上期余额</td>
+              <td width="15%">本期消费</td>
+              <td width="15%">本期增加</td>
+              <td width="15%">当前余额</td>
+            </tr>
+          </thead>
+          <tbody>
+            <%unless accounts.nil?%>
+              <% account = accounts[0] %>
+              <tr>
+                <%if  k == Account::TYPES[:CUSTOMER]%>
+                  <td><%= account.name %></td>
+                  <td><%= account.group_name.nil? ? "个人客户" : account.group_name %></td>
+                <%else%>
+                  <td><%= account.name %></td>
+                <%end%>
+                <td><%= account.left_amt%></td>
+                <td><%= account.trade_amt%></td>
+                <td><%= account.pay_recieve%></td>
+                <td><%= account.balance%></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+      <div class="table_box">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+          <thead>
+            <tr class="hbg">
+              <%if  k == Account::TYPES[:CUSTOMER] %>
+                <td width="20%">客户名称</td>
+                <td width="20%">客户属性</td>
+              <%else%>
+                <td width="40%">供应商名称</td>
+              <%end%>
+              <td width="15%">上期余额</td>
+              <td width="15%">本期消费</td>
+              <td width="15%">本期增加</td>
+              <td width="15%">当前余额</td>
+            </tr>
+          </thead>
+          <tbody>
+            <%unless accounts.nil? %>
+              <% accounts.each do |account| %>
+                <tr>
+                  <%if  k == Account::TYPES[:CUSTOMER] %>
+                    <td><%= account.name %></td>
+                    <td><%= account.group_name.nil? ? "个人客户" : account.group_name %></td>
+                  <%else%>
+                    <td><%= account.name %></td>
+                  <%end%>
+                  <td><%= account.left_amt%></td>
+                  <td><%= account.trade_amt%></td>
+                  <td><%= account.pay_recieve%></td>
+                  <td><%= account.balance%></td>
+                </tr>
+              <% end %>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+<%end%>

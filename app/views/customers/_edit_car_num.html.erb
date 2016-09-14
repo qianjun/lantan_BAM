@@ -1,0 +1,57 @@
+<div id="edit_car_num_<%= edit_car_num.c_id %>" class="tab_popup" style="display:none;">
+  <%= form_for :customer, :url=>"/customers/#{@customer.id}_#{edit_car_num.c_id}/edit_car_num", :method => "post",
+    :html => {:onsubmit => "return edit_car_num(#{edit_car_num.c_id})",
+    :id => "d_c_n_f_#{edit_car_num.c_id}", :name => "d_c_n_f_#{edit_car_num.c_id}"} do %>
+    <div class="popup_box">
+      <h1>编辑车牌号码<a href="javascript:void(0)" class="close">关闭</a></h1>
+      <input type="hidden" name="store_id_<%= edit_car_num.c_id %>" value="<%= @store.id %>" />
+      <div class="popup_body">
+        <div class="popup_body_area">
+          <div class="item">
+            <label><font color="red">*</font>汽车购买年份：</label>
+            <select id="buy_year_<%= edit_car_num.c_id %>" name="buy_year_<%= edit_car_num.c_id %>">
+              <% ((Time.now.year.to_i - 30)..Time.now.year.to_i).each do |i| %>
+                <option value="<%= i %>" <% if edit_car_num.buy_year == i %>selected<% end %>><%= i %></option>
+              <% end %>
+            </select>
+          </div>
+          <div class="item">
+            <label><font color="red">*</font>车牌号码：</label>
+            <input type="text" id="car_num_<%= edit_car_num.c_id %>"
+                   name="car_num_<%= edit_car_num.c_id %>" value="<%= edit_car_num.num %>" 
+                   onblur="check_e_car_num('<%= edit_car_num.c_id %>')" />
+          </div>
+          <div class="item">
+            <label><font color="red">*</font>品牌型号：</label>
+            <select class="ymd" id="capital_div_<%= edit_car_num.c_id %>"
+                    onchange="choose_brand('#capital_div_<%= edit_car_num.c_id %>', '#car_brands_<%= edit_car_num.c_id %>', '#car_models_<%= edit_car_num.c_id %>')">
+              <option value="">--</option>
+              <% Capital.all.each do |ca| %>
+                <option value="<%= ca.id %>" <% if edit_car_num.capital_id == ca.id %>selected<% end %>><%= ca.name %></option>
+              <% end %>
+            </select>
+            <select class="ymd" id="car_brands_<%= edit_car_num.c_id %>" name="car_brands_<%= edit_car_num.c_id %>"
+                    onchange="choose_model('#car_brands_<%= edit_car_num.c_id %>', '#car_models_<%= edit_car_num.c_id %>')">
+              <option value="">--</option>
+              <% CarBrand.where(:capital_id => edit_car_num.capital_id).each do |b| %>
+                <option value="<%= b.id %>" <% if edit_car_num.b_id == b.id %>selected<% end %>><%= b.name %></option>
+              <% end %>
+            </select>
+            <select class="ymd" id="car_models_<%= edit_car_num.c_id %>" name="car_models_<%= edit_car_num.c_id %>">
+              <option value="">--</option>
+              <% CarModel.where(:car_brand_id => edit_car_num.b_id).each do |m| %>
+                <option value="<%= m.id %>" <% if edit_car_num.m_id == m.id %>selected<% end %>><%= m.name %></option>
+              <% end %>
+            </select>
+          </div>
+          <div class="item">
+            <label>行驶里程(公里)：</label>
+            <input type="text" name="car_distance_<%= edit_car_num.c_id %>" id="car_distance_<%= edit_car_num.c_id %>"
+                   value="<%= edit_car_num.distance %>"/>
+          </div>
+        </div>
+        <div class="btn_box"><button type="submit" class="confirm_btn">确定</button></div>
+      </div>
+    </div>
+  <% end %>
+</div>

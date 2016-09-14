@@ -1,0 +1,4 @@
+$("#pcard_list").html("<%= escape_javascript(render :partial => "/market_manages/pcard_list") %>");
+$("#pcard_list .data_table > tbody > tr:odd").addClass("tbg");
+$("#pcard_list .data_tab_table > tbody > tr:odd").addClass("tbg");
+$("#pcard_list .pageTurn a").attr("href",$("#pcard_list .pageTurn a").attr("href").replace("?","?created=<%=session[:r_created]%>&ended=<%=session[:r_ended]%>&time=<%=session[:time]%>"));

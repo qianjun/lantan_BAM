@@ -1,0 +1,91 @@
+<div style="display: none" id="c_prod">
+  <div class="item">
+    <label><span class="red">*</span>产品名称：</label><input name="prod_name" id="prod_name" type="text"  />
+  </div>
+  <div class="item">
+    <label><span class="red">*</span>全国零售价：</label><input name="base_price" id="base_price" type="text"  />
+  </div>
+  <div class="item">
+    <label><span class="red">*</span>全国促销价：</label><input name="sale_price" id="sale_price" type="text" />
+  </div>
+  <div class="item">
+    <label>类别：</label><select  id="prod_types" name="prod_types">
+      <% @cates[Category::TYPES[:good]].each do |k,v| %>
+        <option value="<%= k %>" ><%= v %></option>
+      <% end %>
+    </select>
+  </div>
+  <div class="seeProDiv">
+    <div class="seeProDiv_l">配图：</div>
+    <div class="seeProDiv_rWidth">
+      <a href="javascript:void(0)" class="compile_btn" onclick="before_center('.add_img');">添加图片</a><span>*添加新图片会使已上传图片被删除，请为图片做好备份</span>
+    </div>
+  </div>
+  <div class="item">
+    <label><span class="red">*</span>规格：</label><input name="standard" id="standard" type="text"   />
+  </div>
+  <div class="item">
+    <label><span class="red">*</span>积分：</label><input name="prod_point" id="prod_point" type="text" value="0"  />
+  </div>
+  <div class="clear"></div>
+  <div class="item_blockArea">
+    <h2 class="item_blockArea_h2">销售提成</h2>
+    <div class="item item_w"><span class="item_radio_b">
+        <input name="deduct_type" type="radio" checked onclick="change_input('#deduct_price','#deduct_percent')" /></span>
+      <label>百分点：</label>
+      <input name="deduct_percent" id="deduct_percent" type="text"   class="item_areaInput_s" value="<%=0.round(2)%>"/>
+    </div>
+    <div class="item item_w"><span class="item_radio_b">
+        <input name="deduct_type" type="radio" onclick="change_input('#deduct_percent','#deduct_price')" /></span>
+      <label>金 额：</label>
+      <input name="deduct_price" id="deduct_price" type="text"  class="item_areaInput_s" value="<%=0.round(2)%>" disabled />
+    </div>
+    <div class="item">
+      <label>需要施工：</label><input name="is_added" id="is_added" type="checkbox" value="<%=  Product::IS_ADDED[:NO] %>" onclick="control_deduct(this)"/>
+    </div>
+    <div class="clear"></div>
+    <h2 class="item_blockArea_h2" style="display: none" id="techin_lable">技师提成</h2>
+    <div class="item item_w" id="techin_p" style="display: none"><span class="item_radio_b">
+        <input name="techin_type" type="radio" checked onclick="change_input('#techin_price','#techin_percent')" /></span>
+      <label>百分点：</label>
+      <input name="techin_percent" id="techin_percent" type="text"   class="item_areaInput_s" value="<%=0.round(2)%>"/>
+    </div>
+    <div class="item item_w" id="techin_t" style="display: none"><span class="item_radio_b">
+        <input name="techin_type" type="radio" onclick="change_input('#techin_percent','#techin_price')" value="<%=0.round(2)%>" /></span>
+      <label>金 额：</label>
+      <input name="techin_price" id="techin_price" type="text" class="item_areaInput_s" disabled />
+    </div>
+  </div>
+  <div class="item_blockArea">
+    <div class="item">
+      <label>自动回访：</label><input name="auto_revist" id="auto_revist" alt="revist" type="checkbox" onclick="check_revist(this)" />
+    </div>
+    <div class="item"><label>回访时间：</label>
+      <select  id="time_revist" name="time_revist" disabled >
+        <option value="">请选择</option>
+        <% Product::REVIST_TIME.each do |key| %>
+          <option value="<%= key %>" id="<%=key%>"><%= key %>小时</option>
+        <% end %>
+      </select>
+    </div>
+    <div class="item_textarea">
+      <label>回访内容：</label><textarea name="con_revist" disabled id="con_revist" cols="" rows="" class="width_textarea"></textarea>
+    </div>
+  </div>
+  <div class="item_textarea">
+    <label>产品简介：</label><textarea name="intro" id="intro" cols="" rows="" class="width_textarea"></textarea>
+  </div>
+
+  <div class="item_textarea">
+    <label>产品描述：</label><textarea  id="add_intro" cols="" rows="" class="width_textarea" style="width:470px"></textarea>
+    <input type="hidden" name="desc" id="desc" />
+  </div>
+</div>
+<script type="text/javascript">
+  var serv_editor;
+  $(function() {
+    serv_editor = KindEditor.create('textarea[id="add_intro"]', {
+      allowFileManager : true
+    });
+  });
+</script>

@@ -1,0 +1,60 @@
+<%= render 'second_menu'%>
+<form accept-charset="UTF-8" action="/stores/<%= @store.id %>/market_manages/stored_card_record" method="get">
+<div class="search">
+      <div><label>时间：</label>
+        <input name="started_at" type="text" id="start_at" value="<%= @start_at %>" class="Wdate" readonly onClick="WdatePicker();"/>
+        &nbsp;到&nbsp;<input name="ended_at" type="text" id="end_at" value="<%= @end_at %>" class="Wdate" readonly onClick="WdatePicker();"/></div>
+      <div><button class="search_btn">查询</button></div>
+</div>
+</form>
+<div class="clear"></div>
+
+<div class="data_body">
+     <div>
+         <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+             <thead>
+                  <tr class="hbg">
+                    <td>日期</td>
+                    <td>相关订单</td>
+                    <td>消费内容</td>
+                    <td>金额（元）</td>
+                  </tr>
+              </thead>
+              <tbody>
+                <% @orders.each do |order| %>
+                  <tr>
+                    <td><%= order.created_at.strftime("%Y.%m.%d--%H:%M") %></td>
+                    <td><%= link_to "#{order.code}", "/orders/#{order.id}/order_info",
+                        :remote => "true", "data-type" => "script", :class => "other_a" %></td>
+                    <td>
+                      <% if !@product_hash[order.id].nil? && @product_hash[order.id].length != 0 %>
+                        <table width="100%" border="0" cellspacing="1" cellpadding="0" class="s_table">
+                          <tr class="fws">
+                            <td>服务名称</td>
+                            <td>数量</td>
+                            <td>单价</td>
+                          </tr>
+                          <% @product_hash[order.id].each do |prod| %>
+                          <tr>
+                            <td><%= prod.name %></td>
+                            <td><%= prod.pro_num %></td>
+                            <td><%= prod.price %></td>
+                          </tr>
+                          <% end %>
+                        </table>
+                      <% else %>
+                      无服务项目
+                      <% end %>
+                    </td>
+                    <td><%= order.price %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+        </table>
+       <%= will_paginate @orders, :class => "pageTurn", :previous_label => "上一页",
+    :next_label => "下一页" %>
+        <div class="amount">总计：<%= sprintf('%.2f', @total_price) %></div>
+     </div>
+</div>
+<div class="maskOne"></div>
+<div id="related_order_div"></div>

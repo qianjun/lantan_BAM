@@ -1,0 +1,79 @@
+<div class="item">
+  <label>日期：</label>
+  <input type="text" name="assets[fee_date]" value="<%=Time.now.strftime("%Y-%m-%d")%>"  onclick="WdatePicker({preLoad:true,maxDate:'<%=Time.now.strftime("%Y-%m-%d")%>',isShowClear:false})" readonly class="Wdate" />
+</div>
+<div class="item">
+  <label><span class="red">*</span>资产名称：</label>
+  <input type="text" name="assets[name]" id="name" />
+</div>
+<div class="item">
+  <label>资产类别：</label><select  id="types" name="assets[types]">
+    <% @defines.each do |k,v| %>
+      <option value="<%= k %>"><%= v %></option>
+    <% end %>
+  </select>
+</div>
+<div class="item">
+  <label><span class="red">*</span>资产数量：</label>
+  <input type="text" name="assets[num]" id="num" />
+</div>
+<div class="item">
+  <label><span class="red">*</span>购入单价：</label>
+  <input type="text" name="assets[price]" id="price" value="0" />
+</div>
+<div class="item">
+  <label><span class="red">*</span>资产总价：</label>
+  <input type="text" name="assets[amount]" id="amount" value="0" />
+</div>
+<div class="item">
+  <label><span class="red">*</span>购入总额：</label>
+  <input type="text" name="assets[pay_amount]" id="pay_amount" value="0" />
+</div>
+<div class="item">
+  <label>购入时间：</label>
+  <input type="text" name="assets[pay_date]" value="<%=Time.now.strftime("%Y-%m-%d")%>"  onclick="WdatePicker({preLoad:true,maxDate:'<%=Time.now.strftime("%Y-%m-%d")%>',isShowClear:false})" readonly class="Wdate" />
+</div>
+<div class="item">
+  <label>支付方式：</label>
+  <select  id="payment_type" name="assets[payment_type]">
+    <% Fee::FEE_TYPES.each do |k,v| %>
+      <option value="<%= k %>"><%= v %></option>
+    <% end %>
+  </select>
+</div>
+<div class="item">
+  <label>折旧月份：</label>
+  <input type="text" id="share_month" name="assets[share_month]" value="1" />月
+</div>
+<div class="item_textarea">
+  <label>简介：</label><textarea name="assets[remark]" id="remark" cols="" rows="" class="width_textarea"></textarea>
+</div>
+<div class="item_textarea">
+  <label>操作人：</label>
+  <div class="item_rbox">
+    <dl>
+      <dt>当前登录用户</dt><dd><input type="radio" name="assets[operate_staffid]" checked value="<%= cookies[:user_id] %>"/><%= cookies[:user_name] %></dd>&nbsp;&nbsp;
+      <% @staffs.each do |k,v| %>
+        <dt><%=Staff::N_COMPANY[k] %></dt>
+        <%v.each do |p|%>
+          <dd><input type="radio" name="assets[operate_staffid]" value="<%= p.id %>"/><%= p.name %></dd>&nbsp;&nbsp;
+        <%end%>
+      <% end unless @staffs.empty? %>
+    </dl>
+  </div>
+</div>
+<div class="item_textarea">
+  <label>经办人：</label>
+  <div class="item_rbox">
+    <dl>
+      <dt>当前登录用户</dt><dd>
+        <input type="radio" name="assets[create_staffid]" checked value="<%= cookies[:user_id] %>"/><%= cookies[:user_name] %></dd>&nbsp;&nbsp;
+      <% @staffs.each do |k,v| %>
+        <dt><%=Staff::N_COMPANY[k] %></dt>
+        <%v.each do |p|%>
+          <dd><input type="radio" name="assets[create_staffid]" value="<%= p.id %>"/><%= p.name %></dd>&nbsp;&nbsp;
+        <%end%>
+      <% end unless @staffs.empty? %>
+    </dl>
+  </div>
+</div>

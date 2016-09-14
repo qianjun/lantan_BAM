@@ -1,0 +1,11 @@
+<% if @msg[0].blank? %>
+  tishi_alert('<%= "开单完成" %>',5);
+<%else%>
+  tishi_alert('<%= (@msg[0] << ["开单完成"]).join(" ")%>',5);
+<%end%>
+setTimeout(function(data){
+window.location.reload();
+},5000);
+$(".tab_alert .close").click(function(){
+window.location.reload();
+})

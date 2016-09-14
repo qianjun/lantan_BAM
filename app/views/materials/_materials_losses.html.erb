@@ -1,0 +1,33 @@
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table" id="materials_losses_tab">
+  <thead>
+    <tr class="hbg">
+      <td>条形码</td>
+      <td>物料名称</td>
+      <td>物料类别</td>
+      <td>数量</td>
+      <td>状态</td>
+      <td>规格</td>
+      <td>零售价（元）</td>
+      <td>报损人</td>
+      <td>备注</td>
+    </tr>
+  </thead>
+  <tbody>
+    <% (@material_losses || []).each do |mat_loss| %>
+      <tr class="<%= cycle('', 'tbg') %>">
+        <td><%= mat_loss.code %></td>
+        <td><%= mat_loss.name %></td>
+        <td><%= mat_loss.cname  %></td>
+        <td><%= mat_loss.loss_num %></td>
+        <td><%= MaterialLoss::TYPES_NAME[mat_loss.m_types] %></td>
+        <td><%= mat_loss.unit %></td>
+        <td><%= mat_loss.sale_price %></td>
+        <td>
+          <%= mat_loss.staff_name %>
+        </td>
+        <td><%=  mat_loss.remark%></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<%= will_paginate_remote(@material_losses,"mat_code=#{@mat_code}&mat_name=#{@mat_name}&mat_type=#{@mat_type}",{:url => page_materials_losses_store_materials_url(params[:store_id]),:class => "pageTurn",:prev_label => "上一页",:next_label => "下一页",:renderer => "RemotePaginateHelper::LinkRenderer"}) if @material_losses.size > 0 %>

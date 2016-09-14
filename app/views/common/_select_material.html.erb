@@ -1,0 +1,4 @@
+<% @selected_materials.each do |m| %>
+  <li><%= m.name %>&nbsp;&nbsp;<%= m.types %>&nbsp;&nbsp;<%= m.storage.to_i %>&nbsp;&nbsp;
+    <%= text_field_tag "out_num_#{m.id}",1,{:style => "width:50px;"} %>&nbsp;&nbsp;<%= link_to "删除" %></li>
+<% end %>

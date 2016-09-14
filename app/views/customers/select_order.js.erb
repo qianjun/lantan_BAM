@@ -1,0 +1,3 @@
+$("#order_prods_partial").html('<%= escape_javascript(render :partial=>"order_prods_p")  %>');
+$("#total_sum").html('<%= @total_orders.map(&:price).compact.reduce(:+) %>');
+odd_even();

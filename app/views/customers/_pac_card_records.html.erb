@@ -1,0 +1,53 @@
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+  <thead>
+    <tr class="hbg">
+      <td>名称</td>
+      <td>已使用项目</td>
+      <td>剩余项目</td>
+      <td>使用期限</td>
+      <td>操作</td>
+    </tr>
+  </thead>
+  <tbody>
+    <% if @c_pcard_relations.blank? %>
+      <tr align="center">
+        <td colspan="4"><h4>您当前没有任何套餐消费记录！</h4></td>
+      </tr>
+    <% else %>
+      <% @c_pcard_relations.each do |cpr| %>
+        <tr>
+          <td><%= cpr.name %></td>
+          <td>
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tbody>
+                <%  if @already_used_count.present? and @already_used_count[cpr.c_id].present?  %>
+                  <% @already_used_count[cpr.c_id].values.each do |v| %>
+                    <tr><td style="text-align: center"><%= v[0] %>：<%= v[1] %>次&nbsp;&nbsp;</td></tr>
+                  <% end%>
+                <%else%>
+                  <tr><td style="text-align: center"><%= "--" %></td></tr>
+                <%end%>
+              </tbody></table>
+          </td>
+          <td>
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tbody>
+                <% cpr.content.split(",").each do |c| %>
+                  <% v = c.split("-") %>
+                  <tr><td style="text-align: center"><%= v[1] %>：<%= v[2] %>次&nbsp;&nbsp;</td></tr>
+                <% end %>
+              </tbody></table>
+          </td>
+          <td><%= cpr.ended_at.strftime('%Y-%m-%d') if cpr.ended_at %></td>
+          <td>
+            <button type="button" class="compile_btn" onclick="return_order(<%= cpr.o_id %>, <%= @customer.id %>)">退卡</button>
+          </td>
+        </tr>
+      <% end %>
+    <% end %>
+  </tbody>
+</table>
+<div class="pageTurn">
+  <%=  will_paginate_remote(@c_pcard_relations , "",
+    {:url => "/stores/#{@store.id}/customers/#{@customer.id}/pc_card_records"}) %>
+</div>

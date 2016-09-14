@@ -1,0 +1,15 @@
+<%if @may_pay[0]%>
+  $("#cash_reload").html('<%= j(render :partial => "cash") %>');
+  $("#car_nums").html('<%= j(render :partial => "car_num") %>');
+  <%if @orders.length > 0 %>
+    change_order(<%= params[:store_id] %>);
+  <%else%>
+    $("#tab_pay .close").trigger("click");
+  <%end%>
+<%end%>
+<% if params[:show_btn] && params[:show_btn].to_i == 1 %>
+  $("#confirm_order,#spinner_user").toggle();
+<%end%>
+tishi_alert("<%=@may_pay[1]%>");
+
+

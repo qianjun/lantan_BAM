@@ -1,0 +1,321 @@
+<div class="main">
+  <div class="box">
+    <% if @violations[false] && @violations[false].length >0  %>
+      <div class="message" id="message_voilate">
+        有 <span class="red" id="voilate_span"><%=  @violations[false].length %></span>条违规记录等待处理
+        <a href="javascript:void(0)" onclick="toggle_voilation(this)">点击查看</a>
+        <div style="display: none;" id="voilate_pannel">
+          <%= render :partial => 'operate_voilate',:object=>@violations[false]%>
+        </div>
+      </div>
+    <% end %>
+    <% if @violations[true] && @violations[true].length>0 %>
+      <div class="message" id="message_reward">
+        有 <span class="red" id="reward_span"><%= @violations[true].length %></span>条奖励记录等待处理
+        <a href="javascript:void(0)" onclick="toggle_voilation(this)">点击查看</a>
+        <div style="display: none;" id="reward_pannel">
+          <%= render :partial => 'operate_voilate',:object=>@violations[true]%>
+        </div>
+      </div>
+    <% end %>
+    <div class="data_box">
+      <% if permission?(:staffs, :search_staff) %>
+        <div class="search">
+          <%= form_for :staff ,:url=>"/stores/#{@store.id}/staffs/search", :method => :post, :html => {:remote => true, 'data-type' => 'script'} do %>
+            <div><label>员工姓名：</label><input type="text" name="name" id="name"/></div>
+            <div><label>类别：</label>
+              <select id="s_types" name="types">
+                <option value="-1">全部</option>
+                <% Staff::N_COMPANY.each do |k, v| %>
+                  <option value="<%= k %>"><%= v %></option>
+                <% end %>
+              </select>
+            </div>
+            <div><label>员工状态：</label>
+              <select id="s_status" name="status">
+                <option value="-1">全部</option>
+                <% Staff::STATUS_NAME.except(4).each do |k, v| %>
+                  <option value="<%= k %>"><%= v %></option>
+                <% end %>
+              </select>
+            </div>
+            <input type="hidden" name="store_id" id="store_id" value="<%= @store.id %>" />
+            <div><button type="submit" class="search_btn">查询</button></div>
+          <% end %>
+        </div>
+      <% end %>
+      <div class="data_menu">
+        <% if permission?(:staffs,:add_staff) %><a href="javascript:void(0)" id="new_staff">新建员工</a><% end %>
+        <% if permission?(:staffs,:add_priase) %><a href="javascript:void(0)" id="new_reward">新建奖励</a><% end %>
+        <% if permission?(:staffs,:add_violation) %><a href="javascript:void(0)" id="new_violation">新建违规</a><% end %>
+        <% if permission?(:staffs,:add_train) %><a href="javascript:void(0)" id="new_train">新建培训</a><% end %>
+      </div>
+      <div class="collect">
+        <ul>
+          <li>员工数量：<span class="red"><%= @staffs.total_entries %></span>位， 最新更新时间：<%= @latest_updated_at %></li>
+          <li>员工绩效统计月份：<%= DateTime.now.months_ago(1).strftime("%Y-%m") %></li>
+        </ul>
+      </div>
+      <input type="hidden" value="<%= @store.id %>" id="store_id"/>
+      <div class="clear"></div>
+      <div class="data_body" id="staff_info">
+        <%= render :partial => "staff_list" %>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="foot"><p>Copyright © 2013 杭州鼎洪 版权所有</p></div>
+<div class="mask"></div>
+<div class="tab_popup" style="display:none;" id="new_staff_area">
+  <div class="popup_box">
+    <h1>新建员工<a href="javascript:void(0)" class="close">关闭</a></h1>
+    <%= form_for(@staff, :url => store_staffs_path(@store), :html => {:multipart => true, "data-type" => 'script'}, :remote => true) do |f| %>
+      <div class="popup_body">
+        <div class="popup_body_area">
+          <div class="item">
+            <label><span class="red">*</span>姓名：</label>
+            <%= f.text_field :name %>
+          </div>
+          <div class="item">
+            <label>性别：</label>
+            <%= f.radio_button :sex, Constant::SEX[:MALE], :checked => true %> 男&nbsp;&nbsp;
+            <%= f.radio_button :sex, Constant::SEX[:FEMALE] %> 女
+          </div>
+          <div class="item">
+            <label>部门：</label>
+            <select name="staff[position]" id="staff_position" onchange="load_work();">
+              <%@departs[Department::TYPES[:DEPARTMENT]].each do |pos|%>
+                <option value="<%= pos[0] %>"><%= pos[1].name %></option>
+              <%end if @departs[Department::TYPES[:DEPARTMENT]]%>
+            </select>
+          </div>
+          <div class="item">
+            <label>职务：</label>
+            <select name="staff[department_id]" id="staff_department_id">
+              <option value="">请选择</option>
+              <% if @departs[Department::TYPES[:POSITION]] %>
+                <% depart_id = @departs[Department::TYPES[:DEPARTMENT]].first.nil? ? 0 : @departs[Department::TYPES[:DEPARTMENT]].first[0] %>
+                <%@departs[Department::TYPES[:POSITION]].each do |pos|%>
+                  <option value="<%= pos[0] %>" id="<%=pos[1].dpt_id%>" <% if depart_id!=pos[1].dpt_id %>style="display:none"<%end%>><%= pos[1].name %></option>
+                <%end%>
+              <%end%>
+            </select>
+          </div>
+          <div class="item">
+            <label>类别：</label>
+            <%= f.select :type_of_w, Staff::N_COMPANY.invert %>
+          </div>
+          <div class="item">
+            <label>教育程度：</label>
+            <%= f.select :education, Staff::N_EDUCATION.invert %>
+          </div>
+          <div class="item">
+            <label>等级：</label>
+            <%= f.select :level, Staff::LEVELS.invert %>
+          </div>
+          <div class="item">
+            <label>员工状态：</label>
+            <%= f.select :working_stats, Staff::S_WORKING_STATS.invert %>
+          </div>
+          <div class="item">
+            <label><span class="red" style="display:none">*</span>实习时长(天):</label>
+            <%= f.text_field :probation_days, :disabled => true %>
+          </div>
+          <div class="item">
+            <label><span class="red" style="display:none">*</span>实习薪资：</label>
+            <%= f.text_field :probation_salary, :disabled => true %>
+          </div>
+          <div class="item">
+            <label><span class="red">*</span>正式薪资：</label>
+            <%= f.text_field :base_salary %>
+          </div>
+          <div class="item">
+            <label>出生年月：</label>
+            <%= f.text_field :birthday, :class => "Wdate", :readonly => true, :onClick => "WdatePicker();" %>
+          </div>
+          <div class="item">
+            <label><span class="red">*</span>联系方式：</label>
+            <%= f.text_field :phone %>
+          </div>
+          <div class="item">
+            <label>籍贯：</label>
+            <%= f.text_field :hometown %>
+          </div>
+          <div class="item">
+            <label><span class="red">*</span>身份证号：</label>
+            <%= f.text_field :id_card %>
+          </div>
+          <div class="item">
+            <label>民族：</label>
+            <%= f.text_field :nation %>
+          </div>
+          <div class="item">
+            <label>政治面貌：</label>
+            <%= f.text_field :political %>
+          </div>
+          <div class="item">
+            <label><span class="red">*</span>地址：</label>
+            <%= f.text_field :address %>
+          </div>
+          <div class="item">
+            <label>是否提成：</label>
+            <%= f.check_box :is_deduct, :value => 1, :checked => true %>
+          </div>
+          <div class="item">
+            <label>社保扣款：</label>
+            <%= f.text_field :secure_fee %>
+          </div>
+          <div class="item">
+            <label>补贴金额：</label>
+            <%= f.text_field :reward_fee %>
+          </div>
+          <div class="item">
+            <label>按考核分发底薪：</label>
+            <%= f.check_box :is_score_ge_salary, :value => 1 %>
+          </div>
+          <div class="item_textarea">
+            <label>上传照片：</label>
+            <%= f.file_field :photo, :class => "file"%>
+          </div>
+          <div class="item">
+            <label>登录系统：</label>
+            <input type="checkbox" name="is_access" />
+          </div>
+        </div>
+        <%= f.hidden_field :status, :value => 0 %>
+        <div class="btn_box">
+          <button class="confirm_btn" id="new_staff_btn" type="button">确定</button>
+          <button class="cancel_btn">取消</button></div>
+        <div class="clear"></div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="tab_popup" style="display:none;" id="new_reward_area">
+  <div class="popup_box">
+    <h1>新建奖励<a href="javascript:void(0)" class="close">关闭</a></h1>
+    <%= form_for(@violation_reward, :url => store_violation_rewards_path(@store)) do |f| %>
+      <div class="popup_body">
+        <div class="popup_body_area">
+          <div class="item_textarea">
+            <label><span class="red">*</span>奖励人员：</label>
+            <div class="width_div">
+              <% @staffs_names.each do |staff| %>
+                <span><input type="checkbox" value="<%= staff.id %>" name="staff[id][]"/>&nbsp;<%= staff.name %></span>
+              <% end %>
+            </div>
+          </div>
+          <div class="item_textarea">
+            <label>奖励类别：</label>
+            <%= f.select :belong_types, ViolationReward::VIOLATE_TYPES.invert %>（<%=ViolationReward::VIOLATE_TYPES.values.join("、")%>）
+          </div>
+          <div class="item_textarea">
+            <label><span class="red">*</span>奖励原因：</label>
+            <%= f.text_area(:situation, :cols => "", :rows => "", :class => "width_textarea") %>
+          </div>
+          <div class="item_textarea">
+            <label>奖励方法：</label>
+            <%= f.select :process_types, ViolationReward::N_REWARD.invert %>（<%=ViolationReward::N_REWARD.values.join("、")%>）
+            <ul>
+              <li>按分值奖励&nbsp;<input name="violation_reward[score_num]" id="score_num" type="text"/></li>
+              <li>按金额奖励&nbsp;<input name="violation_reward[salary_num]" id="salary_num" type="text"/></li>
+            </ul>
+          </div>
+          <div class="item_textarea">
+            <label><span class="red">*</span>补充说明：</label>
+            <%= f.text_area(:mark, :cols => "", :rows => "", :class => "width_textarea") %>
+          </div>
+          <%= f.hidden_field :types, :value => 1 %>
+        </div>
+        <div class="btn_box"><a class="confirm_btn" id="new_reward_btn">确定</a><button class="cancel_btn">取消</button></div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="tab_popup" style="display:none;" id="new_violation_area">
+  <div class="popup_box">
+    <h1>新建违规<a href="javascript:void(0)" class="close">关闭</a></h1>
+    <%= form_for(@violation_reward, :url => store_violation_rewards_path(@store)) do |f| %>
+      <div class="popup_body">
+        <div class="popup_body_area">
+          <div class="item_textarea">
+            <label><span class="red">*</span>违规人员：</label>
+            <div class="width_div">
+              <% @staffs_names.each do |staff| %>
+                <span><input type="checkbox" value="<%= staff.id %>" name="staff[id][]"/>&nbsp;<%= staff.name %></span>
+              <% end %>
+            </div>
+          </div>
+          <div class="item_textarea">
+            <label>违规类别：</label>
+            <%= f.select :belong_types, ViolationReward::VIOLATE_TYPES.invert %>（<%=ViolationReward::VIOLATE_TYPES.values.join("、")%>）
+          </div>
+          <div class="item_textarea">
+            <label><span class="red">*</span>违规原因：</label>
+            <%= f.text_area(:situation, :cols => "", :rows => "", :class => "width_textarea") %>
+          </div>
+
+          <div class="item_textarea">
+            <label>处罚方法：</label>
+            <%= f.select :process_types, ViolationReward::N_VIOLATE.invert %>（<%=ViolationReward::N_VIOLATE.values.join("、")%>）
+            <ul>
+              <li>按分值处罚&nbsp;<input name="violation_reward[score_num]" type="text"/></li>
+              <li>按金额处罚&nbsp;<input name="violation_reward[salary_num]" type="text"/></li>
+            </ul>
+          </div>
+          <div class="item_textarea">
+            <label><span class="red">*</span>补充说明：</label>
+            <%= f.text_area(:mark, :cols => "", :rows => "", :class => "width_textarea") %>
+          </div>
+          <%= f.hidden_field :types, :value => 0 %>
+        </div>
+        <div class="btn_box"><a class="confirm_btn" id="new_violation_btn">确定</a><button class="cancel_btn">取消</button></div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="tab_popup" style="display:none;" id="new_train_area">
+  <div class="popup_box">
+    <h1>新建培训<a href="javascript:void(0)" class="close">关闭</a></h1>
+    <%= form_for(@train, :url => store_trains_path(@store)) do |f| %>
+      <div class="popup_body">
+        <div class="popup_body_area">
+          <div class="search paddin_left" style="padding-left:53px !important;">
+            <div><label><span class="red">*</span>培训时间：</label>
+              <%= f.text_field :start_at, :class => "Wdate", :readonly => true, :onClick => "WdatePicker();" %>
+              到 <%= f.text_field :end_at, :class => "Wdate", :readonly => true, :onClick => "WdatePicker();" %>
+            </div>
+          </div>
+          <div class="item_textarea">
+            <label><span class="red">*</span>培训人员：</label>
+            <div class="width_div">
+              <% @staffs_names.each do |staff| %>
+                <span><input type="checkbox" value="<%= staff.id %>" name="staff[id][]"/>&nbsp;<%= staff.name %></span>
+              <% end %>
+            </div>
+          </div>
+          <div class="item_textarea">
+            <div><label>培训类别：</label>
+              <%= f.select :train_type, Train::TYPES_NAME.invert %>
+            </div>
+          </div>
+          <div class="item_textarea">
+            <div><label>有无证书：</label>
+              <input type="checkbox" value="0" name="train[certificate]"/>
+            </div>
+          </div>
+          <div class="item_textarea">
+            <label><span class="red">*</span>培训原因：</label>
+            <%= f.text_area(:content, :cols => "", :rows => "", :class => "width_textarea") %>
+          </div>
+        </div>
+        <div class="btn_box"><a class="confirm_btn" id="new_train_btn">确定</a><button class="cancel_btn">取消</button></div>
+      </div>
+    <% end %>
+  </div>
+</div>
+<%= render "/violation_rewards/reward" %>
+<%= render "/violation_rewards/voilate" %>

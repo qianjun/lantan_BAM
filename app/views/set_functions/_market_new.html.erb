@@ -1,0 +1,11 @@
+<div class="popup_box">
+    <h1>新建<%= @types == Category::TYPES[:good] ? "产品" : "服务" %><a href="javascript:void(0);" class="close">关闭</a></h1>
+    <div class="popup_body">
+      <div class="popup_body_area">
+        <div class="brand"><span class="red">*</span><%= @types == Category::TYPES[:good] ? "产品" : "服务" %>名称：
+          <input type="text" id="market_name" style="width:200px;"/>
+        </div>
+      </div>
+      <div class="btn_box"><button class="confirm_btn" onclick="new_market_commit(<%= @store_id %>,<%= @types %>)">确定</button></div>
+    </div>
+  </div>

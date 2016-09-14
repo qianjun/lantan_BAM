@@ -1,0 +1,34 @@
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table" id="reward_table">
+  <thead>
+    <tr class="hbg">
+      <th><span class="sort_u_s" onclick="sort_change(this)">时间</span></th>
+      <th width="25%">原因</th>
+      <th>奖励方式</th>
+      <th>处理状态</th>
+      <th>奖励分值</th>
+      <th>奖励金额</th>
+      <th width="25%">理由</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @rewards.each do |reward| %>
+      <tr>
+        <td><%= reward.created_at.strftime("%Y-%m-%d") %></td>
+        <td><%= reward.situation %></td>
+        <td><%= ViolationReward::N_REWARD[reward.process_types] %></td>
+        <td>
+          <% unless reward.status %>
+            <% if permission?(:staffs, :deal_violation) %><%= link_to "处理", "javascript:void(0)", :class => "process_reward", :id => reward.id, :name => @store.id %><% end %>
+          <% else %>
+            已处理
+          <% end %>
+        </td>
+        <td><%= reward.score_num %></td>
+        <td><%= reward.salary_num %></td>
+        <td><%= reward.mark %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<%= will_paginate @rewards, :class => "pageTurn", :previous_label => "上一页",
+  :next_label => "下一页" %>

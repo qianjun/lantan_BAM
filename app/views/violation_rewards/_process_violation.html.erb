@@ -1,0 +1,34 @@
+<div class="tab_popup" style="display:none;" id="process_violation_reward">
+  <div class="popup_box">
+    <h1>违规处理<a href="javascript:void(0)" class="close">关闭</a></h1>
+    <%= form_for(@violation_reward, :url => store_violation_reward_path(@store, @violation_reward), :html => {:method => :put, "data-type" => 'script'}, :remote => true) do |f| %>
+      <div class="popup_body">
+        <div class="popup_body_area">
+          <div class="item_textarea">
+            <label>违规类别：</label>
+            <%= f.select :belong_types, ViolationReward::VIOLATE_TYPES.invert %>（<%=ViolationReward::VIOLATE_TYPES.values.join("、")%>）
+          </div>
+          <div class="item_textarea">
+            <label><span class="red">*</span>违规原因：</label>
+            <%= f.text_area(:situation, :cols => "", :rows => "", :class => "width_textarea") %>
+          </div>
+
+          <div class="item_textarea">
+            <label>处罚方法：</label>
+            <%= f.select :process_types, ViolationReward::N_VIOLATE.invert %>（<%=ViolationReward::N_VIOLATE.values.join("、")%>）
+            <ul>
+              <li>按分值处罚&nbsp;<input name="violation_reward[score_num]" value="<%=@violation_reward.score_num  %>" type="text"/></li>
+              <li>按金额处罚&nbsp;<input name="violation_reward[salary_num]" value="<%=@violation_reward.salary_num  %>" type="text"/></li>
+            </ul>
+          </div>
+          <div class="item_textarea">
+            <label><span class="red">*</span>补充说明：</label>
+            <%= f.text_area(:mark, :cols => "", :rows => "", :class => "width_textarea") %>
+          </div>
+          <input type="hidden" name="violation_reward[status]" value="1"/>
+          <div class="btn_box"><button class="confirm_btn">确定</button><button class="cancel_btn">取消</button></div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

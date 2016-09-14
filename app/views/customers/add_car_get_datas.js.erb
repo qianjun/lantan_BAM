@@ -1,0 +1,5 @@
+<% if @type==0 %>
+$("#add_car_brands").html("<option value=''>--</option><% @brands.each do |b| %><option value='<%= b.id %>'><%= b.name %></option><% end if @brands %>");
+<% elsif @type==1 %>
+$("#add_car_models").html("<option value=''>--</option><% @models.each do |m| %><option value='<%= m.id %>'><%= m.name %></option><% end if @models %>");
+<% end %>

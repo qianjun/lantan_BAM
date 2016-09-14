@@ -1,0 +1,9 @@
+<% if @div_name.eql?("s_div") %>
+  $("#comp_div").html("<%= j(render :partial => "complaints_div") %>");
+  $("#comp_ts_category a").removeAttr("class");
+  $("#comp_a_<%= @comp_type %>").attr("class", "hover");
+<% elsif @div_name.eql?("p_div") %>
+  $("#plea_div").html("<%= j(render :partial => "pleaseds_div") %>");
+  $("#plea_ts_category a").removeAttr("class");
+  $("#plea_a_<%= @plea_type %>").attr("class", "hover");
+<% end %>

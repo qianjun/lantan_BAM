@@ -1,0 +1,36 @@
+<script type="text/javascript">
+  $(function(){
+    $(".organization dt").hover(
+    function(){
+      $(this).find(".group_func").css("display","block");
+      $(this).find(".group_x").css("display","block");
+    },
+    function(){
+      $(this).find(".group_func").css("display","none");
+      $(this).find(".group_x").css("display","none");
+    }
+  );
+  });
+</script>
+<div class="search">
+  <div><button class="search_btn" onclick="depart_new(<%= @store.id %>)">新建部门</button></div>
+</div>
+<% @departs.each do |k, v| %>
+<div class="organization">
+  <div class="data_menu"><a href="javaScript:void(0)" class="add_btn" onclick="sibling_depart_new(<%= @store.id %>, <%= k %>)">新建同级部门</a></div>
+  <% v.each do |depart| %>
+  <dl>
+    <dt>
+      <a href="javaScript:void(0)"><%= depart.name %></a>
+      <a href="javaScript:void(0)" class="group_x" onclick="depart_del(<%= @store.id %>,<%= depart.id %>)">Close</a>
+      <span class="group_func">
+        <a href="javaScript:void(0)" onclick="depart_edit(<%= @store.id %>, <%= depart.id %>)">编辑</a>
+      </span>
+    </dt>
+    <% @positions[depart.id].each do |p| %>
+    <dd><%= p.name %></dd>
+    <% end if @positions[depart.id] %>
+  </dl>
+  <% end %>
+</div>
+<% end if @departs %>

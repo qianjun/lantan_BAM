@@ -1,0 +1,65 @@
+<div class="second_menu">
+  <% if permission?(:datas, :jixiao) %><%= link_to "绩效统计", store_staff_manages_path(params[:store_id]) %><% end %>
+  <% if permission?(:datas, :shuip) %><a href="/stores/<%= params[:store_id] %>/staff_manages/average_score_hart">平均水平统计</a><% end %>
+  <% if permission?(:datas, :ave_cost_detail) %><a href="/stores/<%= params[:store_id] %>/staff_manages/average_cost_detail_summary" style="font-size: 13px">平均成本明细汇总</a><% end %>
+  <% if permission?(:datas, :staff_detail) %><a href="/stores/<%= params[:store_id]%>/complaints/cost_price" class="hover">员工成本明细</a><% end %>
+</div>
+<div class="search">
+  <div>
+    <label>时间：</label>
+    <input type="text" class="Wdate" onclick="WdatePicker()" readonly value="<%= session[:created] %>" id="c_time"/>&nbsp;到&nbsp;
+    <input type="text" class="Wdate" onclick="WdatePicker()" readonly value="<%= session[:ended] %>" id="e_time"/>
+  </div>
+  <div>
+    <label>服务选择：</label>
+    <select id="s_type">
+      <option value="">全部</option>
+      <% @service.each do |k, v| %>
+        <option value="<%= k %>"<% if session[:types] == "#{k}" %>selected<%end%>><%= v %></option>
+      <% end %>
+    </select>
+  </div>
+  <div><button class="search_btn" onclick="send_request(<%= params[:store_id] %>)">查询</button></div>
+</div>
+<div class="clear"></div>
+<div class="data_body">
+  <div>
+    <% unless @s_infos.blank? %>
+      <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+        <thead>
+          <tr class="hbg">
+            <td>员工姓名</td>
+            <td>水消耗(m³)</td>
+            <td>气消耗(m³)</td>
+            <td>物料价值</td>
+            <td>施工车辆</td>
+            <td>平均成本</td>
+            <td>标准成本</td>
+            <td>成本效率</td>
+          </tr>
+        </thead>
+        <tbody>
+          <% @s_infos.each do |staff| %>
+            <tr>
+              <td><%= staff[0] %></td>
+              <td><%=  (staff[1]/(10.0**6)).round(2)%></td>
+              <td><%= (staff[2]/(10.0**6)).round(2) %></td>
+              <td><%= staff[3] %></td>
+              <td><%= staff[4] %></td>
+              <td><%= (staff[3]*1.0/staff[4]).round(1) %></td>
+              <td><%= (staff[5]*1.0/staff[4]).round(1) %></td>
+              <td><%= "#{staff[3]==0 ? 0 : (staff[5]*100.0/staff[3]).round(1)}%" %></td>
+            </tr>
+          <% end%>
+        </tbody>
+      </table>
+      <%= will_paginate @s_infos, :class => "pageTurn", :previous_label => "上一页",
+        :next_label => "下一页" %>
+    <% else %>
+      <%= "暂无员工成本明细" %>
+    <% end %>
+  </div>
+</div>
+
+<div class="mask"></div>
+<div id="staff_chart_detail"></div>

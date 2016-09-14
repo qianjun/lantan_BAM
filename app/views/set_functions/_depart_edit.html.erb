@@ -1,0 +1,30 @@
+<div class="popup_box">
+  <h1>编辑部门<a href="javaScript:void(0)" class="close">关闭</a></h1>
+  <div class="popup_body">
+    <div class="popup_body_area duty_center">
+      <div class="data_menu"><a href="javaScript:void(0)" class="add_btn" onclick="position_new(<%= @store_id %>, <%= @depart.id %>)">新建职务</a></div>
+      <div class="item">
+        <label>部门名称：</label><input name="" type="text" id="depart_edit_name" value="<%= @depart.name %>"/>
+      </div>
+      <div class="clear"></div>
+      <div class="duty">
+        <div class="duty_left">职务名称：</div>
+        <div class="duty_right">
+          <ul>
+            <% @positions.each do |p| %>
+            <li>
+              <label><%= p.name %></label>
+              <input type="text" value="<%= p.name %>" style="display:none;" onblur="position_edit_commit(<%= @store_id %>, <%= p.id %>, this)"/>
+              <a href="javaScript:void(0)" class="a_btn" onclick="position_edit(this)">编辑</a>
+              <a href="javaScript:void(0)" class="a_btn" onclick="position_del(<%= @store_id %>, <%= p.id %>, this)">删除</a>
+            </li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="btn_box">
+      <button class="confirm_btn" onclick="depart_edit_commit(<%= @store_id %>, <%= @depart.id %>)">确定</button>
+    </div>
+  </div>
+</div>

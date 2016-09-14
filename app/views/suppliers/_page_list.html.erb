@@ -1,0 +1,52 @@
+<script>
+  $(document).ready(function(){
+    $(".pageTurn a").bind("click", function() {
+      $.ajax({
+        async:true,
+        url:this.href,
+        dataType:"script",
+        type:"GET",
+        success:function(){
+          // alert(1);
+        },error:function(){
+          // alert("error");
+        }
+      });
+      /* alert(this.href); */
+      return false;
+    });
+  });
+</script>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+  <thead>
+    <tr class="hbg">
+      <th width="180">供应商名称</th>
+      <th width="80">助记码</th>
+      <th width="150">联系人</th>
+      <th width="150">联系电话</th>
+      <th width="150">结算方式</th>
+      <th width="150">结算时间</th>
+      <th width="160">其他联系方式</th>
+      <th width="200">公司地址</th>
+      <th width="200">操作</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% (@supps || []).each do |s| %>
+      <tr>
+        <td><%= s.name %></td>
+        <td><%= s.cap_name.nil? ? "--" : s.cap_name  %></td>
+        <td><%= s.contact %></td>
+        <td><%= s.phone %></td>
+        <td><%= Supplier::S_CHECK_TYPE[s.check_type.to_i] %></td>
+        <td><%=s.check_type.to_i==Supplier::CHECK_TYPE[:DAY] ? "----" : s.check_time %></td>
+        <td><%= s.email %></td>
+        <td><%= s.address %></td>
+        <td>
+          <% if permission?(:materials, :edit_supplier) %><%= link_to "修改",edit_store_supplier_path(params[:store_id], s.id), :remote => true, "data-type" => "script" %><% end %>
+          <% if permission?(:materials, :del_supplier) %><%= link_to "删除", "/stores/#{params[:store_id]}/suppliers/#{s.id}", :method => "delete", :confirm => "确定要删除供应商？" %><% end %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<%= will_paginate @supps,:class => "pageTurn", :renderer => "RemotePaginateHelper::LinkRenderer", :previous_label => "上一页", :next_label => "下一页" if @supps.size > 0  %>

@@ -1,0 +1,6 @@
+<% if @save_card.nil? || @save_card.blank? %>
+tishi_alert("编辑错误!");
+<% else %>
+$("#edit_save_cards_div").html("<%= j(render :partial => "edit") %>");
+popup("#edit_save_cards_div");
+<% end %>

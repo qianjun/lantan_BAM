@@ -1,0 +1,21 @@
+<div class="data_menu_box">
+  <div class="data_menu">
+    <% if permission?(controller.controller_name.to_sym, :create) %>
+      <a href="javascript:void(0)" onclick="javascript:show_new_customer()">新建客户</a>
+    <% end %></div>
+  <div class="tab_head">
+    <ul>
+      <% @t_customers.keys.each_with_index do |k,index| %>
+        <li <%if index ==0 %>class="hover" <%end%> ><%= Customer::TAB_LIST[k] %></li>
+      <% end %>
+    </ul>
+  </div>
+</div>
+<div class="clear"></div>
+<div class="data_body">
+  <% @t_customers.each do |k,v| %>
+    <div id="types_<%=k%>"<%if @t_customers.keys[0] != k  %> style="display:none"<%end%>>
+      <%=  render :partial=>"one_type_customer",:object=>[k,v]%>
+    </div>
+  <%end unless @t_customers.blank?%>
+</div>

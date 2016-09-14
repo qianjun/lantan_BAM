@@ -1,0 +1,9 @@
+<div class="popup_box">
+    <h1>备注<a href="javascript:void(0)" class="close">关闭</a></h1>
+    <div class="popup_body">
+      <div class="popup_body_area">
+        <%= text_area_tag "order_remark",@material_order.remark,{:rows => 7,:cols => 30, :class => "beizhu_textarea"} %>
+      </div>
+      <div class="btn_box"><%= button_to_function "确定","save_order_remark(#{@material_order.id}, #{@store.id}, this)",{:class => "confirm_btn"} %></div>
+    </div>
+  </div>

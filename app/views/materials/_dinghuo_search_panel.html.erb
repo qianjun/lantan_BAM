@@ -1,0 +1,11 @@
+<div class="search">
+  <div><%= label_tag "types","物料类型：" %><span id="select_types"><%= select(:material,:category_id,@types.inject(Hash.new){|hash,x|hash[x.name]=x.id;hash}, {:prompt => "请选择"}) %></span></div>
+  <div><%= label_tag "name","物料名称：" %><%= text_field_tag "name" %></div>
+  <div><%= button_to_function "查询","submit_search_form(#{params[:store_id]},1,this)", :class => "search_btn" %></div>
+</div>
+<fieldset class="popup_body_fieldset" id="dinghuo_search_result" style="display: none;">
+  <legend class="popup_body_title">查询结果</legend>
+  <div class="popup_body_result" id="dinghuo_search_material">
+    <%= render :partial => "/common/search_material" %>
+  </div>
+</fieldset>

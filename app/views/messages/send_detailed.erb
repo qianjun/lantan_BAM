@@ -1,0 +1,42 @@
+<div class="data_box">
+  <div class="second_menu">
+    <a href="/stores/<%= params[:store_id] %>/set_stores" >门店信息</a>
+    <a href="/stores/<%= params[:store_id]%>/set_functions">功能设置</a>
+    <a href="/stores/<%= params[:store_id]%>/adverts">led广告设置</a>
+    <a href="/stores/<%= params[:store_id]%>/messages/send_list" class="hover">短信设置</a>
+  </div>
+  <div class="tab_head">
+    <ul>
+      <li class="hover">消费明细</li>
+      <li onclick="window.location.href='/stores/<%=params[:store_id]%>/messages/send_alipay'">充值明细</li>
+      <li onclick="window.location.href='/stores/<%=params[:store_id]%>/messages/send_list'">开关设置</li>
+    </ul>
+  </div>
+  <div class="clear"></div>
+  <div class="data_body">
+    <div class="search">
+      <div><label>时间：</label>
+        <input id="c_first" type="text"  onclick="WdatePicker({preLoad:true,maxDate:'<%=Time.now.strftime("%Y-%m-%d")%>',qsEnabled:false,isShowClear:false})" readonly class="Wdate"
+               value="<%=@start_time%>"/> 到
+        <input id="c_last" type="text" onclick="WdatePicker({preLoad:true,maxDate:'<%=Time.now.strftime("%Y-%m-%d")%>',qsEnabled:false,isShowClear:false})" readonly class="Wdate"
+               value="<%=@end_time%>" /></div>
+      <div id="order_types">扣费操作：
+        <select  id="cate_n">
+          <option value="">全部</option>
+          <% MessageRecord::SET_MESSAGE.each do |key,value| %>
+            <option value="<%= key %>"><%= value %></option>
+          <% end%>
+        </select>
+      </div>
+      <div>
+        <button class="search_btn" id="send_search" onclick="send_detailed(<%=params[:store_id]%>)">查&nbsp&nbsp询</button>
+        <%= image_tag "ajax-loader.gif", :id => "submit_spinner", :style => "display:none;" %>
+      </div>
+    </div>
+    <div class="data_item" id="cash_over">
+    <%= render "detailed"%>
+    </div>
+  </div>
+</div>
+<div id="message_detail" class="tab_popup"></div>
+

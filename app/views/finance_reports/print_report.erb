@@ -1,0 +1,48 @@
+<%= stylesheet_link_tag  "application"%>
+<link rel="stylesheet" type="text/css" media="print" href="/assets/style.css" />
+<div class="collect">
+  <ul>
+    <li><%= "收入共：<span>#{@orders.length}</span>笔&nbsp&nbsp".html_safe %></li>
+    <li><%= "金额统计：<span>#{@orders.map(&:price).compact.inject(0){|num,p|num+p}.round(2)}</span>&nbsp&nbsp".html_safe %></li>
+    <%
+    prod_serv = (@orders || []).group_by{|i|i.is_service}
+    product = (prod_serv[Product::PROD_TYPES[:PRODUCT]] ||= []).map(&:price).compact.inject(0){|num,p|num+p}
+    service = (prod_serv[Product::PROD_TYPES[:SERVICE]] ||= []).map(&:price).compact.inject(0){|num,p|num+p}
+  %>
+    <li><%= "产品统计：<span>#{product.round(2)}</span>&nbsp&nbsp".html_safe %></li>
+    <li><%= "服务统计：<span>#{service.round(2)}</span>&nbsp&nbsp".html_safe %></li>
+    <%=  @pays.select{|k,v| OrderPayType::FINCANCE_TYPES.keys.include? k}.map{|k,v| "<li>#{OrderPayType::PAY_TYPES_NAME[k]}:<span>#{v.to_f.round(2)}</span></li>"}.join("&nbsp&nbsp").html_safe %>
+    <li>优惠：<span><%= @pays.select{|k,v| !OrderPayType::FINCANCE_TYPES.keys.include? k}.values.compact.inject(0){|sum,n|sum+n}.round(2)%></span></li>
+  </ul>
+</div>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+  <thead>
+    <tr class="hbg">
+      <td width="20%">单号</td>
+      <td width="10%">客户</td>
+      <td width="15%">项目名称</td>
+      <td width="10%">项目金额</td>
+      <td width="10%">优惠</td>
+      <td width="10%">付款方式</td>
+      <td width="10%">小计</td>
+      <td width="10%">付款日期</td>
+    </tr>
+  </thead>
+  <tbody>
+    <% (@orders || []).each do |order| %>
+      <tr>
+        <td><%= order.code %></td>
+        <td><%= order.c_name %></td>
+        <td><%= order.p_name %></td>
+        <td><%= order.price %></td>
+        <% pay_types = @pay_types[order.id]
+        reward = pay_types.nil? ? 0 : pay_types.select{|k,v| !OrderPayType::FINCANCE_TYPES.keys.include? k}.values.compact.inject(0){|num,p|num+p}.round(2)
+      %>
+        <td><%= reward %></td>
+        <td><%= pay_types.nil? ? "--" : pay_types.select{|k,v| OrderPayType::FINCANCE_TYPES.keys.include? k}.map{|k,v|"#{OrderPayType::PAY_TYPES_NAME[k]}"}.join("、") %></td>
+        <td><%= (order.price-reward).round(2) %></td>
+        <td><%= order.updated_at.strftime('%Y-%m-%d %H:%S') %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

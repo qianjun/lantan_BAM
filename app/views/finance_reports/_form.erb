@@ -1,0 +1,67 @@
+<div class="item">
+  <label>入账日期：</label>
+  <input type="text" name="fee[fee_date]" value="<%=Time.now.strftime("%Y-%m-%d")%>"  onclick="WdatePicker({preLoad:true,maxDate:'<%=Time.now.strftime("%Y-%m-%d")%>',isShowClear:false})" readonly class="Wdate" />
+</div>
+<div class="item">
+  <label><span class="red">*</span>费用名称：</label>
+  <input type="text" name="fee[name]" id="name" />
+</div>
+<div class="item">
+  <label>费用类别：</label><select  id="types" name="fee[types]">
+    <% Fee::FEE_TAB.each do |k,v| %>
+      <option value="<%= k %>"><%= v %></option>
+    <% end %>
+  </select>
+</div>
+<div class="item">
+  <label><span class="red">*</span>支付金额：</label>
+  <input type="text" name="fee[amount]" id="amount" value="0" />
+</div>
+<div class="item">
+  <label>支付时间：</label>
+  <input type="text" name="fee[pay_date]" value="<%=Time.now.strftime("%Y-%m-%d")%>"  onclick="WdatePicker({preLoad:true,maxDate:'<%=Time.now.strftime("%Y-%m-%d")%>',isShowClear:false})" readonly class="Wdate" />
+</div>
+<div class="item">
+  <label>支付方式：</label>
+  <select  id="payment_type" name="fee[payment_type]">
+    <% Fee::FEE_TYPES.each do |k,v| %>
+      <option value="<%= k %>"><%= v %></option>
+    <% end %>
+  </select>
+</div>
+<div class="item">
+  <label>分摊月份：</label>
+  <input type="text" id="share_month" name="fee[share_month]" value="1" />月
+</div>
+<div class="item_textarea">
+  <label>备注：</label><textarea name="fee[remark]" id="remark" cols="" rows="" class="width_textarea"></textarea>
+</div>
+<div class="item_textarea">
+  <label>经手人：</label>
+  <div class="item_rbox">
+    <dl>
+      <dt>当前登录用户</dt><dd><input type="radio" name="fee[operate_staffid]" checked value="<%= cookies[:user_id] %>"/><%= cookies[:user_name] %></dd>&nbsp;&nbsp;
+      <% @staffs.each do |k,v| %>
+        <dt><%=Staff::N_COMPANY[k] %></dt>
+        <%v.each do |p|%>
+          <dd><input type="radio" name="fee[operate_staffid]" value="<%= p.id %>"/><%= p.name %></dd>&nbsp;&nbsp;
+        <%end%>
+      <% end unless @staffs.empty? %>
+    </dl>
+  </div>
+</div>
+<div class="item_textarea">
+  <label>经办人：</label>
+  <div class="item_rbox">
+    <dl>
+      <dt>当前登录用户</dt><dd>
+        <input type="radio" name="fee[create_staffid]" checked value="<%= cookies[:user_id] %>"/><%= cookies[:user_name] %></dd>&nbsp;&nbsp;
+      <% @staffs.each do |k,v| %>
+        <dt><%=Staff::N_COMPANY[k] %></dt>
+        <%v.each do |p|%>
+          <dd><input type="radio" name="fee[create_staffid]" value="<%= p.id %>"/><%= p.name %></dd>&nbsp;&nbsp;
+        <%end%>
+      <% end unless @staffs.empty? %>
+    </dl>
+  </div>
+</div>

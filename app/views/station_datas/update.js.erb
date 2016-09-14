@@ -1,0 +1,8 @@
+<% if @status==2 %>
+tishi_alert("编辑失败，已有同编号的工控机!");
+<% elsif @status==0 %>
+tishi_alert("编辑失败!");
+<% else %>
+window.location.reload();
+tishi_alert("编辑成功!");
+<% end %>

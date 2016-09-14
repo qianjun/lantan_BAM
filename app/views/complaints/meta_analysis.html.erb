@@ -1,0 +1,83 @@
+<%= render 'directory' %>
+<div class="data_body">
+  <div>
+    <div class="analyze">
+      <ul>
+        <li>
+          <h1>个人客户数量：<span class="red">
+              <a href="/stores/<%= @store_id %>/complaints/meta_analysis?property=0&flag=1" data-type="script" data-remote="true">
+                <%= @single_cus %>
+              </a></span>位</h1>
+          <div class="analyze_jt"><p>男性客户：<span class="red">
+                <a href="/stores/<%= @store_id %>/complaints/meta_analysis?property=0&sex=1&flag=1" data-type="script" data-remote="true">
+                <%= @male %>
+                </a>
+              </span>位</p>
+            <p>女性客户：<span class="red">
+                <a href="/stores/<%= @store_id %>/complaints/meta_analysis?property=0&sex=0&flag=1" data-type="script" data-remote="true">
+              <%= @female %>
+                </a>
+              </span>位</p></div>
+        </li>
+        <li>
+          <h1>单位客户：<span class="red">
+              <a href="/stores/<%= @store_id %>/complaints/meta_analysis?property=1&flag=1" data-type="script" data-remote="true">
+            <%= @group_cus %>
+              </a>
+            </span>位</h1>
+          <div class="analyze_jt"><p>挂账单位：<span class="red">
+                <a href="/stores/<%= @store_id %>/complaints/meta_analysis?property=1&allow_debts=1&flag=1" data-type="script" data-remote="true">
+                <%= @allowed_debts %>
+                </a>
+              </span>位</p>
+            <p>非挂账单位：<span class="red">
+                <a href="/stores/<%= @store_id %>/complaints/meta_analysis?property=1&allow_debts=0&flag=1" data-type="script" data-remote="true">
+                <%= @unallowed_dents %>
+                </a>
+              </span>位</p></div>
+        </li>
+      </ul>
+
+      <div class="analyze_category">
+        <div class="analyze_category_list"><strong>车辆品牌：</strong>
+          <div class="analyze_category_list_fx">
+            <% @brands_hash[0..3].each do |b| %>
+              &nbsp;<%= CarBrand.find_by_id(b[0]).name %>(<a href="/stores/<%= @store_id %>/complaints/meta_analysis?brand=<%= b[0] %>&flag=1" data-type="script" data-remote="true"><em class="red"><%= b[1] %></em></a>)&nbsp;&nbsp;
+            <% end if @brands_hash %>
+            <% if @other %>其他品牌(<a href="/stores/<%= @store_id %>/complaints/meta_analysis?brand_arr=<%= @brands_hash[0..3].inject([]){|a,b|a << b[0];a} %>&flag=1" data-type="script" data-remote="true"><em class="red"><%= @other %></em></a>)<% end %>
+          </div>
+        </div>
+        <div class="analyze_category_list"><strong>消费金额：</strong>
+          <div class="analyze_category_list_fx">
+            0-100( <a href="/stores/<%= @store_id %>/complaints/meta_analysis?amount_con_start=0&amount_con_end=100&flag=1" data-type="script" data-remote="true"><em class="red"><%= @order_lv1 %></em></a> )
+            100-500( <a href="/stores/<%= @store_id %>/complaints/meta_analysis?amount_con_start=100&amount_con_end=500&flag=1" data-type="script" data-remote="true"><em class="red"><%= @order_lv2 %></em></a> )
+            500-1000( <a href="/stores/<%= @store_id %>/complaints/meta_analysis?amount_con_start=500&amount_con_end=1000&flag=1" data-type="script" data-remote="true"><em class="red"><%= @order_lv3 %></em></a> )
+            1000-2000( <a href="/stores/<%= @store_id %>/complaints/meta_analysis?amount_con_start=1000&amount_con_end=2000&flag=1" data-type="script" data-remote="true"><em class="red"><%= @order_lv4 %></em></a> )
+            2000-5000( <a href="/stores/<%= @store_id %>/complaints/meta_analysis?amount_con_start=2000&amount_con_end=5000&flag=1" data-type="script" data-remote="true"><em class="red"><%= @order_lv5 %></em></a> )
+            5000以上( <a href="/stores/<%= @store_id %>/complaints/meta_analysis?amount_con_start=5000&flag=1" data-type="script" data-remote="true"><em class="red"><%= @order_lv6 %></em></a> )
+            <p>
+              <input type="checkbox" name="amount_con" id="amount_con" onclick="meta_analysis_search_checkbox(this)"/>
+              <input name="amount_con_start" id="amount_con_start" type="text" class="input_s" disabled/>到
+              <input name="amount_con_end" id="amount_con_end" type="text" class="input_s" disabled/>
+            </p>
+          </div>
+        </div>
+        <div class="analyze_category_list"><strong>最近消费：</strong>
+          <div class="analyze_category_list_fx">
+            今天( <a href="/stores/<%= @store_id %>/complaints/meta_analysis?recent_cons=1&flag=1" data-type="script" data-remote="true"><em class="red"><%= @cons_current_day %></em></a> )&nbsp;&nbsp;
+            本周( <a href="/stores/<%= @store_id %>/complaints/meta_analysis?recent_cons=2&flag=1" data-type="script" data-remote="true"><em class="red"><%= @cons_current_week %></em></a> )&nbsp;&nbsp;
+            本月( <a href="/stores/<%= @store_id %>/complaints/meta_analysis?recent_cons=3&flag=1" data-type="script" data-remote="true"><em class="red"><%= @cons_current_month %></em></a> )&nbsp;&nbsp;
+            <input type="checkbox" name="amount_date" id="amount_date" onclick="meta_analysis_search_checkbox(this)"/> 其他
+            <input name="amount_date_start" id="amount_date_start" type="text" onclick="WdatePicker()" class="Wdate" readonly disabled/>到
+            <input name="amount_date_end" id="amount_date_end" type="text" onclick="WdatePicker()" class="Wdate" readonly disabled/>
+          </div>
+        </div>
+        <input type="hidden" name="flag" value="1"/>
+        <div class="analyze_category_btn"><button class="search_btn" type="button" onclick="meta_analysis_search(<%= @store_id %>)">查询</button></div>
+      </div>
+    </div>
+    <div id="meta_analysis_div">
+      <%= render "meta_analysis_table" %>
+    </div>
+  </div>
+</div>

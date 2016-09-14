@@ -1,0 +1,4 @@
+$('#order_prods_partial').html("<%= escape_javascript(render :partial => "/customers/order_prods_p") %>");
+$(".data_table > tbody > tr:odd").addClass("tbg");
+$(".data_tab_table > tbody > tr:odd").addClass("tbg");
+$("#rev_page").attr("value", "<%= params[:page] %>");

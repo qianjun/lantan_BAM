@@ -1,0 +1,55 @@
+<% mat_in_flag ||= 0
+mo_search ||= false
+%>
+<div class="search">
+  <% if mo_search %>
+    <div>
+      <label>订货单号：</label>
+      <%= select("material_order", "code", @material_orders_not_all_in.collect {|mo| [ mo.code, mo.id ] }, { :prompt =>"请选择" }) %>
+    </div>
+  <% end %>
+  <% if tab_name == "out_records" || tab_name == "in_records" %>
+    <div><label>时间：</label>
+      <input id="c_first" type="text"  onclick="WdatePicker({preLoad:true,maxDate:'<%=Time.now.strftime("%Y-%m-%d")%>',isShowClear:false})" readonly class="Wdate"
+             value="<%=@start_time%>"/> 到
+      <input id="c_last" type="text" onclick="WdatePicker({preLoad:true,maxDate:'<%=Time.now.strftime("%Y-%m-%d")%>',isShowClear:false})" readonly class="Wdate"
+             value="<%= @end_time %>" /></div>
+    <%end%>
+  <div>
+    <label>物料类别：</label>
+    <select id="search_material_type">
+      <option value="-1">全部</option>
+      <% @types.each do |t| %>
+        <option value="<%= t.id %>" <% if @mat_type.to_i == t.id %>selected<% end %>><%= t.name %></option>
+      <% end %>
+    </select>
+  </div>
+  <div>
+    <label>物料名称：</label>
+    <input type="text" id="search_material_name" value="<%= @mat_name %>"/>
+  </div>
+  <% if tab_name == "out_records"%>
+    <div>
+      <label>出库类型：</label>
+      <select id="out_types">
+        <option value="">全部</option>
+        <%MatOutOrder::TYPES.each do |k,v|%>
+          <option value="<%= k %>" <% if @out_types.to_i == k %>selected<% end %>><%= v %></option>
+        <%end%>
+      </select>
+    </div>
+  <%else%>
+    <div>
+      <label>条形码：</label>
+      <input type="text" id="search_material_code" value="<%= @mat_code %>"/>
+    </div>
+  <%end%>
+  <div>
+    <button class="search_btn" onclick="search_materials('<%= tab_name %>',<%= @current_store.id %>, this, <%= mat_in_flag %>)">查询</button>
+  </div>
+  <% if tab_name == "out_records" || tab_name == "in_records"%>
+    <div>
+      <button class="search_btn" onclick="print_out('<%= tab_name %>',<%= @current_store.id %>, this)">打印</button>
+    </div>
+  <%end%>
+</div>

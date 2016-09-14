@@ -1,0 +1,42 @@
+<% unless @goals.blank? %>
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+    <thead>
+      <tr class="hbg">
+        <td>时间</td>
+        <td>详细</td>
+        <td>剩余时间（天）</td>
+      </tr>
+    </thead>
+    <tbody>
+      <%  @goals.each do |sale|%>
+        <tr>
+          <td> <%="#{sale[0].started_at.strftime("%Y.%m.%d")}-#{sale[0].ended_at.strftime("%Y.%m.%d")}" %></td>
+          <td>
+            <table width="720" border="0" cellspacing="1" cellpadding="0" class="s_table">
+              <tr class="fws">
+                <td width="220px">分类</td>
+                <td width="140px">目标销售额（元）</td>
+                <td width="220px">目前完成销售额（元）</td>
+                <td width="140px">目前完成百分比</td>
+              </tr>
+              <% sale.each_with_index do |goal,index| %>
+                <tr>
+                  <td><%= goal.type_name %></td>
+                  <td><%= format("%.2f",goal.goal_price) %></td>
+                  <td><%= format("%.2f",goal.current_price) %></td>
+                  <td><%= goal.goal_price==0 ? "0%" :"#{format("%.1f",(goal.current_price.nil?? 0 :goal.current_price)*100/goal.goal_price)}%" %></td>
+                </tr>
+              <% end unless sale.blank? %>
+            </table>
+          </td>
+          <td>
+            <%= (sale[0].ended_at-Time.now.beginning_of_day)>=0 ? "#{((sale[0].ended_at-Time.now.beginning_of_day)/86400).to_i}天" : "--"%></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <%url = @goals[0][0].ended_at > Time.now ? "load_goal" : "load_over" %>
+  <%= will_paginate_remote(@goals ,"" ,{:url =>"/stores/#{params[:store_id]}/market_manages/#{url}"}) %>
+<% else %>
+  当前暂无记录
+<% end %>

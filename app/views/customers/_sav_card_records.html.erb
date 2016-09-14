@@ -1,0 +1,70 @@
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+  <thead>
+    <tr class="hbg">
+      <td width="15%">名称</td>
+      <td width="15%">时间</td>
+      <td width="15%">金额（元）</td>
+      <td width="25%">原因</td>
+      <td width="15%">余额（元）</td>
+      <td width="15%">操作</td>
+    </tr>
+  </thead>
+  <tbody>
+    <% (@srs || []).each do |k, v| %>
+      <tr>
+        <td width="15%"><%= v[0].sc_name %></td>
+        <td colspan="4" width="70%">
+          <table width="100%" border="0" cellspacing="1" cellpadding="0" class="s_table">
+            <% v.each do |record| %>
+              <tr>
+                <td width="21%"><%= record.created_at.strftime('%Y-%m-%d %H:%M') if record.created_at %></td>
+                <td width="22%"><% if record.use_price ==0 %> 0.0 <% else %><%= record.types==SvcardUseRecord::TYPES[:IN]? "+": "-" %><%= record.use_price %><% end %></td>
+                <td width="35%"><%= record.content %> </td>
+                <td width="22%"><%= record.left_price %></td>
+              </tr>
+            <% end %>
+          </table>
+        </td>
+        <td width="15%">
+          <button type="button" class="compile_btn" onclick="change_pcard_pwd(<%= k %>, '<%= v[0].sc_name %>')">修改密码</button>
+          <button type="button" class="compile_btn" onclick="return_order(<%= v[0].order_id %>, <%= @customer.id %>)">退卡</button>
+        </td>
+      </tr>
+    <%end if @srs %>
+  </tbody>
+</table>
+<div class="pageTurn">
+  <%=  will_paginate_remote(@svcard_records , "",
+    {:url => "/stores/#{@store.id}/customers/#{@customer.id}/sav_card_records"}) %>
+</div>
+<div class="tab_popup" style="display:none;" id="change_pcard_pwd_div">
+  <div class="popup_box">
+    <h1>修改储值卡密码<a href="JavaScript:void(0)" class="close" onclick="change_pcard_pwd_close()">关闭</a></h1>
+    <div class="popup_body">
+      <div class="popup_body_area">
+        <div style="width:320px;margin: 0 auto;">
+          <div class="item">
+            <label>储值卡名称：</label>
+            <span id="change_pcard_pwd_name"></span>
+          </div>
+          <div class="item_textarea">
+            <label>验证码：</label>
+            <input type="text" style="width:137px;" name="change_pcard_pwd_valid_code" id="change_pcard_pwd_valid_code"/>
+            <a href="javascript:change_pcard_pwd_get_valid_code()" id="change_pcard_pwd_a">获取验证码</a>            
+          </div>  
+          <div class="item_textarea">
+            <label>新密码：</label>
+            <input type="password" name="change_pcard_pwd_new_pwd" id="change_pcard_pwd_new_pwd"/>
+          </div>
+          <div class="item_textarea">
+            <label>确认密码：</label>
+            <input type="password" name="change_pcard_pwd_repeat_pwd" id="change_pcard_pwd_repeat_pwd"/>
+          </div>
+          <div class="btn_box">
+            <button class="confirm_btn" onclick="change_pcard_pwd_commit()">提交</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

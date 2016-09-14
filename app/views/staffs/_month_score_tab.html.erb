@@ -1,0 +1,22 @@
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table myTable" id="month_score_table">
+     <thead>
+          <tr class="hbg">
+            <th><span class="sort_u_s" onclick="sort_change(this)">时间</span></th>
+            <th>系统打分</th>
+            <th>店长打分</th>
+            <th>当月评估结果</th>
+          </tr>
+      </thead>
+      <tbody>
+        <% @month_scores.each do |month_score| %>
+          <tr>
+            <td><%= month_score.current_month %></td>
+            <td id="<%= (!@current_month_score.nil? && @current_month_score.current_month == month_score.current_month) ? "current_month_score" : "" %>"><%= month_score.sys_score %></td>
+            <td id="<%= (!@current_month_score.nil? && @current_month_score.current_month == month_score.current_month) ? "current_month_manage_score" : "" %>"><%= month_score.manage_score.nil? ? "未打分" : month_score.manage_score %></td>
+            <td><%= current_month_access_result(month_score) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+</table>
+<%= will_paginate @month_scores, :class => "pageTurn", :previous_label => "上一页",
+    :next_label => "下一页" %>

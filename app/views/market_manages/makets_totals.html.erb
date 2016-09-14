@@ -1,0 +1,46 @@
+<%=  render 'second_menu'%>
+<div class="search">
+  <%= form_for :complaint,:url=>"/stores/#{params[:store_id]}/market_manages/search_month" do%>
+    <div><label>时间：</label>
+      <input name="created" type="text" readonly onclick="WdatePicker()" value="<%= session[:created] %>" class="Wdate"/>&nbsp;到&nbsp;
+      <input name="ended" type="text" readonly onclick="WdatePicker()" value="<%= session[:ended] %>" class="Wdate"/></div>
+    <div><button class="search_btn">查询</button></div>
+  <% end %>
+</div>
+<div class="clear"></div>
+<div class="data_body">
+  <div>
+    <% unless @months.blank? %>
+      <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+        <thead>
+          <tr class="hbg">
+            <td>日期</td>
+            <td>现金金额</td>
+            <td>刷卡金额</td>
+            <td>储值卡金额</td>
+            <td>套餐卡金额</td>
+            <td>总计</td>
+          </tr>
+        </thead>
+        <tbody>
+          <%@months.each do |k,v|%>
+            <tr>
+              <td><%= k %></td>
+              <td><%= format("%.2f",v[OrderPayType::PAY_TYPES[:CASH]].nil? ? 0 : v[OrderPayType::PAY_TYPES[:CASH]])%></td>
+              <td><%= format("%.2f",v[OrderPayType::PAY_TYPES[:CREDIT_CARD]].nil? ? 0 : v[OrderPayType::PAY_TYPES[:CREDIT_CARD]]) %></td>
+              <td><%= format("%.2f",v[OrderPayType::PAY_TYPES[:SV_CARD]].nil? ? 0 : v[OrderPayType::PAY_TYPES[:SV_CARD]]) %></td>
+              <td><%= format("%.2f",v[OrderPayType::PAY_TYPES[:PACJAGE_CARD]].nil? ? 0 : v[OrderPayType::PAY_TYPES[:PACJAGE_CARD]]) %></td>
+              <td><%= format("%.2f",v.select{|key,value|key >=OrderPayType::PAY_TYPES[:CASH] && key <=OrderPayType::PAY_TYPES[:PACJAGE_CARD] }.values.inject(0){|num,price|num+price}) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+      <div class="pageTurn">
+        <%= will_paginate @months,:class=>"pageTurn",:previous_label=>"上一页",:next_label=>"下一页" %>
+      </div>
+      <div class="amount">总计：<%=format("%.2f",@total_num)%></div>
+    <% else %>
+      暂无汇总记录
+    <% end %>
+  </div>
+</div>

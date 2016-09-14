@@ -1,0 +1,38 @@
+<%= form_for [@store,@supplier],:html => {:remote => true, 'data-type' => 'script'} do |f| %>
+  <div class="popup_body_area">
+    <div class="item">
+      <label><span class='red'>*</span>名称：</label>
+      <%= f.text_field :name,:onPropertyChange=>"get_cap_code(this,"+ params[:store_id]+")",:oninput=>"get_cap_code(this,"+ params[:store_id]+")" %></div>
+    <div class="item">
+      <label><span class='red'>*</span>助记码：</label>
+      <input type="text" name="supplier[cap_name]" id="cap_name" onchange="set_cap()" /></div>
+    <input type="hidden" value="0" id="refuse" />
+    <input type="hidden" value="0" id="still_name" />
+    <div class="item">
+      <label><span class='red'>*</span>联系人：</label>
+      <%= f.text_field :contact %>
+    </div>
+    <div class="item">
+      <label><span class='red'>*</span>联系电话：</label>
+      <%= f.text_field :phone %>
+    </div>
+    <div class="item">
+      <label>其他联系方式：</label>
+      <%= f.text_field :email, :placeholder =>"QQ/微信/Email" %>
+    </div>
+    <div class="item_textarea">
+      <label>地址：</label>
+      <%= f.text_field :address %>
+    </div>
+    <div class="item">
+      <label>结算方式：</label>
+      <%= f.select :check_type, Supplier::S_CHECK_TYPE.invert, {},{:onchange => "select_check_type(this)"} %>
+    </div>
+    <div class="item">
+      <label>结算时间：</label>
+      <%= f.select :check_time, (1..28).to_a.inject(Hash.new){|h,v|h[v]=v;h} %>
+    </div>
+    <%= hidden_field_tag 'supplier[status]', '0' %>
+  </div>
+  <div class="btn_box"><button type="button" onclick="commit_supplier_form(this)" class="confirm_btn">确定</button></div>
+<% end %>

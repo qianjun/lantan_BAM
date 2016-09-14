@@ -1,0 +1,183 @@
+<%= javascript_include_tag "/assets/products.js" %>
+<%= javascript_include_tag "/assets/kindEditor/kindeditor-min.js" %>
+<%= javascript_include_tag "/assets/kindEditor/zh_CN.js" %>
+<div class="main">
+  <div class="box">
+    <div class="data_box">
+      <div class="second_menu"><a href="/stores/<%=params[:store_id]%>/products/prod_services" class="hover">单项服务</a>
+        <a href="/stores/<%=params[:store_id]%>/products/package_service" >产品套装服务</a></div>
+      <div class="data_menu">
+        <% if permission?(:sales, :add_service) %>
+          <a href="javascript:void(0)" class="add_btn" onclick="add_service('<%= params[:store_id] %>')">添加单项服务</a> <% end %>
+        <% if permission?(:sales, :delete_service) && @total.num > 0 %>
+          <a href="javascript:void(0)" class="add_btn" onclick="delete_prods(<%= params[:store_id] %>)">删除单项服务</a><%end%>
+      </div>
+      <div class="collect">
+        <ul>
+          <li>服务项目共：<span><%= @total.num %></span>项</li>
+        </ul>
+      </div>
+      <div class="clear"></div>
+      <div class="data_body" id="materials_tab_table">
+        <div>
+          <div class="table_box_h">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+              <thead>
+                <tr class="hbg">
+                  <td width="5%"><input type="checkbox" title="全选" onclick='set_value(this)' /></td>
+                  <td width="6%">服务代码</td>
+                  <td width="8%">服务名称</td>
+                  <td width="5%">成本价</td>
+                  <td width="6%">零售价格</td>
+                  <td width="5%">促销价</td>
+                  <td width="3%">积分</td>
+                  <td width="10%">施工时间(分钟)</td>
+                  <td width="8%">类别</td>
+                  <td width="9%">技师</td>
+                  <td width="25%">所需物料</td>
+                  <td width="10%">操作</td>
+                </tr>
+              </thead>
+              <tbody>
+                <% unless @services.blank? %>
+                  <%  service = @services[0]%>
+                  <tr>
+                    <td><input type="checkbox" id="line_<%= service.id %>" value="<%=service.id  %>" /></td>
+                    <td><%= service.code %></td>
+                    <td><%= service.name %></td>
+                    <td><%= service.t_price %></td>
+                    <td><%= service.base_price %></td>
+                    <td><%= service.sale_price %></td>
+                    <td><%= service.prod_point %></td>
+                    <td><%= service.cost_time %></td>
+                    <td><%= service.c_name %></td>
+                    <td><%= "#{Staff::LEVELS[service.level1]} - #{Staff::LEVELS[service.level2]}" %></td>
+                    <td>
+                      <table width="100%" border="0" cellspacing="1" cellpadding="0" class="s_table">
+                        <%unless @materials[service.id].blank? %>
+                          <tr class="fws">
+                            <td width="45%">名称</td>
+                            <td width="40%">条形码</td>
+                            <td width="15%">数量</td>
+                          </tr>
+                          <%@materials[service.id].each do |mat|%>
+                            <tr>
+                              <td><%= mat.name %></td>
+                              <td><%= mat.code %></td>
+                              <td><%= mat.num %></td>
+                            </tr>
+                          <%end%>
+                        <%else%>
+                          <tr class="fws">
+                            <td>暂无</td>
+                          </tr>
+                        <% end %>
+                      </table>
+                    </td>
+                    <td class="operation" >
+                      <% if permission?(:sales, :edit_service) %><a href="javascript:void(0)" onclick="edit_service('<%= params[:store_id] %>','<%=  service.id %>')">编辑</a><% end %>
+                      <a href="javascript:void(0)" class="see_btn" onclick="show_service('<%=params[:store_id] %>','<%=  service.id %>')">查看</a>
+                      <a href="/stores/<%= params[:store_id] %>/products/<%=service.id %>" target="_blank" class="see_btn"  >预览</a>
+                      <% if permission?(:sales, :add_service) %>
+                        <%= link_to (!service.commonly_used ? "常用" : "不常用"), commonly_used_store_product_path(params[:store_id], service.id), :remote => true, 'data-type' => "script", :method => :post, :class => "see_btn", :id => service.id %>
+                      <% end %>
+                      <% if permission?(:sales, :edit_service) %>
+                        <a href="javascript:void(0)"
+                           onclick="on_weixin('Product','<%=  service.id %>',this)" title="<%= service.on_weixin ?  '不' : '' %>在微信上推荐该套餐卡"><%= service.on_weixin ?  '不' : '' %>推荐</a>
+                         <% end %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+          <div class="table_box">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+              <thead>
+                <tr class="hbg">
+                  <td width="5%"><input type="checkbox" title="全选" onclick='set_value(this)' /></td>
+                  <td width="6%">服务代码</td>
+                  <td width="8%">服务名称</td>
+                  <td width="5%">成本价</td>
+                  <td width="6%">零售价格</td>
+                  <td width="5%">促销价</td>
+                  <td width="3%">积分</td>
+                  <td width="10%">施工时间(分钟)</td>
+                  <td width="8%">类别</td>
+                  <td width="9%">技师</td>
+                  <td width="25%">所需物料</td>
+                  <td width="10%">操作</td>
+                </tr>
+              </thead>
+              <tbody>
+                <% unless @services.blank? %>
+                  <% @services.each do |service| %>
+                    <tr>
+                      <td><input type="checkbox" id="line_<%= service.id %>" value="<%=service.id  %>" /></td>
+                      <td><%= service.code %></td>
+                      <td><%= service.name %></td>
+                      <td><%= service.t_price %></td>
+                      <td><%= service.base_price %></td>
+                      <td><%= service.sale_price %></td>
+                      <td><%= service.prod_point %></td>
+                      <td><%= service.cost_time %></td>
+                      <td><%= service.c_name %></td>
+                      <td><%= "#{Staff::LEVELS[service.level1]} - #{Staff::LEVELS[service.level2]}" %></td>
+                      <td>
+                        <table width="100%" border="0" cellspacing="1" cellpadding="0" class="s_table">
+                          <%unless @materials[service.id].blank? %>
+                            <tr class="fws">
+                              <td width="45%">名称</td>
+                              <td width="40%">条形码</td>
+                              <td width="15%">数量</td>
+                            </tr>
+                            <%@materials[service.id].each do |mat|%>
+                              <tr>
+                                <td><%= mat.name %></td>
+                                <td><%= mat.code %></td>
+                                <td><%= mat.num %></td>
+                              </tr>
+                            <%end%>
+                          <%else%>
+                            <tr class="fws">
+                              <td>暂无</td>
+                            </tr>
+                          <% end %>
+                        </table>
+                      </td>
+                      <td class="operation" >
+                        <% if permission?(:sales, :edit_service) %><a href="javascript:void(0)" onclick="edit_service('<%= params[:store_id] %>','<%=  service.id %>')">编辑</a><% end %>
+                        <a href="javascript:void(0)" class="see_btn" onclick="show_service('<%=params[:store_id] %>','<%=  service.id %>')">查看</a>
+                        <a href="/stores/<%= params[:store_id] %>/products/<%=service.id %>" target="_blank" class="see_btn"  >预览</a>
+                        <% if permission?(:sales, :add_service) %>
+                          <%= link_to (!service.commonly_used ? "常用" : "不常用"), commonly_used_store_product_path(params[:store_id], service.id), :remote => true, 'data-type' => "script", :method => :post, :class => "see_btn", :id => service.id %>
+                        <% end %>
+                        <% if permission?(:sales, :edit_service) %>
+                          <a href="javascript:void(0)"
+                             onclick="on_weixin('Product','<%=  service.id %>',this)" title="<%= service.on_weixin ?  '不' : '' %>在微信上推荐该套餐卡"><%= service.on_weixin ?  '不' : '' %>推荐</a>
+                           <% end %>
+                      </td>
+                    </tr>
+                  <% end %>
+                <% end %>
+              </tbody>
+            </table>
+            <%= form_for :ids,:url=>"/stores/#{params[:store_id]}/products/update_status",:html=>{:id=>"update_ids"} do %>
+              <input type="hidden" value="" name="ids" id="ids"/>
+              <input type="hidden" value="" name="vals" id="vals"/>
+            <% end %>
+            <div class="pageTurn">
+              <%= will_paginate @services,:class=>"pageTurn",:previous_label=>"上一页",:next_label=>"下一页" if @total.num >0 %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<%if  flash[:notice]%>
+  <script type="text/javascript">tishi_alert("<%=  flash[:notice] %>")</script>
+<% end %>
+<div class="foot"><p>Copyright © 2013 杭州鼎洪 版权所有</p></div>
+<div class="tab_popup see_tab"></div>
+<div id="serv_add_edit"></div>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <%= stylesheet_link_tag    "application" %>
+    <%= javascript_include_tag "application","role","depot","DD_belatedPNG_0.0.8a-min" %>
+    <script type="text/javascript" src="/assets/My97DatePicker/WdatePicker.js" ></script>
+    <title><%= @title.nil? ? "系统设置" : @title %></title>
+    <%= csrf_meta_tags %>
+    <!--[if IE 6]>
+    <script>
+        DD_belatedPNG.fix('*');
+    </script>
+    <![endif]-->
+
+  </head>
+  <body>
+    <div class="head">
+      <div class="box">
+        <%= render :partial => "/common/login_header" %>
+        <% if  ["cash_register",'complete_pay','plus_items'].include? controller.action_name %>
+          <div class="nav">
+            <ul>
+              <li><a href="/stores/<%= params[:store_id] %>/set_stores/cash_register" <%if ["cash_register","complete_pay"].include? controller.action_name%>class="hover"<%end%>>收银</a></li>
+              <li><a href="/stores/<%= params[:store_id] %>/set_stores/plus_items" <%if ["plus_items"].include? controller.action_name%>class="hover"<%end%>>业务开单</a></li>
+            </ul>
+          </div>
+          <div class="back"  style="width:128px"><a href="/stores/<%= params[:store_id] %>/welcomes" title="返回">Back</a>收银</div>
+        <%else%>
+          <%= render :partial => "/roles/role_nav" %>
+        <%end%>
+      </div>
+    </div>
+    <div class="main">
+      <div class="box">
+        <%= yield %>
+      </div>
+    </div>
+    <%= render :partial => "/common/footer" %>
+    <%= render :partial => "/shared/tishi_alert" %>
+  </body>
+</html>

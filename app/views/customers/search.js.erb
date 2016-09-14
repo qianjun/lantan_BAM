@@ -1,0 +1,3 @@
+$("#types_"+<%=params[:types]%>).html('<%= escape_javascript(render :partial=>"one_type_customer",:object=>[params[:types],@t_customers[params[:types].to_i]]) %>');
+change_tab_li();
+odd_even();

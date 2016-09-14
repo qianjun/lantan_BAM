@@ -1,0 +1,10 @@
+<% if @products.blank? %>
+  <li>无记录!</li>
+<% else %>
+  <% @products.each do |p| %>
+    <li id="product_<%= p.pid %>_li">
+      <input type="checkbox" value="<%= p.pid %>" onclick="selected_product(this, '<%= p.pname %>')"
+             <% @arr.each do |a| %><% if a.to_i == p.pid %>checked<% end %><% end if @arr %>/><%= p.pname %>
+    </li>
+  <% end %>
+<% end %>

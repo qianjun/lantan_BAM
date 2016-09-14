@@ -1,0 +1,103 @@
+<div class="finnace_title" id="finnace_title" style="height:32px;">
+  <ul>
+    <li>应收款：<span><%=@pay_orders.values.flatten.length%></span>笔</li>
+    <li>总金额：<span><%=@pay_orders.values.flatten.map(&:p_price).inject(0){|sum,n|sum+n}.round(2)%></span></li>
+  </ul>
+</div>
+<div class="data_item">
+  <div class="table_box_h">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+      <thead>
+        <tr class="hbg">
+          <%if pay_account.to_i == Account::TYPES[:SUPPLY]%>
+            <td width="30%">名称</td>
+          <%else%>
+            <td width="10%">名称</td>
+            <td width="20%">客户属性</td>
+          <%end%>
+          <td width="12%">消费日期</td>
+          <td width="20%">订单编号</td>
+          <td width="10%">金额</td>
+          <td width="10%">上期余额</td>
+          <td width="9%">当前余额</td>
+          <td width="9%">操作</td>
+        </tr>
+      </thead>
+      <tbody>
+        <%unless @pay_orders.empty? %>
+          <%p_order = @pay_orders.first
+          k = p_order[0]
+          v = p_order[1]%>
+          <tr>
+            <td rowspan ="<%= v.length %>"><%=@customers[k].name%></td>
+            <%unless pay_account.to_i == Account::TYPES[:SUPPLY]%>
+              <td rowspan ="<%= v.length %>"><%=@customers[k].group_name.nil? ? "个人客户" : @customers[k].group_name %></td>
+            <%end%>
+            <% t_v = v.length;v_first = v[0]  %>
+            <td><%= v_first.time %></td>
+            <td><%= v_first.code %></td>
+            <td><%= v_first.p_price %></td>
+            <td rowspan="<%= t_v %>"><%=@account[k].nil? ? "0.0" : @account[k].left_amt  %></td>
+            <td rowspan="<%= t_v %>"><%=@account[k].nil? ? "0.0" : @account[k].balance  %></td>
+            <td rowspan="<%= t_v %>"><a href="javascript:void(0)" onclick="">付款</a></td>
+          </tr>
+
+          <%v[1..v.length-1].each do |pay_order|%>
+            <tr>
+              <td><%= pay_order.time %></td>
+              <td><%= pay_order.code %></td>
+              <td><%= pay_order.p_price %></td>
+            </tr>
+          <% end %>
+        <% end %>
+
+      </tbody>
+    </table>
+  </div>
+  <div class="table_box">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+      <thead>
+        <tr class="hbg">
+          <%if pay_account.to_i == Account::TYPES[:SUPPLY]%>
+            <td width="30%">名称</td>
+          <%else%>
+            <td width="10%">名称</td>
+            <td width="20%">客户属性</td>
+          <%end%>
+          <td width="12%">消费日期</td>
+          <td width="20%">订单编号</td>
+          <td width="10%">金额</td>
+          <td width="10%">上期余额</td>
+          <td width="9%">当前余额</td>
+          <td width="9%">操作</td>
+        </tr>
+      </thead>
+      <tbody>
+        <%unless @pay_orders.empty? %>
+          <% @pay_orders.each do |k,v| %>
+            <tr>
+              <td rowspan ="<%= v.length %>"><%=@customers[k].name%></td>
+              <%unless pay_account.to_i == Account::TYPES[:SUPPLY]%>
+                <td rowspan ="<%= v.length %>"><%=@customers[k].group_name.nil? ? "个人客户" : @customers[k].group_name %></td>
+              <%end%>
+              <% m_v = v.length;m_first = v.shift  %>
+              <td><%= m_first.time %></td>
+              <td><%= m_first.code %></td>
+              <td><%= m_first.p_price %></td>
+              <td rowspan="<%= m_v %>"><%=@account[k].nil? ? "0.0" : @account[k].left_amt  %></td>
+              <td rowspan="<%= m_v %>"><%=@account[k].nil? ? "0.0" : @account[k].balance  %></td>
+              <td rowspan="<%= m_v %>"><a href="javascript:void(0)" onclick="load_account(<%=k%>,<%=params[:store_id]%>,'<%= pay_account%>')">付款</a></td>
+            </tr>
+            <%v.each do |pay_order|%>
+              <tr>
+                <td><%= pay_order.time %></td>
+                <td><%= pay_order.code %></td>
+                <td><%= pay_order.p_price %></td>
+              </tr>
+            <% end %>
+          <% end %>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

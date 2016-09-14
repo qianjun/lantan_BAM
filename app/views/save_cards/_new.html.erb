@@ -1,0 +1,58 @@
+<div class="popup_box">
+  <h1>新建储值卡<a href="JavaScript:void(0)" class="close">关闭</a></h1>
+  <%= form_tag "/stores/#{@store.id}/save_cards", :method => :post, :multipart => true do  %>
+    <div class="popup_body">
+      <div class="popup_body_area">
+        <div class="item">
+          <label><span class="red">*</span>名称：</label><input type="text" name="scard_name" id="scard_name"/>
+        </div>
+        <div class="item">
+          <label>适用门店：</label>
+          <select name="scard_userange">
+            <% SvCard::S_USE_RANGE.each do |k, v| %>
+              <option value="<%= k %>"><%= v %></option>
+            <% end %>
+          </select>
+        </div>
+        <div class="item_textarea">
+          <label><span class='red'>*</span>适用项目：</label>
+          <div class="item_rbox">
+            <dl>
+              <dt><%= "产品/服务:" %></dt>
+              <% @types.each do |t| %>
+                <dd><input type="checkbox" value="<%= t.id %>" name="scard_category[]" id="sv_card_<%=t.id%>"/><%= t.name %></dd>&nbsp;&nbsp;
+              <%end unless @types.blank?%>
+            </dl>
+            <dl>
+              <dt><%= "套餐卡:" %></dt>
+              <% @pcard.each do |p| %>
+                <dd><input type="checkbox" value="<%= p.id %>" name="pcard_category[]" id="sv_card_<%=p.id%>"/><%= p.name %></dd>&nbsp;&nbsp;
+              <%end unless @pcard.blank?%>
+            </dl>
+          </div>
+        </div>
+        <div class="item_textarea">
+          <label><span class="red">*</span>图片：</label>
+          <input type="file" name="scard_img" id="scard_img"/>
+        </div>
+        <div class="setObj">
+          <div class="setobj_name"><span class="red">*</span>发行规则：</div>
+          <div class="setobj_box">
+            <div class="seto_list">
+              <span>充<input id="scard_started_money" name="scard_started_money" type="text" class="input_s" value="0"/>元</span>&nbsp;&nbsp;
+              <span>送<input id="scard_ended_money" name="scard_ended_money" type="text" class="input_s" value="0"/>元</span>
+            </div>
+          </div>
+        </div>
+        <div class="item_textarea">
+          <label><span class="red">*</span>具体内容：</label>
+          <textarea class="width_textarea" name="scard_desc" id="scard_desc"></textarea>
+        </div>
+      </div>
+      <div class="btn_box">
+        <button type="button" class="confirm_btn" onclick="create_save_card_valid(this)">确定</button>
+        <button type="button" class="cancel_btn">取消</button>
+      </div>
+    </div>
+  <% end %>
+</div>

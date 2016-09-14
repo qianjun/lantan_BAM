@@ -1,0 +1,16 @@
+<% if @init == "set_positions" %>
+$("#organi_div").html("<%= j(render :partial => "organi_tab") %>")
+<% else %>
+<% if @init == "depart_init" %>
+$("#organi_div").html("<%= j(render :partial => "organi_tab") %>");
+<% elsif @init == "market_init" %>
+$("#market_div").html("<%= j(render :partial => "market_tab") %>");
+<% elsif @init == "storage_init" %>
+$("#storage_div").html("<%= j(render :partial => "storage_tab") %>");
+<% end %>
+$("#set_functions_new").empty();
+$("#set_functions_new").hide();
+$("#set_functions_edit").empty();
+$("#set_functions_edit").hide();
+$(".mask").hide();
+<% end %>

@@ -1,0 +1,39 @@
+<div class="tab_popup" style="display: none;" id="customer_revisit_div">
+  <div class="popup_box">
+    <h1>用户回访<a href="javascript:void(0)" class="close">关闭</a></h1>
+    <div class="popup_body">
+      <%= form_for :revisit, :url=>"/stores/#{@store.id}/revisits", :method => "post",
+        :html => {:onsubmit => "return check_revisit()", :id => "r_v_form", :name => "r_v_form"} do %>
+        <div class="popup_body_area">
+          <input type="hidden" id="rev_customer_id" name="rev_customer_id" value=""/>
+          <input type="hidden" id="rev_order_id" name="rev_order_id" value=""/>
+          <input type="hidden" id="rev_page" name="rev_page" value=""/>
+          <div class="item">
+            <label><font color="red">*</font>标题：</label><input name="rev_title" id="rev_title" type="text"/>
+          </div>
+          <div class="item">
+            <label><font color="red">*</font>类别：</label>
+            <select name="rev_types" id="rev_types">
+              <option value="">--</option>
+              <% Revisit::TYPES_NAME.each do |k, v| %>
+                <option value="<%= k %>"><%= v %></option>
+              <% end %>
+            </select>
+          </div>
+          <div class="item_textarea">
+            <label><font color="red">*</font>内容：</label>
+            <textarea name="rev_content" id="rev_content" cols="" rows="" class="width_textarea"></textarea>
+          </div>
+          <div class="item_textarea">
+            <label><font color="red">*</font>客户留言：</label>
+            <textarea name="rev_answer" id="rev_answer" cols="" rows="" class="width_textarea"></textarea>
+          </div>
+          <div class="item">
+            <label>投诉：</label><input name="is_complaint" id="is_complaint" type="checkbox" value="1"/>
+          </div>
+        </div>
+        <div class="btn_box"><button class="confirm_btn">确定</button></div>
+      <% end %>
+    </div>
+  </div>
+</div>

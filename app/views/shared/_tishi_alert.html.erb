@@ -1,0 +1,15 @@
+<div class="tab_popup tab_alert" style="display:none">
+  <div class="popup_box">
+    <h1><a href="javascript:void(0)" class="close">关闭</a></h1>
+    <div class="popup_body">
+      <div class="popup_body_area">
+        <div class="alert_h"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<% if flash[:notice] %>
+<script type="text/javascript">
+  tishi_alert("<%= flash[:notice].html_safe %>");
+</script>
+<% end %>

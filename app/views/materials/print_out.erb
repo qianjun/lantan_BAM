@@ -1,0 +1,73 @@
+<%= stylesheet_link_tag  "application"%>
+<link rel="stylesheet" type="text/css" media="print" href="/assets/style.css" />
+<%= javascript_include_tag "application", "main"%>
+<%if params[:tab_name] == "out_records"%>
+  <div class="collect">
+    <ul>
+      <li>出库记录：<span><%= @out_arr[0] %></span>条</li>
+      <li>金额：<span><%= format("%.2f", @out_arr[1]) if @out_arr[1] %></span></li>
+    </ul>
+  </div>
+
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table" id="materials_out_tab">
+    <thead>
+      <tr class="hbg">
+        <th width="150">条形码</th>
+        <th width="120">物料名称</th>
+        <th>出库类型</th>
+        <th>物料类别</th>
+        <th width="100">申请人</th>
+        <th width="80">出库量</th>
+        <th>出库时间</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% (@out_records || []).each do |out| %>
+        <tr class="<%= cycle('', 'tbg') %>">
+          <td><%= out.code %></td>
+          <td><%= out.name %></td>
+          <td><%= MatOutOrder::TYPES[out.out_types] %></td>
+          <td><%= out.cname %></td>
+          <td><%= out.staff_name %></td>
+
+          <td><%= out.material_num.to_i %></td>
+          <td><%= out.out_time.strftime("%Y-%m-%d %H:%M") unless out.out_time.nil?%></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<%elsif params[:tab_name] == "in_records"%>
+  <div class="collect">
+    <ul>
+      <li>入库记录：<span><%= @in_arr[0] %></span>条</li>
+      <li>金额：<span><%= format("%.2f", @in_arr[1]) if @in_arr[1] %></span></li>
+    </ul>
+  </div>
+
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table" id="materials_out_tab">
+    <thead>
+      <tr class="hbg">
+        <th>订货单号</th>
+        <th width="150">条形码</th>
+        <th>物料名称</th>
+        <th>物料类别</th>
+        <th>入库量</th>
+        <th>操作人</th>
+        <th>入库时间</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% (@in_records || []).each do |record| %>
+        <tr class="<%= cycle('', 'tbg') %>">
+          <td><%= record.order_code %></td>
+          <td><%= record.code %></td>
+          <td><%= record.name %></td>
+          <td><%= record.cname %></td>
+          <td><%= record.material_num.to_i %></td>
+          <td><%= record.staff_name %></td>
+          <td><%= record.out_time.strftime("%Y-%m-%d %H:%M") %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<%end%>

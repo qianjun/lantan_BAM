@@ -1,0 +1,171 @@
+<script>
+  $(document).ready(function(){
+    $("#kucunliebiao .pageTurn a").unbind("click");
+    $("#kucunliebiao .pageTurn a").bind("click", function() {
+      var url = this.href;
+      $.ajax({
+        async:true,
+        url:this.href,
+        dataType:"script",
+        type:"GET",
+        success:function(){
+          // alert(1);
+        },error:function(){
+          // alert("error");
+        }
+      });
+      /* alert(this.href); */
+      return false;
+    });
+
+    //after sort
+    $("#materials_tab_table").bind("sortEnd",function() {
+      $("#materials_tab_table tbody").find('tr').each(function(i){
+        if(i%2==0){
+          $(this).removeClass('tbg');
+        }else{
+          $(this).addClass('tbg');
+        }
+      })
+    });
+  });
+
+</script>
+<% if permission?(:materials, :mat_search) %>
+  <%= render :partial => 'search_materials', :locals => {:tab_name => "materials"} %>
+<% end %>
+<div class="collect">
+  <ul>
+    <li>物料总记录：<span><%= @materials.length %></span>条</li>
+    <li>物料销售总额：<span><%= (@materials.map(&:total_price).compact.reduce(:+) || 0).round(2) %></span></li>
+  </ul>
+</div>
+<div class="table_box_h">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table" id="materials_tab_table">
+    <thead>
+      <tr class="hbg">
+        <th width="150">条形码</th>
+        <th width="100"><span>物料名称</span></th>
+        <th width="100"><span>物料类别</span></th>
+        <th width="70">库存状态</th>
+        <th width="50">库存量</th>
+        <th width="70">规格</th>
+        <% if permission?(:materials, :show_sale) %>
+          <th width="80">成本价(元)</th>
+          <th width="80">进货价(元)</th>
+        <%end%>
+        <th width="100">零售价(元)</th>
+        <th width="80">入库数量</th>
+        <th width="160">操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% unless @materials_storages.blank? %>
+        <% material = @materials_storages[0] %>
+        <tr class="<%= cycle('', 'tbg') %>" id="showmaterial<%= material.id %>tr">
+          <td id="td_<%= material.id %>" <% if !material.is_ignore && material.storage.to_i<=material.material_low.to_i %>class="data_table_error"<% end %>>
+            <% if permission?(:materials, :modify_mat_code) %>
+              <span class="code_span" style="display: none;"><input id="mat_<%= material.id %>" type="text" onblur="submit_code(this,<%= params[:store_id] %>)" /></span>
+            <% end %>
+            <span <% if permission?(:materials, :modify_mat_code) %>title="双击修改条形码" style="cursor: pointer;" ondblclick="change_code(this)"<% end %> ><%= material.code %></span>
+          </td>
+          <td><%= material.name %></td>
+          <td><%= material.cname %></td>
+          <td class="sstatus"><%= material.is_ignore || material.storage.to_i > material.material_low.to_i ? "存货" : "缺货" %></td>
+          <td class="su"><span class="storage" id="showmaterial<%= material.id %>span"><%= material.storage.to_i %></span></td>
+          <td><%= material.unit %></td>
+          <% if permission?(:materials, :show_sale) %>
+            <td><%= material.price %></td>
+            <td><%= material.import_price %></td>
+          <%end%>
+          <td><%= material.sale_price %></td>
+          <td class="check_num_field"><%= text_field_tag "materials[#{material.id}][num]",0, :id =>"check_num_#{material.id}", :style =>"width:50px;" %></td>
+          <td class="operation">
+            <% if permission?(:materials, :mat_mark) %>
+              <%= link_to "备注", "/stores/#{params[:store_id]}/materials/#{material.id}/get_remark", :remote => true, 'data-type' => 'script' %>
+            <% end %>
+            <% if permission?(:materials, :mat_edit) %><%= link_to "编辑", edit_store_material_path(params[:store_id], material.id), :remote => true, 'data-type' => 'script' %><% end %>
+            <% if permission?(:materials, :delete) %>
+              <% if  material.storage <= 0%>
+                <%= link_to "删除", store_material_path(params[:store_id], material.id), :method => :delete, :confirm => "确定删除物料？" %>
+              <%else%>
+                <a title="物料库存为0才能删除" href="javascript:void(0)" >删除</a>
+              <%end%>
+            <% end %>
+            <% if permission?(:materials, :make_warning) %><%= link_to "设置库存预警", "materials/#{material.id}/set_material_low_count", :remote => true, 'data-type' => 'script' %><% end %>
+            <% if material.is_ignore %>
+              <%if permission?(:materials, :ignore_cancel)%><%= link_to_function "取消忽略","cancel_ignore(#{material.id},#{@current_store.id},this)"  %><% end %>
+            <% else %>
+              <% if permission?(:materials, :ignore) %><%= link_to_function "忽略","set_ignore(#{material.id},#{@current_store.id},this)" %><% end %>
+            <% end %>
+            <% if permission?(:materials, :check) %><%= link_to_function "快速入库","check_material_num(#{material.id},#{@current_store.id}, this, '')" %><% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+<div class="table_box">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table" id="materials_tab_table">
+    <thead>
+      <tr class="hbg">
+        <th width="150">条形码</th>
+        <th width="100"><span>物料名称</span></th>
+        <th width="100"><span>物料类别</span></th>
+        <th width="70">库存状态</th>
+        <th width="50">库存量</th>
+        <th width="70">规格</th>
+        <th width="80">成本价(元)</th>
+        <th width="80">进货价(元)</th>
+        <th width="100">零售价（元）</th>
+        <th width="80">入库数量</th>
+        <th width="160">操作</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <% (@materials_storages || []).each do |material| %>
+        <tr class="<%= cycle('', 'tbg') %>" id="showmaterial<%= material.id %>tr">
+          <td id="td_<%= material.id %>" <% if !material.is_ignore && material.storage.to_i<=material.material_low.to_i %>class="data_table_error"<% end %>>
+            <% if permission?(:materials, :modify_mat_code) %>
+              <span class="code_span" style="display: none;"><input id="mat_<%= material.id %>" type="text" onblur="submit_code(this,<%= params[:store_id] %>)" /></span>
+            <% end %>
+            <span <% if permission?(:materials, :modify_mat_code) %>title="双击修改条形码" style="cursor: pointer;" ondblclick="change_code(this)"<% end %> ><%= material.code %></span>
+          </td>
+          <td><%= material.name %></td>
+          <td><%= material.cname %></td>
+          <td class="sstatus"><%= material.is_ignore || material.storage.to_i > material.material_low.to_i ? "存货" : "缺货" %></td>
+          <td class="su"><span class="storage" id="showmaterial<%= material.id %>span"><%= material.storage.to_i %></span></td>
+          <td><%= material.unit %></td>
+          <% if permission?(:materials, :show_sale) %>
+          <td><%=  material.price%></td>
+          <td><%= material.import_price %></td>
+          <%end%>
+          <td><%= material.sale_price %></td>
+          <td class="check_num_field"><%= text_field_tag "materials[#{material.id}][num]",0, :id =>"check_num_#{material.id}", :style =>"width:50px;" %></td>
+          <td class="operation">
+            <% if permission?(:materials, :mat_mark) %>
+              <%= link_to "备注", "/stores/#{params[:store_id]}/materials/#{material.id}/get_remark", :remote => true, 'data-type' => 'script' %>
+            <% end %>
+            <% if permission?(:materials, :mat_edit) %><%= link_to "编辑", edit_store_material_path(params[:store_id], material.id), :remote => true, 'data-type' => 'script' %><% end %>
+            <% if permission?(:materials, :delete) %>
+              <% if  material.storage <= 0%>
+                <%= link_to "删除", store_material_path(params[:store_id], material.id), :method => :delete, :confirm => "确定删除物料？" %>
+              <%else%>
+                <a title="物料库存为0才能删除" href="javascript:void(0)" >删除</a>
+              <%end%>
+            <% end %>
+            <% if permission?(:materials, :make_warning) %><%= link_to "设置库存预警", "materials/#{material.id}/set_material_low_count", :remote => true, 'data-type' => 'script' %><% end %>
+            <% if material.is_ignore %>
+              <%if permission?(:materials, :ignore_cancel)%><%= link_to_function "取消忽略","cancel_ignore(#{material.id},#{@current_store.id},this)"  %><% end %>
+            <% else %>
+              <% if permission?(:materials, :ignore) %><%= link_to_function "忽略","set_ignore(#{material.id},#{@current_store.id},this)" %><% end %>
+            <% end %>
+            <% if permission?(:materials, :check) %><%= link_to_function "快速入库","check_material_num(#{material.id},#{@current_store.id}, this, '')" %><% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+<%= will_paginate_remote(@materials_storages,"mat_code=#{@mat_code}&mat_name=#{@mat_name}&mat_type=#{@mat_type}",{:url => page_materials_store_materials_url(params[:store_id]),:class => "pageTurn",:prev_label => "上一页",:next_label => "下一页",:renderer => "RemotePaginateHelper::LinkRenderer"}) if @materials_storages.size > 0 %>

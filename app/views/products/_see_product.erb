@@ -1,0 +1,51 @@
+<div class="popup_box">
+  <h1>查看产品<a href="javascript:void(0)" class="close">关闭</a></h1>
+  <div class="popup_body">
+    <div class="popup_body_area">
+      <div class="seeProDiv">
+        <div class="seeProDiv_l">产品编码：</div>
+        <div class="seeProDiv_r"><%= @product.service_code %></div>
+      </div>
+      <div class="seeProDiv">
+        <div class="seeProDiv_l">产品名称：</div>
+        <div class="seeProDiv_r"><%=@product.name  %></div>
+      </div>
+      <div class="seeProDiv">
+        <div class="seeProDiv_l">价格：</div>
+        <div class="seeProDiv_r"><%= @product.base_price %></div>
+      </div>
+      <div class="seeProDiv">
+        <div class="seeProDiv_l">促销价格：</div>
+        <div class="seeProDiv_r"><%= @product.sale_price %></div>
+      </div>
+
+      <div class="seeProDiv">
+        <div class="seeProDiv_l">类别：</div>
+        <div class="seeProDiv_r"><%= Product::PRODUCT_TYPES[@product.types] %></div>
+      </div>
+      <div class="seeProDiv">
+        <div class="seeProDiv_l">配图：</div>
+        <div class="seeProDiv_rWidth">
+          <ul class="seeProPic">
+            <%@img_urls.each do |img|%>
+              <li><img src="<%= img.img_url.nil? ? "" : img.img_url.gsub("img#{@product.id}","img#{@product.id}_#{Constant::P_PICSIZE[0]}")  %>" /></li>
+            <% end unless @img_urls.blank? %>
+          </ul>
+        </div>
+      </div>
+      <div class="seeProDiv">
+        <div class="seeProDiv_l">规格：</div>
+        <div class="seeProDiv_r"><%= @product.standard %></div>
+      </div>
+      <div class="clear"></div>
+      <div class="seeProDiv_p">
+        <div class="seeProDiv_l">简介：</div>
+        <div class="seeProDiv_rWidth"><p><%= @product.description %></p></div>
+      </div>
+      <div class="seeProDiv_p">
+        <div class="seeProDiv_l">描述：</div>
+        <div class="seeProDiv_rWidth"><p><%= @product.introduction.nil?? "" : @product.introduction.html_safe  %></p></div>
+      </div>
+    </div>
+  </div>
+</div>

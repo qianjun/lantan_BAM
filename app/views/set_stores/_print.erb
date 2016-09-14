@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <%= javascript_include_tag "application" %>
+    <style type="text/css">
+      /* CSS Document */
+      * { padding: 0; margin: 0;}
+      body { font-family: "微软雅黑", "宋体", Arial; font-size: 6px; background:#e9ebea; color: #2c2c2c;}
+      p { margin: 2px 5px;}
+      .prod_span{ width: 55%; display: inline-block;}
+      .prod_span1{ width: 20%; display: inline-block;float:none; text-align: center}
+      .prod_span2{ width: 18%; display: inline-block; float: none}
+      .prod_span3{ width: 25%; display: inline-block; float: right;}
+      .bill { width: 150px; margin: 0 auto; background: #ffffff; padding: 5px;}
+      .dashed { border-bottom: 1px dashed #2c2c2c; margin-bottom: 10px; height: 5px;}
+      .solid { border-bottom: 1px solid #2c2c2c; margin-bottom: 3px;}
+      .detail { }
+      .lineTxt { background: #ffffff; position: relative; left: 50px; padding: 0 5px;}
+      .tit { font-weight: bold;}
+      .span1 { width: 60%; display: inline-block;}
+    </style>
+    <title>打印小票</title>
+  </head>
+  <body>
+    <div class="bill">
+      <h1><%=@store.name%></h1>
+      <p><label>电话：</label><span><%= @customer.mobilephone %></span></p>
+      <p><label>车牌：</label><span><%=@car_num.num%></span></p>
+      <%@orders.each do |order|%>
+        <% if @order_prods[order.id] %>
+          <div class="dashed"></div>
+          <p><label>ID:</label><span><%=order.code%></span></p>
+          <p><label>开单员：</label><span><%=@staffs[order.front_staff_id]%></span></p>
+          <% tech = @tech_orders[order.id] %>
+          <%unless tech.blank? %>
+            <p><label>技师：</label><span><%=tech.map(&:name).join("、")%></span></p>
+          <% end %>
+          <%  o_prod = @order_prods[order.id][0]%>
+          <div class="dashed"><span class="lineTxt"><%=o_prod.p_types%></span></div>
+          <div class="detail">
+            <p class="tit"><span class="prod_span">品名</span><span class="prod_span1">数量</span>&nbsp;<span class="prod_span2">金额</span></p>
+            <% num = o_prod.pro_num.nil? ? 0 : o_prod.pro_num %>
+            <% price = o_prod.price.nil? ? 0 : o_prod.price %>
+            <p><span class="prod_span"><%=o_prod.name%></span><span class="prod_span1"><%=num.to_f.round(2)%></span>&nbsp;<span class="prod_span2"><%=(num*price).to_f.round(2)%></span></p>
+          </div>
+        <%end%>
+      <%end%>
+      <div class="dashed"><span class="lineTxt">综合</span></div>
+      <div class="detail">
+        <p class="tit"><span class="span1">合计：</span><span class="prod_span3"><%=@orders.map(&:price).inject(0){|sum,num|sum+num}.to_f.round(2)%></span></p>
+        <%@order_pays.each do |k,v|%>
+          <p><span class="span1"><%=OrderPayType::PAY_TYPES_NAME[k]%>：</span><span class="prod_span3"><%=v.to_f.round(2)%></span></p>
+        <%end%>
+        <% if @order_pays.keys.include? OrderPayType::PAY_TYPES[:CASH]%>
+          <p><span class="span1">实收：</span><span class="prod_span3"><%=@cash_pay.pay_cash.to_f.round(2)%></span></p>
+          <p><span class="span1">找零：</span><span class="prod_span3"><%=@cash_pay.second_parm.to_f.round(2)%></span></p>
+        <%end%>
+        <p>
+          <span class="span1">备注：</span><br/>
+          <%@favour_notices.each_with_index do |notice,index|%>
+            <span><%= "#{index+1}.#{notice.second_parm}"%></span><br/>
+          <%end unless @favour_notices.blank? %>
+        </p>
+      </div>
+      <div class="solid"></div>
+      <span class="time"><%=Time.now.strftime("%Y.%m.%d")%></span>
+      <button onclick="$(this).css('display','none');window.print();" style="float: right;">打印</button>
+    </div>
+  </body>
+
+</html>

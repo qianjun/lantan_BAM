@@ -1,0 +1,24 @@
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+  <thead>
+    <tr class="hbg">
+      <td>姓名</td>
+      <td>职务</td>
+      <td>操作</td> 
+    </tr>
+  </thead>
+  <tbody>
+    <% (@staffs || []).each do |staff| %>
+      <% if staff.type_of_w %>
+        <tr class="<%= cycle('', 'tbg') %>">
+          <td><%= staff.name %></td>
+          <td><%= staff.roles.collect{|role| role.name }.join(", ") %></td>
+          <td>
+            <% if permission?(:base_datas, :role_role_set) %><a href="javascript:void(0);" onclick="set_staff_role('<%= staff.id %>','<%= staff.roles.collect{|role| role.id }.join(",") %>')">角色设定</a><% end %>
+          </td>
+        </tr>
+      <% end %>
+    <% end%>
+  </tbody>
+</table>
+<%= will_paginate @staffs, :class => "pageTurn", :previous_label => "上一页",
+  :next_label => "下一页"  unless @staffs.empty?%>

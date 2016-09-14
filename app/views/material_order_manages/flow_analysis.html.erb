@@ -1,0 +1,72 @@
+<div class="second_menu">
+  <a href="/stores/<%= @store_id %>/material_order_manages">订货分析</a>
+  <a href="/stores/<%= @store_id %>/material_order_manages/flow_analysis"  class="hover">流量分析</a>
+  <a href="/stores/<%= @store_id %>/material_order_manages/storage_analysis">库存结构分析</a>
+</div>
+<div class="search">
+  <form url="/stores/<%= @store_id %>/material_order_manages/flow_analysis" method="get">
+  <div><label>统计月份：</label>
+    <select name="statistics_month">
+      <% get_last_twelve_months.each do |month| %>
+        <option value="<%= month %>" <%= @statistics_month.eql?(month) ? "selected" : "" %>><%= month %></option>
+      <% end %>
+    </select>
+  </div>
+  <div><button class="search_btn">查询</button></div>
+  </form>
+</div>
+<div class="data_body">
+  <div class="collect">
+    <ul>
+      <li><span>出库记录：<%= @total_count %>条</span></li>
+      <li><span>金额：<%= @total_price.nil? ? "0" : sprintf("%.2f", @total_price) %></span></li>
+    </ul>
+  </div>
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+    <thead>
+      <tr class="hbg">
+        <td>库存类别</td>
+        <td>金额</td>
+        <td>金额占比</td>
+        <td>物料数量</td>
+        <td>数量占比</td>
+      </tr>
+    </thead>
+    <tbody>
+      <% @arr.each do |a| %>
+      <tr>
+        <td><strong><%= a[:name] %></strong></td>
+        <td><p><%= a[:price].nil? ? 0 : sprintf("%.2f", a[:price]) %></p></td>
+        <td><%= @total_price.nil? || @total_price <= 0 ? "0%" : "#{sprintf("%.2f",(a[:price].to_f * 100)/@total_price)}%" %></td>
+        <td><p><%= a[:count].to_i %></p></td>
+        <td><%= @t_count <= 0 ? "0%" : "#{sprintf("%.2f",(a[:count].to_f * 100)/@t_count)}%" %></td>
+      </tr>
+      <% end if @arr %>      
+    </tbody>
+  </table>
+  <br/>
+  <br/>
+  <br/>
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+    <thead>
+      <tr class="hbg">
+        <td>出库性质</td>
+        <td>金额</td>
+        <td>金额占比</td>
+        <td>物料数量</td>
+        <td>数量占比</td>
+      </tr>
+    </thead>
+    <tbody>
+      <% @arr2.each do |a2| %>
+      <tr>
+        <td><strong><%= MatOutOrder::TYPES[a2[:type].to_i] %></strong></td>
+        <td><p><%= a2[:price].nil? ? 0 : sprintf("%.2f", a2[:price]) %></p></td>
+        <td><%= @total_price <= 0 ? "0%" : "#{sprintf("%.2f",(a2[:price].to_f * 100)/@total_price)}%" %></td>
+        <td><%= a2[:count].to_i %></td>
+        <td><%= @t_count2 <= 0 ? "0%" : "#{sprintf("%.2f",(a2[:count].to_f * 100)/@t_count2)}%" %></td>
+      </tr>
+      <% end if @arr2 %>     
+    </tbody>
+  </table>
+</div>

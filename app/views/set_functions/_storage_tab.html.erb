@@ -1,0 +1,29 @@
+<script type="text/javascript">
+  $(function(){
+    $(".people_group li").hover(
+    function(){
+      $(this).find(".group_func").css("display","block");
+      $(this).find(".group_x").css("display","block");
+    },
+    function(){
+      $(this).find(".group_func").css("display","none");
+      $(this).find(".group_x").css("display","none");
+    }
+  );
+  });
+</script>
+<div class="people_group">
+  <div class="search">
+    <div><button class="search_btn" onclick="storage_new(<%= @store.id %>)">新建物料类别</button></div>
+  </div>
+  <ul class="func_set_ul">
+    <% @storage_goods.each do |sg| %>
+      <li>
+        <a href="javaScript:void(0)"><%= sg.name %></a>
+        <span class="group_func">
+          <a href="javaScript:void(0)" onclick="edit_storage(<%= sg.id %>, <%= @store.id %>)">编辑</a>
+        </span>
+      </li>
+    <% end if @storage_goods %>
+  </ul>
+</div>

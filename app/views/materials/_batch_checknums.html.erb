@@ -1,0 +1,20 @@
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+  <thead>
+    <tr class="hbg">
+      <td>条形码</td>
+      <td>原始库存</td>
+      <td>盘点实数</td>
+    </tr>
+  </thead>
+  <tbody>
+    <% @materials.each do |material| %>
+      <tr class="<%= cycle("tbg", "") %>">
+        <td><%= material.code %></td>
+        <td><%= material.storage %></td>
+        <td><%= @check_nums[material.code] %></td>
+        <%= hidden_field_tag "materials[#{material.id}][code]", material.code %>
+        <%= hidden_field_tag "materials[#{material.id}][num]", @check_nums[material.code] %>
+      </tr>
+    <% end unless @materials.blank?%>
+  </tbody>
+</table>

@@ -1,0 +1,100 @@
+<script>
+<% if controller.action_name=="search" %>
+    $(document).ready(function(){
+      $(".pageTurn a").unbind("click");
+      $(".pageTurn a").bind("click", function() {
+        var url = this.href + "&name="+$("#name").val()+"&types="+$("#s_types").val()+"&status="+$("#s_status").val();
+        $.ajax({
+          async:true,
+          url:url,
+          dataType:"script",
+          type:"POST",
+          success:function(){
+            // alert(1);
+          },error:function(){
+            // alert("error");
+          }
+        });
+        /* alert(this.href); */
+        return false;
+      });
+    });
+<% end %>
+</script>
+<div>
+  <div class="table_box_h">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table" id="staffs_table">
+      <thead>
+        <tr class="hbg">
+          <th width="10%">姓名</th>
+          <th width="15%">部门</th>
+          <th width="15%">职务</th>
+          <th width="10%">管理扣分</th>
+          <th width="10%">得分</th>
+          <th width="10%">状态</th>
+          <th width="10%">本月评估</th>
+          <th width="20%">操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% unless @staffs.blank? || @departs == {} %>
+          <% staff = @staffs[0] %>
+          <tr>
+            <td><%= staff.name %></td>
+            <td><%= @index_dearts[staff.position] %></td>
+            <td><%= @index_dearts[staff.department_id] %></td>
+            <% month_score =  @staff_scores_hash[staff.id] %>
+            <td>
+              <label class="sys_score_text"><%= month_score.nil? ? 0 : month_score.try(:sys_score) %></label>
+            </td>
+            <td class="manage_score_data"><%=100-(month_score.nil? ? 0 : month_score.try(:sys_score)) %></td>
+            <td><%= Staff::STATUS_NAME[staff.status] %></td>
+            <td class="assess_result"><%= current_month_access_result(month_score) %></td>
+            <td>
+              <% if permission?(:staffs,:detail_staff) %><%= link_to "详细", store_staff_path(@store, staff.id) %><% end %>
+              <% if permission?(:staffs,:del_staff) %><%= link_to "删除", store_staff_path(@store, staff.id), :method => :delete, :confirm => "确定删除该员工吗？" %><% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <div class="table_box">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table" id="staffs_table">
+      <thead>
+        <tr class="hbg">
+          <th width="10%">姓名</th>
+          <th width="15%">部门</th>
+          <th width="15%">职务</th>
+          <th width="10%">管理扣分</th>
+          <th width="10%">得分</th>
+          <th width="10%">状态</th>
+          <th width="10%">本月评估</th>
+          <th width="20%">操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @staffs.each do |staff| %>
+          <tr>
+            <td><%= staff.name %></td>
+            <td><%= @index_dearts[staff.position] %></td>
+            <td><%= @index_dearts[staff.department_id] %></td>
+            <% month_score =  @staff_scores_hash[staff.id] %>
+            <td>
+              <label class="sys_score_text"><%= month_score.nil? ? 0 : month_score.try(:sys_score) %></label>
+            </td>
+            <td class="manage_score_data"><%=100-(month_score.nil? ? 0 : month_score.try(:sys_score)) %></td>
+            <td><%= Staff::STATUS_NAME[staff.status] %></td>
+            <td class="assess_result"><%= current_month_access_result(month_score) %></td>
+            <td>
+              <% if permission?(:staffs,:detail_staff) %><%= link_to "详细", store_staff_path(@store, staff.id) %><% end %>
+              <% if permission?(:staffs,:del_staff) %><%= link_to "删除", store_staff_path(@store, staff.id), :method => :delete, :confirm => "确定删除该员工吗？" %><% end %>
+            </td>
+          </tr>
+        <% end  unless @staffs.blank? || @departs == {}%>
+      </tbody>
+    </table>
+    <%= will_paginate @staffs, :class => "pageTurn", :previous_label => "上一页",
+      :next_label => "下一页" unless @staffs.blank?%>
+  </div>
+</div>

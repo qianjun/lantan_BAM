@@ -1,0 +1,77 @@
+<%= javascript_include_tag "set_stores" %>
+<div class="data_box">
+  <div class="clear"></div>
+  <div class="tab_head">
+    <ul><li class="hover">等待付款</li>
+      <li onclick="window.location.href='/stores/<%=params[:store_id]%>/set_stores/complete_pay'">已付款</li></ul>
+  </div>
+  <div class="data_body">
+    <div>
+      <div class="data_menu afterClear"><a href="javascript:void(0)" onclick="load_register(<%=params[:store_id]%>)" id="cash_refresh">刷新</a></div>
+      <div class="collect">
+        <ul>
+          <li><span>今天：<%=Time.now.strftime("%Y-%m-%d")%></span></li>
+          <li><span id="c_time">现在时间 <%=Time.now.strftime("%H:%M")%></span></li>
+          <script type="text/javascript">
+            setInterval(function(){
+              var jsDate = new Date();
+              //date = jsDate.getFullYear()+"年"+jsDate.getMonth()+"月"+jsDate.getDay()+"日 "+jsDate.getHours()+"时"+jsDate.getMinutes()+"分"+new Date().getSeconds()+"秒";
+              var hour = "";
+              var minute = "";
+              if(jsDate.getHours()<10){
+                hour = "0"+jsDate.getHours();
+              }else{
+                hour = jsDate.getHours();
+              }
+              if(jsDate.getMinutes()<10){
+                minute = "0"+jsDate.getMinutes();
+              }else{
+                minute = jsDate.getMinutes();
+              }
+              $("#c_time").html("现在时间 "+hour+":"+minute);
+            },1000)
+          </script>
+        </ul>
+      </div>
+      <div class="data_item"  id="cash_reload">
+        <%= render "cash" %>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="mask"></div>
+<div class="maskOne"></div>
+<div class="tab_popup" id="tab_pay">
+  <div class="popup_box"  id="pop_box">
+    <h1>收银<a href="javascript:void(0)" class="close">关闭</a></h1>
+    <div class="popup_body">
+      <div class="popup_body_area">
+        <div class="accountsTab_top">
+          <div class="accountsTab_item_block">
+            <div class="accountsTab_item" id="car_nums">
+              <%= render "car_num" %>
+            </div>
+          </div>
+          <div class="accountsTab_project">
+            <ul>
+              <li><a href="javascript:void(0)" onclick="show_loss('input')">优惠</a></li>
+              <li><a href="javascript:void(0)" onclick="show_loss('return_order')">退单</a></li>
+            </ul>
+          </div>
+        </div>
+        <div  id="cash_pay"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="tab_popup"  id="edit_card">
+  <div class="popup_box">
+    <h1>修改卡号<a href="javascript:void(0);" class="close">关闭</a></h1>
+    <div class="popup_body">
+      <div class="popup_body_area">
+        <div class="brand">卡号：<input type="text" id="id_card" style="width:200px;"/></div>
+      </div>
+      <div class="btn_box"><button class="confirm_btn" id="confirm_card">确定</button></div>
+    </div>
+  </div>
+</div>

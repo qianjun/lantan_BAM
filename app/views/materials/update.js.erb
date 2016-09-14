@@ -1,0 +1,62 @@
+<%if @status == 2 %>
+tishi_alert("<%= @flash_notice.html_safe() %>");
+$(".edit_material #material_ce_bn").attr('disabled', false);
+<% elsif @status == 0 || @status == 1%>
+tishi_alert("<%= @flash_notice.html_safe() %>");
+
+$("#showmaterial<%= @material.id %>tr").find("td:nth-child(1)").text("<%= @material.code %>");
+$("#showmaterial<%= @material.id %>tr").find("td:nth-child(2)").text("<%= @material.name %>");
+$("#showmaterial<%= @material.id %>tr").find("td:nth-child(3)").text("<%= @cname %>");
+$("#showmaterial<%= @material.id %>tr").find("td:nth-child(4)").text("<%= @material.is_ignore || @material.storage.to_i > @material.material_low.to_i ? '存货' : '缺货' %>");
+$("#showmaterial<%= @material.id %>tr").find("td:nth-child(6)").text("<%= @material.unit %>");
+$("#showmaterial<%= @material.id %>tr").find("td:nth-child(7)").text("<%= @material.price %>");
+$("#showmaterial<%= @material.id %>tr").find("td:nth-child(8)").text("<%= @material.sale_price %>");
+$("#showmaterial<%= @material.id %>span").text(<%= @material.storage %>);
+
+<% if @material.storage <= @material.material_low.to_i %>       <!--如果小于预警值，则要加上信息提示-->
+
+$("#showmaterial<%= @material.id %>tr").find("td:first").removeAttr("class");
+$("#showmaterial<%= @material.id %>tr").find("td:first").attr("class", "data_table_error");
+$("#showmaterial<%= @material.id %>span").parent().parent().find('.sstatus').text("缺货");
+var message_span = $("span[id='low_materials_span']").length;       <!--判断是否有缺货提示-->
+if(message_span<=0){      <!--如果没有缺货提示-->
+$("#material_data_box").before("<div class='message'>有 <span class='red' id='low_materials_span'>1\n\
+                                </span>个库存量过低<a href='JavaScript:void(0)' onclick='toggle_low_materials(this)'>点击查看</a>\n\
+                                <%= escape_javascript(render :partial => 'show_low_materials', :locals => {:low_materials => [@material]}) %></div>");
+}else{      <!--如果有缺货提示-->
+var l = $("#low_materials_tbody").find("#material"+<%= @material.id %>+"tr").length;  <!--判断该物料是否已经在缺货信息提示里-->
+if(l<=0){   <!--如果不在缺货信息提示里-->
+var low_materials_count = parseInt($("#low_materials_span").text());
+$("#low_materials_span").text(low_materials_count+1);
+$("#low_materials_tbody").append("<%= escape_javascript(render :partial => 'add_a_low_material', :locals => {:material => @material}) %>");
+$("#low_materials_tbody").find("tr").removeAttr("class");
+$("#low_materials_tbody").find("tr:odd").attr("class", "tbg");
+}else{      <!--如果在确货信息提示里-->
+$("#material<%= @material.id %>tr").find("td:nth-child(1)").text("<%= @material.code %>");
+$("#material<%= @material.id %>tr").find("td:nth-child(2)").text("<%= @material.name %>");
+$("#material<%= @material.id %>tr").find("td:nth-child(3)").text("<%= @cname %>");
+$("#material<%= @material.id %>tr").find("td:nth-child(6)").text("<%= @material.price %>");
+$("#materialstorage"+<%= @material.id %>+"td").text(<%= @material.storage %>);
+}
+}
+<% else %>        <!--如果不小于预警值，则要去掉信息提示-->
+$("#showmaterial<%= @material.id %>tr").find("td:first").removeAttr("class");
+$("#showmaterial<%= @material.id %>span").parent().parent().find('.sstatus').text("存货");
+var message_span = $("span[id='low_materials_span']").length;       <!--判断是否有缺货提示-->
+if(message_span>0){       <!--如果有缺货提示-->
+var l = $("#low_materials_tbody").find("#material"+<%= @material.id %>+"tr").length;  <!--判断该物料是否已经在缺货信息提示里-->
+if(l>0){        <!--且该物料在缺货信息提示里-->
+var low_materials_count = parseInt($("#low_materials_span").text());
+$("#low_materials_span").text(low_materials_count-1);
+$("#material"+<%= @material.id %>+"tr").remove();
+$("#low_materials_tbody").find("tr").removeAttr("class");       <!--重新加上样式-->
+$("#low_materials_tbody").find("tr:odd").attr("class", "tbg");
+if((low_materials_count-1)==0){
+$("#low_materials_span").parent().remove();
+}
+}
+}
+<% end %>
+$("#material_div").hide();
+$(".mask").css('display','none');
+<% end %>

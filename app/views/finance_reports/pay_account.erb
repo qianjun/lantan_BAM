@@ -1,0 +1,30 @@
+<div class="main">
+  <div class="box">
+    <%= render :partial => "warn_account_tips" %>
+    <div class="data_box">
+      <div class="tab_head">
+        <ul>
+          <li class="hover">应收款</li>
+          <li onclick="window.location.href='/stores/<%=params[:store_id]%>/finance_reports/payable_account'" >应付款</li>
+          <li onclick="window.location.href='/stores/<%=params[:store_id]%>/finance_reports/manage_account'">往来帐户管理</li>
+        </ul>
+      </div>
+      <div class="data_body">
+        <div class="search">
+          <div><label>时间：</label>
+            <input id="c_first" type="text"  onclick="WdatePicker({preLoad:true,maxDate:'<%=Time.now.strftime("%Y-%m-%d")%>'})" readonly class="Wdate"
+                   value="<%=@start_time%>"/> 到
+            <input id="c_last" type="text" onclick="WdatePicker({preLoad:true,maxDate:'<%=Time.now.strftime("%Y-%m-%d")%>'})" readonly class="Wdate"
+                   value="<%=@end_time%>" /></div>
+          <div style="float:right;"><button class="search_btn" style="padding:-1px 0;" onclick="pay_account(this,<%=params[:store_id]%>)">查&nbsp&nbsp询</button></div>
+        </div>
+        <div  id="account">
+          <%= render :partial=>'pay_account',:object=>Account::TYPES[:CUSTOMER] %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="mask"></div>
+<div class="tab_popup" id="pay_account"></div>
+

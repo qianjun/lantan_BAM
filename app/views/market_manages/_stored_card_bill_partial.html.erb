@@ -1,0 +1,38 @@
+<div>
+   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+       <thead>
+            <tr class="hbg">
+              <td>单号</td>
+              <td>日期</td>
+              <td>内容</td>
+              <td>收入（元）</td>
+              <td>支出（元）</td>
+              <td>总店未支付储值卡余额（元）</td>
+            </tr>
+        </thead>
+        <tbody>
+          <% @svc_returns.each do |svc_return| %>
+            <tr>
+              <td>
+                <% if svc_return.types == SvcReturnRecord::TYPES[:OUT] %>
+                  <%= link_to "#{svc_return.code}", "/orders/#{svc_return.o_id}/order_info",
+                  :remote => "true", "data-type" => "script", :class => "other_a" %>
+                <% else %>
+                  <%= link_to svc_return.code, store_material_order_manage_path(@store, svc_return.mo_id), :class => "other_a", :remote => true, "data-type" => "script" %>
+                <% end %>
+              </td>
+                
+                
+              <td><%= svc_return.created_at.strftime("%Y.%m.%d--%H:%M") %></td>
+              <td><%= svc_return.content %></td>
+              <td><%= svc_return.price if svc_return.types == SvcReturnRecord::TYPES[:IN] %></td>
+              <td><%= "-"+svc_return.price.to_s if svc_return.types == SvcReturnRecord::TYPES[:OUT] %></td>
+              <td><%= svc_return.total_price %></td>
+            </tr>
+          <% end %>
+        </tbody>
+  </table>
+  <%= will_paginate @svc_returns, :class => "pageTurn", :previous_label => "上一页",
+    :next_label => "下一页" %>
+  <div class="amount">总店未支付储值卡余额  总计：<%= @price %>（元）</div>
+</div>

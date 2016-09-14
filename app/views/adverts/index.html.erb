@@ -1,0 +1,44 @@
+<div class="data_box">
+  <div class="second_menu">
+    <a href="/stores/<%= params[:store_id] %>/set_stores">门店信息</a>
+    <a href="/stores/<%= params[:store_id]%>/set_functions">功能设置</a>
+    <a href="/stores/<%= params[:store_id]%>/adverts"  class="hover">led广告设置</a>
+    <a href="/stores/<%= params[:store_id] %>/messages/send_list">短信设置</a>
+  </div>
+  <div class="data_menu">
+    <%= link_to "新建广告", new_store_advert_path(params[:store_id]), remote: :true, "data-type" => 'script', :class =>"add_btn" %></div>
+  <div class="clear"></div>
+  <div class="data_body">
+    <% unless @adverts.blank? %>
+      <div class="groupFunc_area">
+        <div class="groupFunc_b">
+          <div class="organization">
+            <% @adverts.each do |advert| %>
+              <dl style="width:180px;">
+                <dt style="width:120px;">
+                  <a href="javaScript:void(0)"><%= advert.content %></a>
+                  <%= link_to "编辑", edit_store_advert_path(params[:store_id],advert.id), remote: :true, "data-type" => 'script', :class =>"group_x",:style=>"background: url(/assets/edit.png) no-repeat;width:25px;height:20px;right:-26px;" %>
+                </dt>
+                <dd>显示时间：<%= advert.last_time %>秒</dd>
+              </dl>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <%end%>
+  </div>
+</div>
+<div class="mask"></div>
+<div class="tab_popup" id="ad_div" style="display:none;"></div>
+<script type="text/javascript">
+  $(function(){
+    $(".organization dt").hover(
+    function(){
+      $(this).find(".group_x").css("display","block");
+    },
+    function(){
+      $(this).find(".group_x").css("display","none");
+    }
+  );
+  });
+</script>

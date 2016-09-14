@@ -1,0 +1,48 @@
+<div class="popup_box">
+  <h1>查看<%=Fee::FEE_TAB[@position]%><a href="javascript:void(0)" class="close">关闭</a></h1>
+  <div class="popup_body">
+    <div class="popup_body_area">
+      <div class="seeProDiv">
+        <div class="seeProDiv_l">单据编号：</div>
+        <div class="seeProDiv_r"><%= @fee.code %></div>
+      </div>
+      <div class="seeProDiv">
+        <div class="seeProDiv_l">名称：</div>
+        <div class="seeProDiv_r"><%= @fee.name %></div>
+      </div>
+      <div class="seeProDiv">
+        <div class="seeProDiv_l">支付日期：</div>
+        <div class="seeProDiv_r"><%= @fee.pay_date.strftime("%Y-%m-%d") %></div>
+      </div>
+      <div class="seeProDiv">
+        <div class="seeProDiv_l">入账日期：</div>
+        <div class="seeProDiv_r"><%= @fee.fee_date.strftime("%Y-%m-%d") %></div>
+      </div>
+
+      <div class="seeProDiv">
+        <div class="seeProDiv_l">经手人：</div>
+        <div class="seeProDiv_r"><%= @customers[@fee.operate_staffid]%></div>
+      </div>
+      <div class="seeProDiv">
+        <div class="seeProDiv_l">经办人：</div>
+        <div class="seeProDiv_r"><%= @customers[@fee.create_staffid]%></div>
+      </div>
+      <div class="seeProDiv">
+        <div class="seeProDiv_l">分摊月份：</div>
+        <div class="seeProDiv_r"><%= @fee.share_month.nil? ? "--" : @fee.share_month.to_s+"个月"  %></div>
+      </div>
+      <div class="seeProDiv">
+        <div class="seeProDiv_l">分摊金额：</div>
+        <div class="seeProDiv_r"><%= @fee.share_month.nil? ? "--" : (@fee.amount/@fee.share_month).round(2) %></div>
+      </div>
+      <div class="seeProDiv">
+        <div class="seeProDiv_l">金额：</div>
+        <div class="seeProDiv_r"><%= @fee.amount %></div>
+      </div>
+      <div class="seeProDiv">
+        <div class="seeProDiv_l">备注：</div>
+        <div class="seeProDiv_r"><%= @fee.remark %></div>
+      </div>
+    </div>
+  </div>
+</div>

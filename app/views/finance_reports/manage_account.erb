@@ -1,0 +1,32 @@
+<div class="main">
+  <div class="box">
+    <div class="data_box">
+      <div class="tab_head">
+        <ul>
+          <li onclick="window.location.href='/stores/<%=params[:store_id]%>/finance_reports/pay_account'">应收款</li>
+          <li onclick="window.location.href='/stores/<%=params[:store_id]%>/finance_reports/payable_account'" >应付款</li>
+          <li class="hover">往来帐户管理</li>
+        </ul>
+      </div>
+      <div class="data_body">
+        <div class="search">
+          <div><label>客户/供应商名称：</label><input type="text" id="account_name" /></div>
+          <div style="float:right;"><button class="search_btn" style="padding:-1px 0;" onclick="manage_account(this,<%=params[:store_id]%>)">查&nbsp&nbsp询</button></div>
+        </div>
+        <div class="tab_before">
+          <ul>
+            <%Account::TYPES_NAMES.each do |k,tab|%>
+              <li onclick="manage_tab(this,<%=k%>)" id="<%=k%>" <%if k == @position%> class="hover"<%end%>><%=tab%></li>
+            <%end%>
+          </ul>
+        </div>
+        <div class="data_item" id="account" >
+          <%=  render 'manage_account'%>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="mask"></div>
+<div class="tab_popup" id="pay_account"></div>
+

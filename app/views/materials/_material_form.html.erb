@@ -1,0 +1,33 @@
+<%= form_for [@current_store, @material], :id => "material_tab_form", :remote => true, :html => {"data-type" => "script"} do |f| %>
+  <div class="tab_popup" id="add_material">
+    <div class="popup_box">
+      <h1>添加物料<a href="javascript:void(0)" class="close">关闭</a></h1>
+      <div class="popup_body">
+        <% if @material.new_record? %>
+          <div style="height: 40px; line-height: 36px;">
+            <div class="item">
+              <label>条形码：</label>
+              <input type="text" name="search-barcode" class="search-barcode"/>
+            </div>
+            <div>
+              <a class="search_btn" onclick="search_material_barcode(<%= @current_store.id %>, this)">查询</a>
+            </div>
+          </div>
+          <div id="search_by_code" style="display: none;">
+            <div class="no_material_notice">
+            </div>
+          </div>
+        <% end %>
+        <div class="popup_body_area">
+          <div class="mat_search_result">
+            <%= render :partial => 'mat_form', :locals => {:material => f.object} %>
+            <%= render "prod_material" %>
+          </div>
+        </div>
+        <div class="btn_box"><button type="button" onclick="checkMaterial(this)" id="material_ce_bn" class="confirm_btn">确定</button></div>
+        <div class="clear"></div>
+      </div>
+    </div>
+  </div>
+  <%= render '/products/img_url' %>
+<% end %>

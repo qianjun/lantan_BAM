@@ -1,0 +1,101 @@
+<%= javascript_include_tag "/assets/My97DatePicker/WdatePicker.js" %>
+<%= stylesheet_link_tag    "/assets/My97DatePicker/skin/WdatePicker" %>
+<div class="main">
+  <div class="box">
+    <div class="data_box">
+      <div class="second_menu">
+        <a href="/stores/<%= params[:store_id] %>/package_cards" 
+           <% if params[:action] == "index"  %> class="hover"<%end%>>套餐卡列表
+        </a>
+        <a href="/stores/<%= params[:store_id] %>/package_cards/sale_records"
+           <% if params[:action] == "sale_records" || params[:action] == "search_list"  %> class="hover"<%end%> >销售记录
+        </a>
+      </div>
+      <div class="search">
+        <%= form_for :search,:url=>"/stores/#{params[:store_id]}/package_cards/search" do  %>
+          <div>
+            <label>套餐卡名称：</label>
+            <select name="pcard">
+              <option value="">请选择</option>
+              <%  @pcards.each do |key,value| %>
+                <option value="<%= key %>" <% if session[:pcard]=="#{key}" %> selected <%end%>><%= value %></option>
+              <%end%>
+            </select>
+          </div>
+          <div>
+            <label>时间：</label>
+            <input name="created_at" type="text" onclick="WdatePicker()" value="<%= session[:created_at] %>" class="Wdate" readonly />
+            &nbsp;到&nbsp;
+            <input name="ended_at" type="text" onclick="WdatePicker()" value="<%= session[:ended_at] %>" class="Wdate" readonly />
+          </div>
+          <div><label>车牌号：</label><input name="car_num" type="text" value="<%= session[:car_num] %>" /></div>
+          <div><label>客户名称：</label><input name="c_name" type="text" value="<%= session[:c_name] %>" /></div>
+          <div>
+            <button class="search_btn">查询</button>
+          </div>
+        <% end %>
+      </div>
+      <div class="data_body_title">
+        <span class="data_body_p">总销售量：<span class="red"><%=  @p_cards.blank? ? 0 : @p_cards.length  %></span>张
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;总金额：<span class="red"><%=  @card_fee  %></span>元</span>
+      </div>
+      <div class="clear"></div>
+      <div class="data_body">
+        <div>
+          <%unless @cards.blank?%>
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="data_table">
+              <thead>
+                <tr class="hbg">
+                  <td>客户姓名</td>
+                  <td>手机号码</td>
+                  <td>套餐卡价格（元）</td>
+                  <td>消费情况</td>
+                  <td>状态</td>
+                </tr>
+              </thead>
+              <tbody>
+                <% @cards.each do |card| %>
+                  <tr>
+                    <td><%= card.name %></td>
+                    <td><%= card.mobilephone %></td>
+                    <td><%= card.price %></td>
+                    <%  stat = card.content.nil? ? [] : card.content.split(",")%>
+                    <td>
+                      <table width="100%" border="0" cellspacing="1" cellpadding="0" class="s_table">
+                        <%unless  card.content.nil? %>
+                          <tr class="fws">
+                            <td width="75%">项目</td>
+                            <td width="25%">剩余次数</td>
+                          </tr>
+                          <%card.content.split(",").each do |prod|%>
+                            <tr>
+                              <td><%= prod.split("-")[1] %></td>
+                              <td><%=prod.split("-")[2] %></td>
+                            </tr>
+                          <%end%>
+                        <%else%>
+                          <tr class="fws">
+                            <td>暂无</td>
+                          </tr>
+                        <% end %>
+                      </table>
+                    </td>
+                    <td><%= CPcardRelation::STATUS_NAME[card.status] %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+            <div class="pageTurn">
+              <%= will_paginate @cards,:class=>"pageTurn",:previous_label=>"上一页",:next_label=>"下一页" %>
+            </div>
+          <% else %>
+            暂无消费记录
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="foot">
+  <p>Copyright © 2013 杭州鼎洪 版权所有</p>
+</div>

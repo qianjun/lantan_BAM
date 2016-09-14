@@ -1,0 +1,18 @@
+<% unless @no_material_codes.blank? %>
+  <div class="message">
+    <% @no_material_codes.each do |nm| %>
+      条形码为 【<%= nm %>】 的物料不存在！<br/>
+    <% end%>
+  </div>
+<% end %>
+<% if @material_ins.map{|arr| arr.values.flatten.length}.select{|l| l > 1}.length > 0 %>
+  <div class="message">
+    <% @material_ins.each do |mi| %>
+      <% mi.each do |material, mos| %>
+        <% if mos.length>1 %>
+          条形码为 【<%= material.code %>】 的物料在多批订货单中都存在，请保留对应的订货记录，移除其他。<br/>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>

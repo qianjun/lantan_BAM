@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>打印条形码</title>
+    <%= csrf_meta_tags %>
+    <style type="text/css">
+
+      *{ padding: 0; margin: 0;}
+      .box { padding: 40px 23px;}
+      .barcode { width: 250px; height: 140px; float: left; margin: 20px 0 20px 78px;}
+      .margin24 { margin-left: 80px;}
+    </style>
+  </head>
+
+  <body>
+    <% line_num = (params[:num].nil? || params[:num].to_i<1 || params[:num].to_i>10 ) ? 3 : params[:num].to_i  %>
+    <div class="box" style="width:<%=line_num*330%>px">
+      <% i = 1 %>
+      <% @data.each do |material| %>
+        <% (1..material[:num].to_i).each do |index| %>
+          <div class="barcode <%= (i % line_num == 1) ? "" : "margin24" %>"><%= image_tag material[:code_img], :width => '250', :height => '120' %>
+          <span style="width:150px;float: left;">名称：<%=material[:name] %></span><span>￥：<%=material[:price]%></span></div>
+    <% i += 1 %>
+        <% end %>
+      <% end %>
+    </div>
+  </body>
+</html>

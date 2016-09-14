@@ -1,0 +1,46 @@
+<%= javascript_include_tag "jquery-ui","stations" %>
+<div class="data_box">
+  <div class="station">
+    <div class="station_body">
+      <dt><label>工位</label>
+      <div  class="station_delete"><img src="/assets/delete.png" /></div>
+      <a  href="javascript:void(0)" style="float:right;" onclick="compelete_station(<%= params[:store_id] %>)" >提交</a>
+      </dt>
+      <%@stations.each do |station|%>
+        <ul class="station_item  station_width">
+          <li class="station_num  inner_li"><h2><%= station.name %></h2></li>
+          <li class="station_tech">
+            <ul class="technician" id="<%= station.id %>">
+              <%@station_staffs[station.id].each do |st|%>
+                <% staff = @staff_info[st.staff_id] %>
+                <% if staff %>
+                  <li id="<%= station.id %>_<%= staff.id %>" class="inner_li">
+                    <img src="<%= staff.photo || '/assets/tech.jpg'  %>"  alt="<%= staff.name %>" id="<%= staff.id %>"/>
+                    <p><%= staff.name %></p>
+                  </li>
+                <%end%>
+              <%end if @station_staffs[station.id]%>
+            </ul>
+          </li>
+        </ul>
+      <%end%>
+    </div>
+  </div>
+</div>
+<div style=" position: fixed; top: 100px; left: 22px; width: 150px; height: 200px;" id="discount_card">
+  <%=  render :partial=>'tech',:object => 0%>
+</div>
+<div style=" position: fixed; top: 100px; right: 22px; width: 150px; height: 200px;" id="pcard">
+  <%=  render :partial=>'tech',:object => 1%>
+</div>
+<script type="text/javascript">
+  drag_self("#all_tech li img","a",true)
+  drag_self(".technician li","b",false)
+  station_drop();
+  $(".station_delete").droppable({
+    scope: 'b',
+    drop: function( event, ui ) {
+      $("#"+ui.draggable.attr('id')).remove();
+    }
+  })
+</script>

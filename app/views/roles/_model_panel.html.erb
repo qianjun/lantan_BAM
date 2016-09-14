@@ -1,0 +1,53 @@
+<script type="text/javascript">
+  $(function(){
+    $(".people_group li").hover(
+    function(){
+      $(this).find(".group_func").css("display","block");
+      $(this).find(".group_x").css("display","block");
+    },
+    function(){
+      $(this).find(".group_func").css("display","none");
+      $(this).find(".group_x").css("display","none");
+    }
+  );
+    $('.groupFunc_h li').bind('click',function(){
+      $(this).addClass('hover').siblings().removeClass('hover');
+      var index = $('.groupFunc_h li').index(this);
+      $('.groupFunc_b > div').eq(index).show().siblings().hide();
+    });
+  });
+</script>
+<%= form_tag set_role_store_roles_url(params[:store_id]), :id => "role_form" do %>
+  <div class="groupFunc_area">
+    <ul class="groupFunc_h">
+      <li class="hover">菜单</li>
+      <li>功能</li>
+    </ul>
+    <div class="groupFunc_b">
+      <div class="role_menu">
+        <ul>
+          <% (@menus || []).each do |menu| %>
+            <% check = @role_menu_relation_menu_ids.nil? ? false : @role_menu_relation_menu_ids.include?(menu.id) %>
+            <li><%= check_box_tag "menu_checks[]", menu.id, check %><%= menu.name %></li>
+          <% end %>
+        </ul>
+      </div>
+      <div style="display: none;">
+        <% Constant::ROLES.each do |k, v| %>
+        <% role_model_relation = RoleModelRelation.where(:role_id => @role_id, :model_name => k.to_s).first if @role_id %>
+        <div class="clear">
+          <dl>
+            <dt><input type="checkbox" onclick="selectAll(this)"/><%= v[:name] %>模块</dt>
+            <div>
+            <% v.except(:name).each do |k1, v1| %>
+              <dd><%= check_box_tag "model_nums[#{k}][]", v1[1], role_model_relation.nil? ? false : v1[1] == role_model_relation.num & v1[1] %><%= v1[0] %></dd>
+            <% end %>
+            </div>
+          </dl>
+        </div>
+        <% end %>
+      </div>
+    </div>
+  </div> <%= hidden_field_tag "role_id","" %>
+  <div class="btn_box"><button type="submit" class="confirm_btn">确定</button><button type="button" onclick="cancel_role_panel()" class="cancel_btn">取消</button></div>
+<% end %>
