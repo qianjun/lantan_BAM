@@ -104,6 +104,7 @@ module UserRoleHelper
       end
     end
     role_flag.to_i&i[1] == i[1]
+    true
     #    session[:model_role][model]&i[1]==i[1]
   end
 

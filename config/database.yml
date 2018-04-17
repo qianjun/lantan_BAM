@@ -15,9 +15,8 @@ development:
   database: lantan_db
   pool: 15
   username: root
-  password: qianjun
+  password: 
   host: localhost
-#  host: 192.168.0.250
 
 
 

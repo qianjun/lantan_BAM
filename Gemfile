@@ -2,14 +2,14 @@
   Encoding.default_external = Encoding::UTF_8
   Encoding.default_internal = Encoding::UTF_8
 end 
-source 'https://rubygems.org/'
+source 'https://gems.ruby-china.org/'
 
 gem 'rails', '3.1.2'
 
 # Bundle edge Rails instead:
 # gem 'rails',     :git => 'git://github.com/rails/rails.git'
 gem 'rake', '10.1.0'
-gem 'mysql2', '0.3.10'
+gem 'mysql2', '0.3.20'
 gem "will_paginate", '3.0.3'
 gem 'mini_magick', '3.5.0'
 gem 'gchartrb', '0.8'
@@ -33,14 +33,14 @@ gem 'remotipart', '~> 1.0'
 gem 'iconv'
 
 # group :production do
- gem 'libv8', '~> 3.11.8.17'
- gem 'therubyracer', :platform => :ruby
-#end
+#  gem 'libv8', '~> 3.11.8.17'
+#  gem 'therubyracer', :platform => :ruby
+# end
 # To use ActiveModel has_secure_password
-# gem 'bcrypt-ruby', '~> 3.0.0'
+gem 'bcrypt-ruby', '~> 3.0.0'
 
 # Use unicorn as the web server
-# gem 'unicorn'
+gem 'puma'
 
 # Deploy with Capistrano
 gem 'capistrano','~> 2.15.4'

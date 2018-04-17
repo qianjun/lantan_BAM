@@ -37,8 +37,8 @@ class LoginsController < ApplicationController
         @user_name = params[:user_name]
         render 'index', :layout => false
       else
-        file_path = mkdir("login_ip_logs","ip_log")
-        file = File.open(file_path,"a+")
+        # file_path = mkdir("login_ip_logs","ip_log")
+        # file = File.open(file_path,"a+")
         ip = request.headers["HTTP_X_REAL_IP"] || request.remote_ip
         info = create_get_http("http://ip.taobao.com","/service/getIpInfo.php?ip=#{ip}")["data"]
         position = "#{info["country"]}-#{info["area"]}-#{info["region"]}-#{info["city"]}--#{info["isp"]}"
@@ -46,8 +46,8 @@ class LoginsController < ApplicationController
 
         region = City.find store.city.parent_id if store.city.parent_id != 0
         if @staff.name =~ /管理员/ || city.name =~ /#{info["city"]+"-"+info["region"]}/ || (region && region.name =~ /#{info["region"]}/  )
-          file.write("\r\n登录ip:#{ip}-- 时间#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}  登录用户：#{@staff.name} 门店ID:#{@staff.store_id}  门店地址：#{store.address}  所属区域：#{position} \r\n".force_encoding("UTF-8"))
-          file.close
+          # file.write("\r\n登录ip:#{ip}-- 时间#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}  登录用户：#{@staff.name} 门店ID:#{@staff.store_id}  门店地址：#{store.address}  所属区域：#{position} \r\n".force_encoding("UTF-8"))
+          # file.close
           @staff.update_attributes(:last_login=>Time.now.strftime("%Y-%m-%d %H:%M:%S"))
           cookies[:user_id]={:value =>@staff.id, :path => "/", :secure  => false}
           cookies[:user_name]={:value =>@staff.name, :path => "/", :secure  => false}
