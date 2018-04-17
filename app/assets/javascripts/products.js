@@ -13,6 +13,11 @@ function prod_request(id,store_id,action){
     request_ajax(url+"/"+action,'',"post")
 }
 
+
+// 添加服务
+function add_prod(store_id){
+    request_ajax("/stores/"+ store_id+"/products/add_prod",'',"post","script")
+}
 //添加或者编辑产品
 function add_product(e){
     var pattern = new RegExp("[=-]")

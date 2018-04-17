@@ -16,7 +16,12 @@
         </form>
       </div>
       <div class="data_menu">
-        <% if permission?(:sales, :delete_product) && @total.num > 0 %><a href="javascript:void(0)" class="add_btn" onclick="delete_prods(<%= params[:store_id] %>)">删除产品</a><%end%>
+         <% if permission?(:sales, :add_product) %>
+          <a href="javascript:void(0)" class="add_btn" onclick="add_prod('<%= params[:store_id] %>')">添加产品</a> 
+          <% end %>
+        <% if permission?(:sales, :delete_product) && @total.num > 0 %>
+        <a href="javascript:void(0)" class="add_btn" onclick="delete_prods(<%= params[:store_id] %>)">删除产品</a>
+        <%end%>
       </div>
       <div class="collect">
         <ul><li>服务项目共：<span><%= @total.num %></span>项</li></ul>
